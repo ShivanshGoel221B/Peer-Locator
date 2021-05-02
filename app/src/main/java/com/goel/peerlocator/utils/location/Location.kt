@@ -1,11 +1,8 @@
 package com.goel.peerlocator.utils.location
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DataSnapshot
@@ -15,20 +12,10 @@ import com.google.firebase.database.ValueEventListener
 
 object Location {
 
-    const val FINE = Manifest.permission.ACCESS_FINE_LOCATION
-    const val COARSE = Manifest.permission.ACCESS_COARSE_LOCATION
-    @RequiresApi(Build.VERSION_CODES.Q)
-    const val BACKGROUND = Manifest.permission.ACCESS_BACKGROUND_LOCATION
-
-    var currentLocation : Location? = null
+    private var currentLocation : Location? = null
     var currentFriend : FriendModel? = null
     var friendLocation : Location? = Location("")
     var locationListener : LocationListener? = null
-
-    private const val LOC = "last_locations"
-    private const val LAT = "lat"
-    private const val LON = "lon"
-
 
     private val friendsLatitudeListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -59,12 +46,12 @@ object Location {
     }
 
     fun getFriendLocation () {
-        FirebaseDatabase.getInstance().reference.child(LOC).child(currentFriend?.uid!!)
+        FirebaseDatabase.getInstance().reference.child(Constants.LOC).child(currentFriend?.uid!!)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        val lat = snapshot.child(LAT).getValue(Double::class.java) as Double
-                        val lon = snapshot.child(LON).getValue(Double::class.java) as Double
+                        val lat = snapshot.child(Constants.LAT).getValue(Double::class.java) as Double
+                        val lon = snapshot.child(Constants.LON).getValue(Double::class.java) as Double
                         locationListener?.onLocationReady(LatLng(lat, lon))
                     }
                     else {
@@ -80,23 +67,23 @@ object Location {
 
     fun updateMyLocation(location: Location?) {
         currentLocation = location
-        val ref = FirebaseDatabase.getInstance().reference.child(LOC).child(Database.currentUser!!.uid)
-        ref.child(LAT).setValue(location?.latitude)
-        ref.child(LON).setValue(location?.longitude)
+        val ref = FirebaseDatabase.getInstance().reference.child(Constants.LOC).child(Database.currentUser!!.uid)
+        ref.child(Constants.LAT).setValue(location?.latitude)
+        ref.child(Constants.LON).setValue(location?.longitude)
     }
 
     fun setListeners (friend : FriendModel) {
-        val lat = FirebaseDatabase.getInstance().reference.child(LOC).child(friend.uid).child(LAT)
-        val lon = FirebaseDatabase.getInstance().reference.child(LOC).child(friend.uid).child(LON)
+        val lat = FirebaseDatabase.getInstance().reference.child(Constants.LOC).child(friend.uid).child(Constants.LAT)
+        val lon = FirebaseDatabase.getInstance().reference.child(Constants.LOC).child(friend.uid).child(Constants.LON)
 
         lat.addValueEventListener(friendsLatitudeListener)
         lon.addValueEventListener(friendsLongitudeListener)
     }
 
     fun removeListeners (friend: FriendModel) {
-        FirebaseDatabase.getInstance().reference.child(LOC).child(friend.uid)
-            .child(LAT).removeEventListener(friendsLatitudeListener)
-        FirebaseDatabase.getInstance().reference.child(LOC).child(friend.uid)
-            .child(LON).removeEventListener(friendsLongitudeListener)
+        FirebaseDatabase.getInstance().reference.child(Constants.LOC).child(friend.uid)
+            .child(Constants.LAT).removeEventListener(friendsLatitudeListener)
+        FirebaseDatabase.getInstance().reference.child(Constants.LOC).child(friend.uid)
+            .child(Constants.LON).removeEventListener(friendsLongitudeListener)
     }
 }

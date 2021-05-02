@@ -1,6 +1,5 @@
 package com.goel.peerlocator.activities
 
-import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,20 +7,18 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.MainFragmentsAdapter
 import com.goel.peerlocator.databinding.ActivityMainBinding
+import com.goel.peerlocator.models.UserModel
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.utils.firebase.UserDataListener
-import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.utils.location.Location
-import com.goel.peerlocator.utils.location.LocationListener
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
@@ -32,8 +29,6 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     private lateinit var binding: ActivityMainBinding
 
     private var locationPermissionGranted = false
-
-    private val PERMISSION_REQUEST_CODE = 69
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,11 +50,12 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         locationPermissionGranted = false
 
         when (requestCode) {
-            PERMISSION_REQUEST_CODE -> {
+            Constants.PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && PackageManager.PERMISSION_DENIED !in grantResults) {
                     locationPermissionGranted = true
                     alertForGPS()
                     getMyLocation()
+                    setBackgroundLocationService ()
                     return
                 }
             }
@@ -68,11 +64,11 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     }
 
     private fun getLocationPermission () {
-        if (ContextCompat.checkSelfPermission(applicationContext, Location.FINE) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(applicationContext, Location.COARSE) == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(applicationContext, Location.BACKGROUND) == PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
                 locationPermissionGranted = true
                 getMyLocation()
+                setBackgroundLocationService ()
             }
         }
         else {
@@ -81,12 +77,12 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     }
 
     private fun showLocationWarning () {
-        val permissions = arrayOf(Location.FINE, Location.COARSE, Location.BACKGROUND)
+        val permissions = arrayOf(Constants.FINE, Constants.COARSE)
         AlertDialog.Builder(this)
             .setTitle("Permission")
             .setMessage("You need to give Location Access Permission to continue")
             .setPositiveButton("Proceed") { dialog, _ -> Log.d("Error: ", "Could not Retrieve Data")
-                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE)
+                ActivityCompat.requestPermissions(this, permissions, Constants.PERMISSION_REQUEST_CODE)
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") { _, _ -> finish()}
@@ -107,9 +103,8 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     private fun getMyLocation () {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         try {
-            if (ContextCompat.checkSelfPermission(applicationContext, Location.FINE) == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(applicationContext, Location.COARSE) == PackageManager.PERMISSION_GRANTED) {
-                    if (ContextCompat.checkSelfPermission(applicationContext, Location.BACKGROUND) == PackageManager.PERMISSION_GRANTED)
+            if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
                         fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                             Location.updateMyLocation (it)
                         }
@@ -158,6 +153,10 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     private fun setFragmentsAdapter(fragmentsAdapter: MainFragmentsAdapter) {
         binding.mainViewPager.adapter = fragmentsAdapter
         binding.mainTabs.setupWithViewPager(binding.mainViewPager)
+    }
+
+    private fun setBackgroundLocationService () {
+
     }
 
     override fun onBackPressed() {

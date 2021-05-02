@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityFriendBinding
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.utils.location.Location
 import com.goel.peerlocator.utils.location.LocationListener
@@ -19,7 +20,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
 class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
@@ -55,8 +55,8 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     private fun getMyLocation () {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         try {
-            if (ContextCompat.checkSelfPermission(applicationContext, Location.FINE) == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(applicationContext, Location.COARSE) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
                         fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                             Location.updateMyLocation (it)
                         }

@@ -11,6 +11,7 @@ import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UserModel
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.location.LocationListener
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseUser
@@ -24,16 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 object Database {
 
-    // CONSTANTS
-    private const val NAME = "name"
-    private const val EMAIL = "email"
-    private const val DP = "profile_url"
-    private const val CIRCLES = "circles"
-    private const val ADMIN = "admin"
-    private const val MEMBERS = "members"
-    private const val FRIENDS = "friends"
-    private const val INVITES = "invites"
-    ////////////////////////
     private lateinit var currentUserRef : DocumentReference
 
     var listener : UserDataListener? = null
@@ -52,8 +43,8 @@ object Database {
                         createUserEntry(currentUserRef, user)
                     }
                     else {
-                        currentUser?.displayName = it[NAME].toString()
-                        currentUser?.photoUrl = it[DP].toString()
+                        currentUser?.displayName = it[Constants.NAME].toString()
+                        currentUser?.photoUrl = it[Constants.DP].toString()
                         listener?.onUserCreated()
                     }
                 }
@@ -65,12 +56,12 @@ object Database {
     private fun createUserEntry (currentUserRef: DocumentReference, user: FirebaseUser) {
         user.let {
             val newUser = hashMapOf<String, String>()
-            newUser[NAME] = user.displayName!!
-            newUser[DP] = user.photoUrl!!.toString()
+            newUser[Constants.NAME] = user.displayName!!
+            newUser[Constants.DP] = user.photoUrl!!.toString()
             currentUser?.displayName = user.displayName!!
             currentUser?.photoUrl = user.photoUrl!!.toString()
             listener?.onUserCreated()
-            newUser[EMAIL] = user.email!!
+            newUser[Constants.EMAIL] = user.email!!
             currentUserRef.set(newUser)
         }
     }
@@ -83,7 +74,7 @@ object Database {
                 .addOnSuccessListener {
                     if (it.exists()) {
                         try {
-                            circleArray = it[CIRCLES] as ArrayList<DocumentReference>
+                            circleArray = it[Constants.CIRCLES] as ArrayList<DocumentReference>
                         } catch (e: NullPointerException) {}
                         currentUser?.circlesCount = circleArray.size.toLong()
                         addToList(circleArray, circleList, circlesAdapter, shimmer)
@@ -103,13 +94,13 @@ object Database {
                 .addOnSuccessListener {
                     var membersCount = 0
                     try {
-                        membersCount = (it[MEMBERS] as ArrayList<DocumentReference>).size
+                        membersCount = (it[Constants.MEMBERS] as ArrayList<DocumentReference>).size
                     } catch (e: java.lang.NullPointerException) {
                     }
-                    val newCircle = CircleModel(circleName = it[NAME].toString(),
+                    val newCircle = CircleModel(circleName = it[Constants.NAME].toString(),
                         circleReference = it.reference,
-                        imageUrl = it[DP].toString(),
-                        adminReference = it[ADMIN] as DocumentReference,
+                        imageUrl = it[Constants.DP].toString(),
+                        adminReference = it[Constants.ADMIN] as DocumentReference,
                         memberCount = membersCount)
 
                     list.add(newCircle)
@@ -134,10 +125,10 @@ object Database {
             .addOnSuccessListener {
                 if (it.exists()) {
                     try {
-                        circleArray = it[CIRCLES] as ArrayList<DocumentReference>
+                        circleArray = it[Constants.CIRCLES] as ArrayList<DocumentReference>
                     } catch (e: NullPointerException) { }
                     try {
-                        friendsArray = it[FRIENDS] as ArrayList<DocumentReference>
+                        friendsArray = it[Constants.FRIENDS] as ArrayList<DocumentReference>
                     } catch (e : java.lang.NullPointerException){}
                     currentUser?.friendsCount = friendsArray.size.toLong()
                     addToList(friendsArray, circleArray, friendsList, friendsAdapter, shimmer)
@@ -157,7 +148,7 @@ object Database {
                 .addOnSuccessListener {
                     var circles = ArrayList<DocumentReference>()
                     try {
-                        circles =  it[CIRCLES] as ArrayList<DocumentReference>
+                        circles =  it[Constants.CIRCLES] as ArrayList<DocumentReference>
                     } catch (e : java.lang.NullPointerException){}
                     var count = 0
                     for (circleOne in circles) {
@@ -167,9 +158,9 @@ object Database {
                         }
                     }
 
-                    val newFriend = FriendModel(friendName = it[NAME].toString(),
+                    val newFriend = FriendModel(friendName = it[Constants.NAME].toString(),
                         friendReference = it.reference,
-                        imageUrl = it[DP].toString(),
+                        imageUrl = it[Constants.DP].toString(),
                         commonCirclesCount = count, uid = it.reference.path.substring(6)
                     )
                     list.add(newFriend)
@@ -189,7 +180,7 @@ object Database {
 
     fun getAllInvites (database : FirebaseFirestore, invitesList : ArrayList<InviteModel>,
                        invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout) {
-        FirebaseDatabase.getInstance().reference.child(INVITES).child(currentUser!!.uid)
+        FirebaseDatabase.getInstance().reference.child(Constants.INVITES).child(currentUser!!.uid)
             .addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (data in snapshot.children) {
@@ -198,8 +189,8 @@ object Database {
 
 
                         reference.get().addOnSuccessListener {
-                            val name = it[NAME].toString()
-                            val photoUrl = it[DP].toString()
+                            val name = it[Constants.NAME].toString()
+                            val photoUrl = it[Constants.DP].toString()
                             val newInvite = InviteModel(reference = reference, name = name, photoUrl = photoUrl, timeStamp = timeStamp)
                             invitesList.add(newInvite)
                             invitesAdapter.notifyDataSetChanged()
