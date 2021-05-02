@@ -58,5 +58,7 @@
     <string name="circles_in_common">Circles in Common</string>
     <string name="remove_friend">Remove Friend</string>
     <string name="title_activity_friend">Map</string>
+    <string name="find_peer">Find Peer</string>
+    <string name="find_me">Find Me</string>
 
 </resources>

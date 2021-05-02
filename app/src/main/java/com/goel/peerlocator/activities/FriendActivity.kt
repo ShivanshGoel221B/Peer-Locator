@@ -44,6 +44,8 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
 
         friend = Database.currentFriend!!
 
+        binding.friendName.text = friend.friendName
+
         marker.title(friend.friendName)
 
         Location.currentFriend = friend
@@ -74,6 +76,10 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, defaultZoom))
     }
 
+    private fun findMe (latLng: LatLng) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, defaultZoom))
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
@@ -86,6 +92,18 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
             return
         }
         mMap.isMyLocationEnabled = true
+        mMap.uiSettings.isMyLocationButtonEnabled = false
+
+        binding.findMe.setOnClickListener {
+            val loc = mMap.myLocation
+            loc?.let {
+                findMe(LatLng(it.latitude, it.longitude))
+            }
+        }
+
+        binding.findFriend.setOnClickListener {
+            goToLocation(LatLng(friend.currentLocation!!.latitude, friend.currentLocation!!.longitude))
+        }
     }
 
     override fun onLocationReady(latLng: LatLng) {
