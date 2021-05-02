@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -72,8 +73,12 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     private fun goToLocation(latLng: LatLng) {
         marker.position(latLng)
         mMap.clear()
-        mMap.addMarker(marker)
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, defaultZoom))
+        if (latLng.latitude + latLng.longitude > 0.0) {
+            mMap.addMarker(marker)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, defaultZoom))
+        }
+        else
+            Toast.makeText(this, "Failed to get peer's location", Toast.LENGTH_SHORT).show()
     }
 
     private fun findMe (latLng: LatLng) {
@@ -102,7 +107,7 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         }
 
         binding.findFriend.setOnClickListener {
-            goToLocation(LatLng(friend.currentLocation!!.latitude, friend.currentLocation!!.longitude))
+            goToLocation(LatLng(friend.latitude, friend.longitude))
         }
     }
 

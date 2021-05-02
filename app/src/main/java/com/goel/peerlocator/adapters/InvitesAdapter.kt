@@ -21,6 +21,8 @@ class InvitesAdapter (private val invitesList: ArrayList<InviteModel>, private v
         val viewHolder = InvitesViewHolder(view)
         view.setOnClickListener {clickListener.onInviteClicked(viewHolder.adapterPosition)}
         viewHolder.photoView.setOnClickListener {clickListener.onInvitePhotoClicked(viewHolder.adapterPosition)}
+        viewHolder.acceptButton.setOnClickListener {clickListener.onAcceptClicked(viewHolder.adapterPosition)}
+        viewHolder.rejectButton.setOnClickListener {clickListener.onRejectClicked(viewHolder.adapterPosition)}
         return viewHolder
     }
 
@@ -37,6 +39,7 @@ class InvitesAdapter (private val invitesList: ArrayList<InviteModel>, private v
         val timeStamp = invite.timeStamp
 
         holder.controlsBar.visibility = View.VISIBLE
+        holder.infoButton.visibility = View.GONE
         holder.nameView.text = name
         holder.additional.text = timeStamp
         Picasso.with(context).load(profileUrl).placeholder(placeHolder)
@@ -53,10 +56,13 @@ class InvitesAdapter (private val invitesList: ArrayList<InviteModel>, private v
         val controlsBar : LinearLayout = itemView.findViewById(R.id.controls_bar)
         val acceptButton : TextView = itemView.findViewById(R.id.accept_request)
         val rejectButton : TextView = itemView.findViewById(R.id.reject_request)
+        val infoButton : ImageView = itemView.findViewById(R.id.card_info)
     }
 
     interface InviteClickListener {
         fun onInviteClicked (position: Int)
         fun onInvitePhotoClicked (position: Int)
+        fun onAcceptClicked (position: Int)
+        fun onRejectClicked (position: Int)
     }
 }

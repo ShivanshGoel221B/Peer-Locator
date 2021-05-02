@@ -23,7 +23,7 @@ object Location {
                 friendLocation?.latitude = snapshot.getValue(Double::class.java) as Double
             else
                 friendLocation?.latitude = 0.0
-            currentFriend?.currentLocation = friendLocation
+            currentFriend?.latitude = friendLocation!!.latitude
             locationListener?.onFriendMoved(LatLng(friendLocation?.latitude!!, friendLocation?.longitude!!))
         }
 
@@ -35,9 +35,7 @@ object Location {
         override fun onDataChange(snapshot: DataSnapshot) {
             if (snapshot.exists())
                 friendLocation?.longitude = snapshot.getValue(Double::class.java) as Double
-            else
-                friendLocation?.longitude = 0.0
-            currentFriend?.currentLocation = friendLocation
+
             locationListener?.onFriendMoved(LatLng(friendLocation?.latitude!!, friendLocation?.longitude!!))
         }
 

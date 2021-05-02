@@ -88,4 +88,11 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
         TODO("Not yet implemented")
     }
 
+    override fun onAcceptClicked(position: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRejectClicked(position: Int) {
+        TODO("Not yet implemented")
+    }
 }

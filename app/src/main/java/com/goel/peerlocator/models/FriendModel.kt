@@ -1,6 +1,5 @@
 package com.goel.peerlocator.models
 
-import android.location.Location
 import com.google.firebase.firestore.DocumentReference
 
 data class FriendModel (val friendReference : DocumentReference,
@@ -8,4 +7,5 @@ data class FriendModel (val friendReference : DocumentReference,
                         val imageUrl : String = "",
                         val friendName : String = "",
                         val commonCirclesCount : Int = 0,
-                        var currentLocation: Location? = null)
+                        var latitude : Double = 0.0,
+                        var longitude : Double = 0.0)
