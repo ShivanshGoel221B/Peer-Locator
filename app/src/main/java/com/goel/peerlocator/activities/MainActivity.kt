@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         val fragmentsAdapter = MainFragmentsAdapter(supportFragmentManager, 0)
         setFragmentsAdapter(fragmentsAdapter)
 
+        setUserData()
         val preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
         val per = preferences.getBoolean(Constants.BACK_LOC, true)
         if (!per) {
@@ -153,8 +154,9 @@ class MainActivity : AppCompatActivity(), UserDataListener {
             val displayName = user.displayName
             val photoUrl = user.photoUrl
             nameView.text = displayName
-            Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user)
-                .transform(CropCircleTransformation()).into(dpView)
+            if (photoUrl.isNotEmpty())
+                Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user)
+                    .transform(CropCircleTransformation()).into(dpView)
         }
     }
 
