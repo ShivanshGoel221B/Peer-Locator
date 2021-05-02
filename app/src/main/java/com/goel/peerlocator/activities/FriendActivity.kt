@@ -13,7 +13,6 @@ import com.goel.peerlocator.databinding.ActivityFriendBinding
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.utils.location.Location
 import com.goel.peerlocator.utils.location.LocationListener
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,9 +24,11 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
+    companion object {
+        lateinit var friend : FriendModel
+    }
     private lateinit var mMap: GoogleMap
     private lateinit var binding : ActivityFriendBinding
-    private lateinit var friend : FriendModel
     private lateinit var marker: MarkerOptions
 
 
@@ -42,8 +43,6 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
 
         Location.locationListener = this
         marker = MarkerOptions()
-
-        friend = Database.currentFriend!!
 
         binding.friendName.text = friend.friendName
 

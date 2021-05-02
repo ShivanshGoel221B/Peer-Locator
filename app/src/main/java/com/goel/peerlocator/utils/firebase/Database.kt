@@ -1,6 +1,5 @@
 package com.goel.peerlocator.utils.firebase
 
-import android.location.Location
 import android.util.Log
 import android.view.View
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -12,8 +11,6 @@ import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.location.LocationListener
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -30,7 +27,6 @@ object Database {
     var listener : UserDataListener? = null
 
     var currentUser : UserModel? = null
-    var currentFriend : FriendModel? = null
 
     fun signIn(user : FirebaseUser, userRef: CollectionReference) {
         currentUserRef = userRef.document(user.uid)
@@ -206,5 +202,42 @@ object Database {
             })
     }
 
+    //Methods for Getting Friend Info
+    fun getFriendInfo (listener: FriendDataListener, reference: DocumentReference) {
+        reference.get().addOnSuccessListener {
+            if (it.exists()) {
+                var circleList = ArrayList<DocumentReference>()
+                try {
+                    circleList = it[Constants.CIRCLES] as ArrayList<DocumentReference>
+                } catch (e: java.lang.NullPointerException) {}
+                var friendsList = ArrayList<Any>()
+                try {
+                    friendsList = it[Constants.FRIENDS] as ArrayList<Any>
+                } catch (e: java.lang.NullPointerException) { }
+
+                listener.onCountComplete(circleList.size.toLong(), friendsList.size.toLong())
+
+                currentUserRef.get().addOnSuccessListener { snapshot ->
+                    if (snapshot.exists()) {
+                        val commonCircle = ArrayList<DocumentReference>()
+                        var circleArray = ArrayList<DocumentReference>()
+                        try {
+                            circleArray = snapshot[Constants.CIRCLES] as ArrayList<DocumentReference>
+                        } catch (e: java.lang.NullPointerException) { }
+                        for (circle in circleList) {
+                            for (myCircle in circleArray)
+                            {
+                                if (circle.path == myCircle.path)
+                                {
+                                    commonCircle.add(circle)
+                                }
+                            }
+                        }
+                        listener.onCommonCirclesComplete(commonCircle)
+                    }
+                }
+            }
+        }
+    }
 
 }

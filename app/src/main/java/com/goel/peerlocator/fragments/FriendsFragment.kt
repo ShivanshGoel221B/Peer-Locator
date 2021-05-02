@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.activities.FriendActivity
+import com.goel.peerlocator.activities.InfoActivity
 import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.databinding.FriendsFragmentBinding
 import com.goel.peerlocator.utils.firebase.Database
@@ -83,7 +84,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     // Click Listeners
     override fun onFriendClicked(position: Int) {
         val friend = viewModel.friendsList.value?.get(position)
-        Database.currentFriend = friend
+        FriendActivity.friend = friend!!
         startActivity(Intent(context, FriendActivity::class.java))
     }
 
@@ -92,6 +93,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
 
     override fun onInfoClicked(position: Int) {
-        TODO("Not yet implemented")
+        InfoActivity.model = viewModel.friendsList.value?.get(position)!!
+        startActivity(Intent(activity, InfoActivity::class.java))
     }
 }
