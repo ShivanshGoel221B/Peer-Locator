@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Peer Locator</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_logo">App Logo</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_facebook">Continue with Facebook</string>
+
+    <string name="facebook_app_id">162243322477444</string>
+    <string name="fb_login_protocol_scheme">fb162243322477444</string>
+    <string name="settings">Settings</string>
+    <string name="about_us">About Us</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="ok">OK</string>
+    <string name="title_location_permission">Location Access</string>
+    <string name="text_location_permission">You need to allow location access to continue</string>
+    <string name="add_new_circle">Add New Circle</string>
+
+    <plurals name="members_count">
+        <item quantity="one">%d member</item>
+        <item quantity="other">%d members</item>
+    </plurals>
+
+    <plurals name="friends_count">
+        <item quantity="one">%d Friend</item>
+        <item quantity="other">%d Friends</item>
+    </plurals>
+
+    <plurals name="circles_count">
+        <item quantity="one">%d Circle</item>
+        <item quantity="other">%d Circles</item>
+    </plurals>
+
+    <plurals name="common_circles_count">
+        <item quantity="zero">No circles in common</item>
+        <item quantity="one">%d circles in common</item>
+        <item quantity="other">%d circles in common</item>
+    </plurals>
+
+    <string name="profile_picture">Profile Picture</string>
+    <string name="send_request">Send Request</string>
+    <string name="reject">Reject</string>
+    <string name="accept">Accept</string>
+    <string name="unknown_privacy_warning">Profile details are visible to friends only</string>
+    <string name="send_invitation">Send Invitation</string>
+    <string name="block">Block</string>
+    <string name="block_report"><![CDATA[Block & Report]]></string>
+    <string name="info_profile_image">info_profile_image</string>
+    <string name="circles_in_common">Circles in Common</string>
+    <string name="remove_friend">Remove Friend</string>
+    <string name="title_activity_friend">Map</string>
+
+</resources>

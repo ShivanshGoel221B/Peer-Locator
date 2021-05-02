@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="base_background" format="color" />
+
+    <attr name="text_color_dark" format="color" />
+    <attr name="text_color_fade" format="color" />
+    <attr name="text_color_green" format="color" />
+</resources>

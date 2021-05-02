@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp"
+    android:elevation="7dp"
+    app:cardElevation="7dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/card_profile_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/profile_picture"
+                app:srcCompat="@android:drawable/ic_lock_lock" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_weight="8"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/card_profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="2"
+                    android:fontFamily="@font/bree_serif"
+                    android:textSize="22sp"
+                    tools:text="Family" />
+
+                <TextView
+                    android:id="@+id/card_additional_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    tools:text="4 members" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/controls_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/ultra_light_grey"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/reject_request"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/acme"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/reject"
+                android:textAlignment="gravity"
+                android:textAllCaps="true"
+                android:textColor="@color/crimson"
+                android:textSize="18sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/accept_request"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/acme"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/accept"
+                android:textAlignment="gravity"
+                android:textAllCaps="true"
+                android:textColor="@color/dark_sea_green"
+                android:textSize="18sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/send_friend_request"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/acme"
+                android:gravity="center"
+                android:padding="7dp"
+                android:text="@string/send_request"
+                android:textAlignment="gravity"
+                android:textAllCaps="true"
+                android:textColor="@color/blue"
+                android:textSize="21sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

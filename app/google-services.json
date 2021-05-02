@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "955075070166",
+    "project_id": "peer-locator",
+    "storage_bucket": "peer-locator.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955075070166:android:5e2fd2d45b28ac7b62e177",
+        "android_client_info": {
+          "package_name": "com.goel.peerlocator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "955075070166-3186i0c52nt9njp8mcqm9n6nmrpstdnt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goel.peerlocator",
+            "certificate_hash": "4316272f9bce3ea7643f00ac26250de9c781bc5b"
+          }
+        },
+        {
+          "client_id": "955075070166-fpjf6t48ltno1d86cru66sovpt7294qd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSPe1f2gO7pyvnns5x4aZCdbbmeEYBkmU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "955075070166-fpjf6t48ltno1d86cru66sovpt7294qd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

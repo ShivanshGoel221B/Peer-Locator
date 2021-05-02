@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/add_new_circle"
+        android:title="@string/add_new_circle" />
+
+    <item android:id="@+id/app_settings"
+        android:title="@string/settings" />
+
+    <item android:id="@+id/about"
+        android:title="@string/about_us" />
+
+    <item android:id="@+id/privacy"
+        android:title="@string/privacy_policy" />
+
+</menu>

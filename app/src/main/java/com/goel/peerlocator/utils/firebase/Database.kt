@@ -1,0 +1,220 @@
+package com.goel.peerlocator.utils.firebase
+
+import android.location.Location
+import android.util.Log
+import android.view.View
+import com.facebook.shimmer.ShimmerFrameLayout
+import com.goel.peerlocator.adapters.CirclesAdapter
+import com.goel.peerlocator.adapters.FriendsAdapter
+import com.goel.peerlocator.adapters.InvitesAdapter
+import com.goel.peerlocator.models.CircleModel
+import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.InviteModel
+import com.goel.peerlocator.models.UserModel
+import com.goel.peerlocator.utils.location.LocationListener
+import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+
+object Database {
+
+    // CONSTANTS
+    private const val NAME = "name"
+    private const val EMAIL = "email"
+    private const val DP = "profile_url"
+    private const val CIRCLES = "circles"
+    private const val ADMIN = "admin"
+    private const val MEMBERS = "members"
+    private const val FRIENDS = "friends"
+    private const val INVITES = "invites"
+    ////////////////////////
+    private lateinit var currentUserRef : DocumentReference
+
+    var listener : UserDataListener? = null
+
+    var currentUser : UserModel? = null
+    var currentFriend : FriendModel? = null
+
+    fun signIn(user : FirebaseUser, userRef: CollectionReference) {
+        currentUserRef = userRef.document(user.uid)
+        currentUser = UserModel(documentReference = currentUserRef, uid = user.uid,
+                                email = user.email, phoneNumber = user.phoneNumber)
+
+        currentUserRef.get()
+                .addOnSuccessListener {
+                    if (!it.exists()) {
+                        createUserEntry(currentUserRef, user)
+                    }
+                    else {
+                        currentUser?.displayName = it[NAME].toString()
+                        currentUser?.photoUrl = it[DP].toString()
+                        listener?.onUserCreated()
+                    }
+                }
+                .addOnFailureListener {
+                    Log.d("Error", it.toString())
+                }
+    }
+
+    private fun createUserEntry (currentUserRef: DocumentReference, user: FirebaseUser) {
+        user.let {
+            val newUser = hashMapOf<String, String>()
+            newUser[NAME] = user.displayName!!
+            newUser[DP] = user.photoUrl!!.toString()
+            currentUser?.displayName = user.displayName!!
+            currentUser?.photoUrl = user.photoUrl!!.toString()
+            listener?.onUserCreated()
+            newUser[EMAIL] = user.email!!
+            currentUserRef.set(newUser)
+        }
+    }
+
+    fun getAllCircles (userRef: CollectionReference, circleList: java.util.ArrayList<CircleModel>,
+                       circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout) {
+        var circleArray = java.util.ArrayList<DocumentReference>()
+
+        userRef.document(currentUser!!.uid).get()
+                .addOnSuccessListener {
+                    if (it.exists()) {
+                        try {
+                            circleArray = it[CIRCLES] as ArrayList<DocumentReference>
+                        } catch (e: NullPointerException) {}
+                        currentUser?.circlesCount = circleArray.size.toLong()
+                        addToList(circleArray, circleList, circlesAdapter, shimmer)
+                    }
+                }
+                .addOnFailureListener {
+                    Log.d("Error", it.toString())
+                }
+    }
+
+    // Adds circles to the list
+    private fun addToList (circleArray: ArrayList<DocumentReference>, list: ArrayList<CircleModel>,
+                           circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout) {
+
+        for (circle in circleArray) {
+            circle.get()
+                .addOnSuccessListener {
+                    var membersCount = 0
+                    try {
+                        membersCount = (it[MEMBERS] as ArrayList<DocumentReference>).size
+                    } catch (e: java.lang.NullPointerException) {
+                    }
+                    val newCircle = CircleModel(circleName = it[NAME].toString(),
+                        circleReference = it.reference,
+                        imageUrl = it[DP].toString(),
+                        adminReference = it[ADMIN] as DocumentReference,
+                        memberCount = membersCount)
+
+                    list.add(newCircle)
+                    circlesAdapter.notifyDataSetChanged()
+                    shimmer.visibility = View.GONE
+                    shimmer.stopShimmerAnimation()
+                }
+                .addOnFailureListener {
+                    Log.d("Error", it.toString())
+                }
+        }
+        shimmer.visibility = View.GONE
+        shimmer.stopShimmerAnimation()
+    }
+
+    fun getAllFriends (userRef: CollectionReference, friendsList : java.util.ArrayList<FriendModel>,
+                       friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout) {
+        var circleArray =  java.util.ArrayList<DocumentReference>()
+        var friendsArray =  java.util.ArrayList<DocumentReference>()
+
+        userRef.document(currentUser!!.uid).get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    try {
+                        circleArray = it[CIRCLES] as ArrayList<DocumentReference>
+                    } catch (e: NullPointerException) { }
+                    try {
+                        friendsArray = it[FRIENDS] as ArrayList<DocumentReference>
+                    } catch (e : java.lang.NullPointerException){}
+                    currentUser?.friendsCount = friendsArray.size.toLong()
+                    addToList(friendsArray, circleArray, friendsList, friendsAdapter, shimmer)
+                }
+            }
+            .addOnFailureListener {
+                Log.d("Error", it.toString())
+            }
+    }
+
+    // Adds friends to the list
+    private fun addToList (friendsArray: ArrayList<DocumentReference>, circleArray: ArrayList<DocumentReference>,
+                           list: ArrayList<FriendModel>, friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout) {
+        println("fuck ${friendsArray.size}")
+        for (friend in friendsArray) {
+            friend.get()
+                .addOnSuccessListener {
+                    var circles = ArrayList<DocumentReference>()
+                    try {
+                        circles =  it[CIRCLES] as ArrayList<DocumentReference>
+                    } catch (e : java.lang.NullPointerException){}
+                    var count = 0
+                    for (circleOne in circles) {
+                        for (circleTwo in circleArray) {
+                            if (circleOne.path == circleTwo.path)
+                                count++
+                        }
+                    }
+
+                    val newFriend = FriendModel(friendName = it[NAME].toString(),
+                        friendReference = it.reference,
+                        imageUrl = it[DP].toString(),
+                        commonCirclesCount = count, uid = it.reference.path.substring(6)
+                    )
+                    list.add(newFriend)
+                    friendsAdapter.notifyDataSetChanged()
+                    shimmer.visibility = View.GONE
+                    shimmer.stopShimmerAnimation()
+                }
+                .addOnFailureListener {
+                    Log.d("Error", it.toString())
+                }
+        }
+
+        shimmer.visibility = View.GONE
+        shimmer.stopShimmerAnimation()
+    }
+
+
+    fun getAllInvites (database : FirebaseFirestore, invitesList : ArrayList<InviteModel>,
+                       invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout) {
+        FirebaseDatabase.getInstance().reference.child(INVITES).child(currentUser!!.uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (data in snapshot.children) {
+                        val reference = database.document(data.key.toString().replace('!', '/'))
+                        val timeStamp = data.value.toString()
+
+
+                        reference.get().addOnSuccessListener {
+                            val name = it[NAME].toString()
+                            val photoUrl = it[DP].toString()
+                            val newInvite = InviteModel(reference = reference, name = name, photoUrl = photoUrl, timeStamp = timeStamp)
+                            invitesList.add(newInvite)
+                            invitesAdapter.notifyDataSetChanged()
+                            shimmer.visibility = View.GONE
+                            shimmer.stopShimmerAnimation()
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("Error: ", error.message)
+                }
+
+            })
+    }
+
+
+}
