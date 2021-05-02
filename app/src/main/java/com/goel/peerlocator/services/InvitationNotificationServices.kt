@@ -63,7 +63,6 @@ class InvitationNotificationServices : JobService() {
     }
 
     override fun onStartJob(params: JobParameters?): Boolean {
-
         inviteRef.addChildEventListener(inviteListener)
         return true
     }

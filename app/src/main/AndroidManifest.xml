@@ -34,7 +34,7 @@
 
         <activity
             android:name=".activities.FriendActivity"
-            android:label="@string/title_activity_friend"></activity>
+            android:label="@string/title_activity_friend" />
         <activity android:name=".activities.InfoActivity" />
         <activity android:name=".activities.MainActivity" /> <!-- facebook auth -->
         <meta-data
@@ -67,6 +67,8 @@
 
         <service
             android:name=".services.InvitationNotificationServices"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service android:name=".services.BackgroundLocationServices"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 

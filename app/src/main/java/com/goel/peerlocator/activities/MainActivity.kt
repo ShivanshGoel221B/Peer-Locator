@@ -14,6 +14,7 @@ import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.MainFragmentsAdapter
 import com.goel.peerlocator.databinding.ActivityMainBinding
 import com.goel.peerlocator.models.UserModel
+import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.utils.firebase.UserDataListener
@@ -38,12 +39,19 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         Database.listener = this
 
         createToolBar()
+        setBackgroundLocationService()
     }
 
     override fun onResume() {
         super.onResume()
         val fragmentsAdapter = MainFragmentsAdapter(supportFragmentManager, 0)
         setFragmentsAdapter(fragmentsAdapter)
+
+        val preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
+        val per = preferences.getBoolean(Constants.BACK_LOC, true)
+        if (!per) {
+            ServicesHandler.stopBackgroundLocation(this)
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -156,7 +164,11 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     }
 
     private fun setBackgroundLocationService () {
-
+        val preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
+        val per = preferences.getBoolean(Constants.BACK_LOC, true)
+        if (per) {
+            ServicesHandler.startBackgroundLocation(this)
+        }
     }
 
     override fun onBackPressed() {

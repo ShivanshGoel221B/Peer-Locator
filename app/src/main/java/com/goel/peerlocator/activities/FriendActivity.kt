@@ -9,12 +9,11 @@ import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityFriendBinding
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.utils.location.Location
 import com.goel.peerlocator.utils.location.LocationListener
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -25,7 +24,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     private lateinit var mMap: GoogleMap
-    private lateinit var fusedLocationProviderClient : FusedLocationProviderClient
     private lateinit var binding : ActivityFriendBinding
     private lateinit var friend : FriendModel
     private lateinit var marker: MarkerOptions
@@ -52,14 +50,12 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         mapFragment.getMapAsync(this)
     }
 
-    private fun getMyLocation () {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+    private fun startMyLocation () {
         try {
+            ServicesHandler.stopBackgroundLocation(this)
             if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED) {
                 if (ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
-                        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                            Location.updateMyLocation (it)
-                        }
+                    ServicesHandler.startBackgroundLocation(this)
                 }
             }
         } catch (e : SecurityException) {
@@ -78,7 +74,7 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         mMap = googleMap
 
         Location.getFriendLocation()
-        getMyLocation()
+        startMyLocation()
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -99,5 +95,10 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     override fun onDestroy() {
         super.onDestroy()
         Location.removeListeners(friend)
+        val preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
+        val per = preferences.getBoolean(Constants.BACK_LOC, true)
+        if (!per) {
+            ServicesHandler.stopBackgroundLocation(this)
+        }
     }
 }

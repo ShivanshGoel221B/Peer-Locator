@@ -142,7 +142,6 @@ object Database {
     // Adds friends to the list
     private fun addToList (friendsArray: ArrayList<DocumentReference>, circleArray: ArrayList<DocumentReference>,
                            list: ArrayList<FriendModel>, friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout) {
-        println("fuck ${friendsArray.size}")
         for (friend in friendsArray) {
             friend.get()
                 .addOnSuccessListener {

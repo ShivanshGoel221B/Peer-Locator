@@ -4,6 +4,9 @@ import android.Manifest
 
 object Constants {
 
+    const val PREFS = "com.goel.peerlocator.shared"
+    const val BACK_LOC = "background_location_access"
+
     const val NAME = "name"
     const val EMAIL = "email"
     const val DP = "profile_url"
