@@ -3,6 +3,7 @@ package com.goel.peerlocator.activities
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -35,6 +36,9 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         super.onCreate(savedInstanceState)
         binding = ActivityFriendBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         Location.locationListener = this
         marker = MarkerOptions()
 
@@ -58,12 +62,12 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
                     ServicesHandler.startBackgroundLocation(this)
                 }
             }
-        } catch (e : SecurityException) {
+        } catch (e: SecurityException) {
 
         }
     }
 
-    private fun goToLocation (latLng: LatLng) {
+    private fun goToLocation(latLng: LatLng) {
         marker.position(latLng)
         mMap.clear()
         mMap.addMarker(marker)
