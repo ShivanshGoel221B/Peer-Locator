@@ -90,4 +90,8 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     override fun onFriendPhotoClicked(position: Int) {
 
     }
+
+    override fun onInfoClicked(position: Int) {
+        TODO("Not yet implemented")
+    }
 }

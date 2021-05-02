@@ -22,6 +22,7 @@ class FriendsAdapter (private val friendsList: ArrayList<FriendModel>, private v
         val viewHolder = FriendsViewHolder(view)
         view.setOnClickListener {clickListener.onFriendClicked(viewHolder.adapterPosition)}
         viewHolder.friendImage.setOnClickListener {clickListener.onFriendPhotoClicked(viewHolder.adapterPosition)}
+        viewHolder.infoButton.setOnClickListener {clickListener.onInfoClicked(viewHolder.adapterPosition)}
         return viewHolder
     }
 
@@ -47,10 +48,12 @@ class FriendsAdapter (private val friendsList: ArrayList<FriendModel>, private v
         val friendName : TextView = itemView.findViewById(R.id.card_profile_name)
         val commonCirclesCount : TextView = itemView.findViewById(R.id.card_additional_detail)
         val controlsBar : LinearLayout = itemView.findViewById(R.id.controls_bar)
+        val infoButton : ImageView = itemView.findViewById(R.id.card_info)
     }
 
     interface FriendClickListener {
         fun onFriendClicked (position: Int)
         fun onFriendPhotoClicked (position: Int)
+        fun onInfoClicked (position: Int)
     }
 }

@@ -79,4 +79,7 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
         TODO("Not yet implemented")
     }
 
+    override fun onInfoClicked(position: Int) {
+        TODO("Not yet implemented")
+    }
 }

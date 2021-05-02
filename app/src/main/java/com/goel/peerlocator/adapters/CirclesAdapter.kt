@@ -22,6 +22,7 @@ class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val
         val viewHolder = CircleViewHolder(view)
         view.setOnClickListener { clickListener.onCircleClicked(viewHolder.adapterPosition) }
         viewHolder.circleImage.setOnClickListener {clickListener.onCirclePhotoClicked(viewHolder.adapterPosition)}
+        viewHolder.infoButton.setOnClickListener {clickListener.onInfoClicked(viewHolder.adapterPosition)}
         return viewHolder
     }
 
@@ -45,10 +46,12 @@ class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val
         val circleName : TextView = itemView.findViewById(R.id.card_profile_name)
         val membersCount : TextView = itemView.findViewById(R.id.card_additional_detail)
         val controlsBar : LinearLayout = itemView.findViewById(R.id.controls_bar)
+        val infoButton : ImageView = itemView.findViewById(R.id.card_info)
     }
 
     interface CircleClickListener {
         fun onCircleClicked (position: Int)
         fun onCirclePhotoClicked (position: Int)
+        fun onInfoClicked (position: Int)
     }
 }
