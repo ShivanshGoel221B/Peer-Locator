@@ -21,8 +21,9 @@ class FriendsAdapter (private val friendsList: ArrayList<FriendModel>, private v
         val view = LayoutInflater.from(context).inflate(R.layout.details_card, parent, false)
         val viewHolder = FriendsViewHolder(view)
         view.setOnClickListener {clickListener.onFriendClicked(viewHolder.adapterPosition)}
+        view.setOnLongClickListener {clickListener.onFriendLongClicked(viewHolder.adapterPosition)}
         viewHolder.friendImage.setOnClickListener {clickListener.onFriendPhotoClicked(viewHolder.adapterPosition)}
-        viewHolder.infoButton.setOnClickListener {clickListener.onInfoClicked(viewHolder.adapterPosition)}
+        viewHolder.infoButton.setOnClickListener {clickListener.onFriendInfoClicked(viewHolder.adapterPosition)}
         return viewHolder
     }
 
@@ -53,7 +54,8 @@ class FriendsAdapter (private val friendsList: ArrayList<FriendModel>, private v
 
     interface FriendClickListener {
         fun onFriendClicked (position: Int)
+        fun onFriendLongClicked (position: Int) : Boolean
         fun onFriendPhotoClicked (position: Int)
-        fun onInfoClicked (position: Int)
+        fun onFriendInfoClicked (position: Int)
     }
 }

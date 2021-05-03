@@ -240,4 +240,17 @@ object Database {
         }
     }
 
+    fun getCircleInfo(listener: CircleDataListener, circleReference: DocumentReference) {
+        circleReference.get().addOnSuccessListener {
+            if (it.exists()) {
+                var membersList = ArrayList<DocumentReference>()
+                try {
+                    membersList = it[Constants.MEMBERS] as ArrayList<DocumentReference>
+                } catch (e : NullPointerException){}
+                listener.onMemberCountComplete(membersList.size.toLong())
+                listener.onMembersRetrieved(membersList)
+            }
+        }
+    }
+
 }

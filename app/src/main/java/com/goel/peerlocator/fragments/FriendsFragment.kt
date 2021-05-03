@@ -88,11 +88,15 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         startActivity(Intent(context, FriendActivity::class.java))
     }
 
+    override fun onFriendLongClicked(position: Int): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun onFriendPhotoClicked(position: Int) {
 
     }
 
-    override fun onInfoClicked(position: Int) {
+    override fun onFriendInfoClicked(position: Int) {
         InfoActivity.model = viewModel.friendsList.value?.get(position)!!
         startActivity(Intent(activity, InfoActivity::class.java))
     }

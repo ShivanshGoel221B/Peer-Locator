@@ -1,5 +1,6 @@
 package com.goel.peerlocator.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.goel.peerlocator.activities.InfoActivity
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.databinding.CirclesFragmentBinding
 import com.goel.peerlocator.viewmodels.CirclesViewModel
@@ -75,11 +77,16 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
         TODO("Not yet implemented")
     }
 
+    override fun onCircleLongClicked(position: Int): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override fun onCirclePhotoClicked(position: Int) {
         TODO("Not yet implemented")
     }
 
     override fun onInfoClicked(position: Int) {
-        TODO("Not yet implemented")
+        InfoActivity.model = viewModel.circleList.value!![position]
+        startActivity(Intent(activity, InfoActivity::class.java))
     }
 }

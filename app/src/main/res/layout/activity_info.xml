@@ -103,7 +103,7 @@
                         </LinearLayout>
 
                         <TextView
-                            android:id="@+id/textView7"
+                            android:id="@+id/list_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
@@ -112,7 +112,7 @@
                             android:textStyle="italic" />
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/info_common_circles"
+                            android:id="@+id/info_recycler_view"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                     </LinearLayout>

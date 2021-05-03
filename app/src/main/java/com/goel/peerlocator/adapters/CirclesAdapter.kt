@@ -21,6 +21,7 @@ class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val
         val view = LayoutInflater.from(context).inflate(R.layout.details_card, parent, false)
         val viewHolder = CircleViewHolder(view)
         view.setOnClickListener { clickListener.onCircleClicked(viewHolder.adapterPosition) }
+        view.setOnLongClickListener {clickListener.onCircleLongClicked(viewHolder.adapterPosition)}
         viewHolder.circleImage.setOnClickListener {clickListener.onCirclePhotoClicked(viewHolder.adapterPosition)}
         viewHolder.infoButton.setOnClickListener {clickListener.onInfoClicked(viewHolder.adapterPosition)}
         return viewHolder
@@ -51,6 +52,7 @@ class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val
 
     interface CircleClickListener {
         fun onCircleClicked (position: Int)
+        fun onCircleLongClicked (position: Int) : Boolean
         fun onCirclePhotoClicked (position: Int)
         fun onInfoClicked (position: Int)
     }
