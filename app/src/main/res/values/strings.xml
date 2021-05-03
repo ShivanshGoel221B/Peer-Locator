@@ -61,5 +61,9 @@
     <string name="find_peer">Find Peer</string>
     <string name="find_me">Find Me</string>
     <string name="members">Members</string>
+    <string name="add_members">Add members</string>
+    <string name="leave_circle">Leave Circle</string>
+    <string name="admin">Admin</string>
+    <string name="you">You</string>
 
 </resources>

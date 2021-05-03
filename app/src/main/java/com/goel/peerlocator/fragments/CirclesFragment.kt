@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.goel.peerlocator.activities.InfoActivity
+import com.goel.peerlocator.activities.CircleInfoActivity
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.databinding.CirclesFragmentBinding
 import com.goel.peerlocator.viewmodels.CirclesViewModel
@@ -86,7 +86,7 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
     }
 
     override fun onInfoClicked(position: Int) {
-        InfoActivity.model = viewModel.circleList.value!![position]
-        startActivity(Intent(activity, InfoActivity::class.java))
+        CircleInfoActivity.model = viewModel.circleList.value!![position]
+        startActivity(Intent(activity, CircleInfoActivity::class.java))
     }
 }

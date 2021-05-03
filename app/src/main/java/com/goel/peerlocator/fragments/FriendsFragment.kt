@@ -10,10 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.activities.FriendActivity
-import com.goel.peerlocator.activities.InfoActivity
+import com.goel.peerlocator.activities.FriendInfoActivity
 import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.databinding.FriendsFragmentBinding
-import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.viewmodels.FriendsViewModel
 
 class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
@@ -97,7 +96,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
 
     override fun onFriendInfoClicked(position: Int) {
-        InfoActivity.model = viewModel.friendsList.value?.get(position)!!
-        startActivity(Intent(activity, InfoActivity::class.java))
+        FriendInfoActivity.model = viewModel.friendsList.value?.get(position)!!
+        startActivity(Intent(activity, FriendInfoActivity::class.java))
     }
 }
