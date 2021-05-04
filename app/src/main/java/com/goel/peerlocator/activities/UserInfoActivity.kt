@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityFriendInfoBinding
 import com.goel.peerlocator.databinding.ActivityUserInfoBinding
+import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.utils.firebase.Database
 import com.squareup.picasso.Picasso
@@ -13,7 +14,7 @@ import com.squareup.picasso.Picasso
 class UserInfoActivity : AppCompatActivity() {
 
     companion object {
-        lateinit var model : UserModel
+        lateinit var model : UnknownUserModel
     }
 
     private lateinit var binding: ActivityUserInfoBinding

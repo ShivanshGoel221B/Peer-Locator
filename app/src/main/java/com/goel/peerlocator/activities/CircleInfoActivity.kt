@@ -1,7 +1,9 @@
 package com.goel.peerlocator.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,10 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.databinding.ActivityCircleInfoBinding
+import com.goel.peerlocator.listeners.CircleDataListener
+import com.goel.peerlocator.listeners.UserSearchListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.utils.firebase.Database
 import com.google.firebase.firestore.DocumentReference
 import com.squareup.picasso.Picasso
@@ -61,6 +65,10 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
         binding.infoMembersRecyclerView.layoutManager = lm
     }
 
+
+    private fun showBlockedMessage () {
+
+    }
 
     // Circle Listeners
     override fun onMemberCountComplete(members: Long) {
@@ -140,7 +148,26 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
 
     //Friends Click Listeners
     override fun onFriendClicked(position: Int) {
-        TODO("Not yet implemented")
+        Database.findUser(membersList[position].friendReference, object : UserSearchListener {
+            override fun userFound(user: UnknownUserModel) {
+                UserInfoActivity.model = user
+                startActivity(Intent(applicationContext, UserInfoActivity::class.java))
+                Toast.makeText(applicationContext, "You must be friend with this person to track", Toast.LENGTH_LONG).show()
+            }
+
+            override fun friendFound(friend: FriendModel) {
+                FriendActivity.friend = friend
+                startActivity(Intent(applicationContext, FriendActivity::class.java))
+            }
+
+            override fun blockedFound() {
+                showBlockedMessage ()
+            }
+
+            override fun networkError() {
+                Toast.makeText(applicationContext, "Network Error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onFriendLongClicked(position: Int): Boolean {
@@ -152,6 +179,24 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
     }
 
     override fun onFriendInfoClicked(position: Int) {
-        TODO("Not yet implemented")
+        Database.findUser(membersList[position].friendReference, object : UserSearchListener {
+            override fun userFound(user: UnknownUserModel) {
+                UserInfoActivity.model = user
+                startActivity(Intent(applicationContext, UserInfoActivity::class.java))
+            }
+
+            override fun friendFound(friend: FriendModel) {
+                FriendInfoActivity.model = friend
+                startActivity(Intent(applicationContext, FriendInfoActivity::class.java))
+            }
+
+            override fun blockedFound() {
+                showBlockedMessage ()
+            }
+
+            override fun networkError() {
+                Toast.makeText(applicationContext, "Network Error", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

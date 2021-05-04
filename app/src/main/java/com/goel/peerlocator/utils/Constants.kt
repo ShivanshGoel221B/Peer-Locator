@@ -15,6 +15,7 @@ object Constants {
     const val MEMBERS = "members"
     const val FRIENDS = "friends"
     const val INVITES = "invites"
+    const val BLOCKS = "blocks"
 
     const val LOC = "last_locations"
     const val LAT = "lat"

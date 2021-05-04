@@ -9,10 +9,8 @@ import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.listeners.FriendDataListener
 import com.goel.peerlocator.listeners.UserDataListener
-import com.goel.peerlocator.models.CircleModel
-import com.goel.peerlocator.models.FriendModel
-import com.goel.peerlocator.models.InviteModel
-import com.goel.peerlocator.models.UserModel
+import com.goel.peerlocator.listeners.UserSearchListener
+import com.goel.peerlocator.models.*
 import com.goel.peerlocator.utils.Constants
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -253,6 +251,33 @@ object Database {
                 listener.onMemberCountComplete(membersList.size.toLong())
                 listener.onMembersRetrieved(membersList)
             }
+        }
+    }
+
+    fun findUser(reference: DocumentReference, listener: UserSearchListener) {
+        reference.get().addOnSuccessListener {
+        val userPath = currentUser?.documentReference?.path
+            try {
+                val friends = it[Constants.FRIENDS] as ArrayList<*>
+                if (userPath in friends)
+                {
+                    val friend = FriendModel(friendReference = reference, uid = reference.path.substring(6),
+                                                friendName = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
+                    listener.friendFound(friend)
+                    return@addOnSuccessListener
+                }
+            }catch (e : java.lang.NullPointerException){ }
+
+            try {
+                val blocks = it[Constants.BLOCKS] as ArrayList<*>
+                if (userPath in blocks) {
+                    listener.blockedFound()
+                    return@addOnSuccessListener
+                }
+            }catch (e : NullPointerException){}
+
+            listener.userFound(UnknownUserModel(reference, reference.path.substring(6),
+                    displayName = it[Constants.NAME].toString(), photoUrl = it[Constants.DP].toString()))
         }
     }
 
