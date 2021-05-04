@@ -1,4 +1,4 @@
-package com.goel.peerlocator.utils.location
+package com.goel.peerlocator.listeners
 
 import com.google.android.gms.maps.model.LatLng
 

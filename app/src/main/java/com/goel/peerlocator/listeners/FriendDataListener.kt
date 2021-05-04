@@ -1,4 +1,4 @@
-package com.goel.peerlocator.utils.firebase
+package com.goel.peerlocator.listeners
 
 import com.google.firebase.firestore.DocumentReference
 

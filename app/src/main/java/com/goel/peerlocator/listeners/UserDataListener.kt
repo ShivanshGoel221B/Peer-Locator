@@ -1,4 +1,4 @@
-package com.goel.peerlocator.utils.firebase
+package com.goel.peerlocator.listeners
 
 interface UserDataListener {
     fun onUserCreated ()

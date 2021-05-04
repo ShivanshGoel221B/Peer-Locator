@@ -12,7 +12,7 @@ import com.goel.peerlocator.databinding.ActivityCircleInfoBinding
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.CircleDataListener
+import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.utils.firebase.Database
 import com.google.firebase.firestore.DocumentReference
 import com.squareup.picasso.Picasso

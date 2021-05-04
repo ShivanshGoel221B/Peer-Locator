@@ -1,6 +1,7 @@
 package com.goel.peerlocator.utils.location
 
 import android.location.Location
+import com.goel.peerlocator.listeners.LocationListener
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database

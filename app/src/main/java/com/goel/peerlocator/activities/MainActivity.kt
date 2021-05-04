@@ -17,7 +17,7 @@ import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
-import com.goel.peerlocator.utils.firebase.UserDataListener
+import com.goel.peerlocator.listeners.UserDataListener
 import com.goel.peerlocator.utils.location.Location
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
