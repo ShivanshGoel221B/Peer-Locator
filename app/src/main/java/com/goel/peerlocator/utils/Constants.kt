@@ -9,12 +9,15 @@ object Constants {
 
     const val NAME = "name"
     const val EMAIL = "email"
+    const val PHONE = "phone"
     const val DP = "profile_url"
     const val CIRCLES = "circles"
     const val ADMIN = "admin"
     const val MEMBERS = "members"
     const val FRIENDS = "friends"
     const val INVITES = "invites"
+    const val ONLINE = "online"
+    const val VISIBLE = "visible"
 
     const val LOC = "last_locations"
     const val LAT = "lat"

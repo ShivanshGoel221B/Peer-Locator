@@ -6,7 +6,9 @@
     <color name="dark_grey">#292929</color>
     <color name="light_grey">#676767</color>
     <color name="ultra_light_grey">#E3E3E3</color>
+    <color name="primary_color">#0fa958</color>
     <color name="sea_green">#0fa958</color>
+    <color name="sea_green_tinted">#990FA958</color>
     <color name="dark_sea_green">#037138</color>
     <color name="blue">#03A9F4</color>
     <color name="crimson">#DC143C</color>

@@ -8,6 +8,7 @@ import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.listeners.FriendDataListener
+import com.goel.peerlocator.listeners.ProfileDataListener
 import com.goel.peerlocator.listeners.UserDataListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
@@ -252,6 +253,42 @@ object Database {
                 } catch (e : NullPointerException){}
                 listener.onMemberCountComplete(membersList.size.toLong())
                 listener.onMembersRetrieved(membersList)
+            }
+        }
+    }
+
+    fun getMyData (listener : ProfileDataListener) {
+        currentUser!!.documentReference.get().addOnFailureListener {
+            listener.networkError()
+        }
+        currentUser!!.documentReference.get().addOnSuccessListener {
+            var friendCount = 0
+            try {
+                val friendList = it[Constants.FRIENDS] as ArrayList<*>
+                friendCount = friendList.size
+            } catch (e : NullPointerException){}
+            listener.friendsCountComplete(friendCount.toLong())
+
+            var circleCount = 0
+            try {
+                val circleList = it[Constants.CIRCLES] as ArrayList<*>
+                circleCount = circleList.size
+            } catch (e : NullPointerException){}
+            listener.circlesCountComplete(circleCount.toLong())
+
+            listener.onlineStatusFetched(it[Constants.ONLINE] as Boolean)
+            listener.visibilityStatusFetched(it[Constants.VISIBLE] as Boolean)
+
+            if (it[Constants.EMAIL] == null) {
+                listener.onEmailFound(false, "N/A")
+            }else {
+                listener.onEmailFound(true, it[Constants.EMAIL].toString())
+            }
+
+            if (it[Constants.PHONE] == null) {
+                listener.onPhoneFound(false, "N/A")
+            } else {
+                listener.onPhoneFound(true, it[Constants.PHONE].toString())
             }
         }
     }
