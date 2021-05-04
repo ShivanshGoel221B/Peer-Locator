@@ -65,5 +65,10 @@
     <string name="leave_circle">Leave Circle</string>
     <string name="admin">Admin</string>
     <string name="you">You</string>
+    <string name="email_label">Email : </string>
+    <string name="phone_label">Phone : </string>
+    <string name="online">Online </string>
+    <string name="visible_to_unknown">Visible to Unknown </string>
+    <string name="block_list">Block List</string>
 
 </resources>

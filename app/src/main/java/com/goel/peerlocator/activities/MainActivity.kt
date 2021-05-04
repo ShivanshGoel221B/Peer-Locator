@@ -127,6 +127,9 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         val toolbar : androidx.appcompat.widget.Toolbar = binding.customToolbar.root
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
+        binding.customToolbar.profilePicture.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

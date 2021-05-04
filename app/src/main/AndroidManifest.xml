@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PeerLocator">
-        <activity android:name=".activities.UserInfoActivity"></activity>
+        <activity android:name=".activities.ProfileActivity"></activity>
+        <activity android:name=".activities.UserInfoActivity" />
         <activity android:name=".activities.FriendInfoActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

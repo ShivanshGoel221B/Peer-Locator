@@ -24,7 +24,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/custom_toolbar"
-        android:background="@color/sea_green"
+        android:background="@color/primary_color"
         app:tabTextColor="@color/ultra_light_grey"
         app:tabSelectedTextColor="@color/white"
         app:tabIndicatorColor="@color/white"

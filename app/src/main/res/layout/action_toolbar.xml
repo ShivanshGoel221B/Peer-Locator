@@ -4,7 +4,7 @@
     android:layout_height="70dp"
     android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/sea_green">
+    android:background="@color/primary_color">
 
     <ImageView
         android:id="@+id/profile_picture"
