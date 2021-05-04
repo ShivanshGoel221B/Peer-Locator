@@ -18,6 +18,7 @@ object Constants {
     const val INVITES = "invites"
     const val ONLINE = "online"
     const val VISIBLE = "visible"
+    const val BLOCKS = "blocks"
 
     const val LOC = "last_locations"
     const val LAT = "lat"
