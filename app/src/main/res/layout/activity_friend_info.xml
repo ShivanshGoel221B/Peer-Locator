@@ -75,7 +75,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginEnd="8dp"
-                                android:fontFamily="@font/acme"
+                                android:fontFamily="@font/halant_medium"
                                 android:textSize="18sp"
                                 tools:text="23 Friends" />
 
@@ -85,7 +85,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="8dp"
-                                android:fontFamily="@font/acme"
+                                android:fontFamily="@font/halant_medium"
                                 android:textSize="18sp"
                                 tools:text="8 Circles" />
                         </LinearLayout>

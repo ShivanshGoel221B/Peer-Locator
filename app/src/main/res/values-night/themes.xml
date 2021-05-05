@@ -18,9 +18,9 @@
 
         <item name="text_color_dark">@color/white</item>
         <item name="text_color_fade">@color/ultra_light_grey</item>
-        <item name="base_background">@color/ultra_dark_grey</item>
+        <item name="base_background">@color/dark_grey</item>
 
-        <item name="text_color_green">@color/primary_color</item>
+        <item name="text_color_green">@color/sea_green</item>
 
     </style>
 

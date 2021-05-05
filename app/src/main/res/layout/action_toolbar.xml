@@ -17,7 +17,7 @@
         android:id="@+id/profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="30dp"
         android:fontFamily="@font/bree_serif"
         tools:text="User Name"
         android:textColor="@color/white"

@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:fontFamily="@font/bree_serif"
+                    android:fontFamily="@font/vesper_libre"
                     android:textSize="22sp"
                     tools:text="Family" />
 
@@ -55,11 +55,11 @@
 
             <ImageView
                 android:id="@+id/card_info"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@android:drawable/ic_info"
                 app:srcCompat="@android:drawable/ic_info"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="5dp"
                 app:tint="?android:attr/textColorPrimary" />
 
         </LinearLayout>
@@ -77,14 +77,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/acme"
+                android:fontFamily="@font/halant_medium"
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="@string/reject"
                 android:textAlignment="gravity"
                 android:textAllCaps="true"
                 android:textColor="@color/crimson"
-                android:textSize="18sp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:visibility="visible" />
 
             <TextView
@@ -92,14 +93,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/acme"
+                android:fontFamily="@font/halant_medium"
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="@string/accept"
                 android:textAlignment="gravity"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:textAllCaps="true"
-                android:textColor="@color/dark_sea_green"
-                android:textSize="18sp"
+                android:textColor="?attr/text_color_green"
                 android:visibility="visible" />
 
             <TextView
