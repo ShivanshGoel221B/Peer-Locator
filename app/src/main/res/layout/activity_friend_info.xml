@@ -22,7 +22,6 @@
         android:layout_height="275dp"
         android:background="@color/dark_grey"
         android:contentDescription="@string/info_profile_image"
-        android:elevation="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -159,5 +158,16 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/profile_photo_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

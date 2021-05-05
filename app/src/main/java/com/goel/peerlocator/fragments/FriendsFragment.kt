@@ -9,10 +9,12 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.goel.peerlocator.R
 import com.goel.peerlocator.activities.FriendActivity
 import com.goel.peerlocator.activities.FriendInfoActivity
 import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.databinding.FriendsFragmentBinding
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.FriendsViewModel
 
 class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
@@ -92,7 +94,14 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
 
     override fun onFriendPhotoClicked(position: Int) {
-
+        val model = viewModel.friendsList.value!![position]
+        val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, editable = false,
+            isCircle = false)
+        val transaction = activity!!.supportFragmentManager.beginTransaction()
+        transaction.addToBackStack(Constants.DP)
+        transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+        transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)
+        transaction.commit()
     }
 
     override fun onFriendInfoClicked(position: Int) {

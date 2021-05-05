@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.databinding.ActivityFriendInfoBinding
+import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.Constants
@@ -94,7 +95,14 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
     }
 
     override fun onCirclePhotoClicked(position: Int) {
-        TODO("Not yet implemented")
+        val model = commonList[position]
+        val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, editable = true,
+            isCircle = true, reference = model.circleReference)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.addToBackStack(Constants.DP)
+        transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+        transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)
+        transaction.commit()
     }
 
     override fun onInfoClicked(position: Int) {

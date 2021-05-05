@@ -176,11 +176,6 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
-    }
-
     override fun onUserCreated() {
         getLocationPermission()
         setUserData()

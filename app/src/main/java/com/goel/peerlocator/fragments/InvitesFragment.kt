@@ -8,9 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.databinding.InvitesFragmentBinding
 import com.goel.peerlocator.services.ServicesHandler
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.InvitesViewModel
 
 class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
@@ -85,7 +87,15 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
     }
 
     override fun onInvitePhotoClicked(position: Int) {
-        TODO("Not yet implemented")
+        val model = viewModel.invitesList.value!![position]
+        val isCircle = Constants.CIRCLES in model.reference.path
+        val imageViewFragment = ImageViewFragment.newInstance(url = model.photoUrl, editable = false,
+            isCircle = isCircle)
+        val transaction = activity!!.supportFragmentManager.beginTransaction()
+        transaction.addToBackStack(Constants.DP)
+        transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+        transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)
+        transaction.commit()
     }
 
     override fun onAcceptClicked(position: Int) {

@@ -6,8 +6,10 @@ import android.view.View
 import android.widget.Toast
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityProfileBinding
+import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.listeners.ProfileDataListener
 import com.goel.peerlocator.models.UserModel
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
@@ -26,6 +28,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     override fun onResume() {
         super.onResume()
         setData()
+        setClickListeners ()
     }
 
     private fun setData () {
@@ -37,6 +40,18 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
 
         Picasso.with(this).load(model.photoUrl).placeholder(R.drawable.ic_placeholder_user)
                 .transform(CropCircleTransformation()).into(binding.profilePhoto)
+    }
+
+    private fun setClickListeners () {
+        binding.profilePhoto.setOnClickListener {
+            val imageViewFragment = ImageViewFragment.newInstance(url = model.photoUrl, editable = true,
+                                                        isCircle = false, reference = model.documentReference)
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.addToBackStack(Constants.DP)
+            transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+            transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)
+            transaction.commit()
+        }
     }
 
     // Data Listeners

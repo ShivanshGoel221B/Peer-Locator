@@ -9,9 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.goel.peerlocator.R
 import com.goel.peerlocator.activities.CircleInfoActivity
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.databinding.CirclesFragmentBinding
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.CirclesViewModel
 
 class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
@@ -82,7 +84,14 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
     }
 
     override fun onCirclePhotoClicked(position: Int) {
-        TODO("Not yet implemented")
+        val model = viewModel.circleList.value!![position]
+        val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, editable = true,
+            isCircle = true, reference = model.circleReference)
+        val transaction = activity!!.supportFragmentManager.beginTransaction()
+        transaction.addToBackStack(Constants.DP)
+        transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+        transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)
+        transaction.commit()
     }
 
     override fun onInfoClicked(position: Int) {
