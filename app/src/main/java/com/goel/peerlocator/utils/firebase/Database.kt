@@ -295,21 +295,24 @@ object Database {
         reference.get().addOnSuccessListener {
         val userPath = currentUser?.documentReference?.path
             try {
-                val friends = it[Constants.FRIENDS] as ArrayList<*>
-                if (userPath in friends)
-                {
-                    val friend = FriendModel(friendReference = reference, uid = reference.path.substring(6),
-                                                friendName = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
-                    listener.friendFound(friend)
-                    return@addOnSuccessListener
+                val friends = it[Constants.FRIENDS] as ArrayList<DocumentReference>
+                for(ref in friends) {
+                    if (userPath == ref.path) {
+                        val friend = FriendModel(friendReference = reference, uid = reference.path.substring(6),
+                                friendName = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
+                        listener.friendFound(friend)
+                        return@addOnSuccessListener
+                    }
                 }
             }catch (e : java.lang.NullPointerException){ }
 
             try {
-                val blocks = it[Constants.BLOCKS] as ArrayList<*>
-                if (userPath in blocks) {
-                    listener.blockedFound()
-                    return@addOnSuccessListener
+                val blocks = it[Constants.BLOCKS] as ArrayList<DocumentReference>
+                for (ref in blocks) {
+                    if (userPath == ref.path) {
+                        listener.blockedFound()
+                        return@addOnSuccessListener
+                    }
                 }
             }catch (e : NullPointerException){}
 
