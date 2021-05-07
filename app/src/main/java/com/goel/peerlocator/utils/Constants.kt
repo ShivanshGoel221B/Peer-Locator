@@ -29,6 +29,8 @@ object Constants {
 
     const val PERMISSION_REQUEST_CODE = 69
 
+    const val PROFILE_PICTURES = "profile_pictures"
+
     private const val validCharacters = "qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM"
     private const val emptyNameError = "Name should not be empty"
     private const val nameLengthError = "Name should not contain more than 20 characters"

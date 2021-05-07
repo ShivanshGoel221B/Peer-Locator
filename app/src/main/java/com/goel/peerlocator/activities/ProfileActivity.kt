@@ -144,7 +144,9 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     }
 
     override fun onPhotoChanged(url: String) {
-        TODO("Not yet implemented")
+        model.photoUrl = url
+        Picasso.with(this).load(url).placeholder(R.drawable.ic_placeholder_user)
+                .transform(CropCircleTransformation()).into(binding.profilePhoto)
     }
 
     override fun onNameChanged(name: String) {
