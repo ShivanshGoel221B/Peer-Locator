@@ -7,6 +7,8 @@ interface ProfileDataListener {
     fun visibilityStatusFetched (visible : Boolean)
     fun onEmailFound (exist : Boolean, email : String)
     fun onPhoneFound (exist: Boolean, phone : String)
+    fun onPhotoChanged (url : String)
+    fun onNameChanged ( name : String)
     fun onOnlineStatusChanged (online : Boolean)
     fun onVisibilityStatusChanged (visible: Boolean)
     fun networkError ()

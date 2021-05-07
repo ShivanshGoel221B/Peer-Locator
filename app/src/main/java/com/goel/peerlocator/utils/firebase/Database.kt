@@ -321,4 +321,9 @@ object Database {
         }
     }
 
+    fun changeName(documentReference: DocumentReference, newName: String, listener: ProfileDataListener) {
+        documentReference.update(Constants.NAME, newName).addOnSuccessListener { listener.onNameChanged(newName) }
+                .addOnFailureListener { listener.networkError() }
+    }
+
 }

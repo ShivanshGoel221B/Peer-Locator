@@ -29,4 +29,24 @@ object Constants {
 
     const val PERMISSION_REQUEST_CODE = 69
 
+    private const val validCharacters = "qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM"
+    private const val emptyNameError = "Name should not be empty"
+    private const val nameLengthError = "Name should not contain more than 20 characters"
+    private const val invalidCharacterError = "Name should contain alphabets blank spaces only"
+    private const val invalidSpaceError = "Name should not start or end with a blank space"
+
+    fun isNameValid (name : String) : HashMap<Boolean, String> {
+        if (name.isEmpty())
+            return hashMapOf(Pair(false, emptyNameError))
+        if (name.last() == ' ' || name[0] == ' ')
+            return hashMapOf(Pair(false, invalidSpaceError))
+        if (name.length > 20)
+            return hashMapOf(Pair(false, nameLengthError))
+        for (character in name) {
+            if (character !in validCharacters)
+                return hashMapOf(Pair(false, invalidCharacterError))
+        }
+        return hashMapOf(Pair(true, ""))
+    }
+
 }
