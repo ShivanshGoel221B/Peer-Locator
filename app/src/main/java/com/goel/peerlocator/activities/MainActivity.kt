@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         locationPermissionGranted = false
 
         when (requestCode) {
-            Constants.PERMISSION_REQUEST_CODE -> {
+            Constants.LOCATION_PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && PackageManager.PERMISSION_DENIED !in grantResults) {
                     locationPermissionGranted = true
                     alertForGPS()
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity(), UserDataListener {
             .setTitle("Permission")
             .setMessage("You need to give Location Access Permission to continue")
             .setPositiveButton("Proceed") { dialog, _ -> Log.d("Error: ", "Could not Retrieve Data")
-                ActivityCompat.requestPermissions(this, permissions, Constants.PERMISSION_REQUEST_CODE)
+                ActivityCompat.requestPermissions(this, permissions, Constants.LOCATION_PERMISSION_REQUEST_CODE)
                 dialog.dismiss()
             }
             .setNegativeButton("Cancel") { _, _ -> finish()}
@@ -127,9 +127,6 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         val toolbar : androidx.appcompat.widget.Toolbar = binding.customToolbar.root
         setSupportActionBar(toolbar)
         supportActionBar?.title = ""
-        binding.customToolbar.profilePicture.setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java))
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -179,6 +176,9 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     override fun onUserCreated() {
         getLocationPermission()
         setUserData()
+        binding.customToolbar.profilePicture.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
 
 }

@@ -27,8 +27,10 @@ object Constants {
     const val FINE = Manifest.permission.ACCESS_FINE_LOCATION
     const val COARSE = Manifest.permission.ACCESS_COARSE_LOCATION
 
-    const val PERMISSION_REQUEST_CODE = 69
+    const val LOCATION_PERMISSION_REQUEST_CODE = 69
+    const val READ_STORAGE_PERMISSION_REQUEST_CODE = 50
 
+    const val IMAGE_REQUEST_CODE = 100
     const val PROFILE_PICTURES = "profile_pictures"
 
     private const val validCharacters = "qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM"

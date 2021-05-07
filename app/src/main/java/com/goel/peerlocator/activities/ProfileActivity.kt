@@ -1,13 +1,18 @@
 package com.goel.peerlocator.activities
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityProfileBinding
 import com.goel.peerlocator.fragments.ImageViewFragment
@@ -15,6 +20,7 @@ import com.goel.peerlocator.listeners.ProfileDataListener
 import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
+import com.goel.peerlocator.utils.firebase.Storage
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
@@ -28,10 +34,6 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setClickListeners ()
-    }
-
-    override fun onResume() {
-        super.onResume()
         setData()
     }
 
@@ -44,6 +46,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
 
         Picasso.with(this).load(model.photoUrl).placeholder(R.drawable.ic_placeholder_user)
                 .transform(CropCircleTransformation()).into(binding.profilePhoto)
+        binding.profilePhotoProgress.visibility = View.GONE
     }
 
     private fun setClickListeners () {
@@ -62,6 +65,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
         binding.editName.setOnClickListener { editName() }
         binding.editNameDone.setOnClickListener { editNameSubmit(binding.editNameInput) }
         binding.editNameCancel.setOnClickListener { editNameDone() }
+        binding.camera.setOnClickListener { checkStoragePermission () }
     }
 
     private fun editName () {
@@ -98,7 +102,6 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
         }
     }
 
-
     private fun View.showKeyboard () {
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInputFromWindow(applicationWindowToken, InputMethodManager.SHOW_FORCED, 0)
@@ -107,6 +110,40 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     private fun View.hideKeyboard() {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    // change profile pictures
+    private fun checkStoragePermission () {
+        if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            uploadImage()
+        } else {
+        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                Constants.READ_STORAGE_PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == Constants.READ_STORAGE_PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                uploadImage()
+        }
+    }
+
+    private fun uploadImage () {
+        val imageIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(imageIntent, Constants.IMAGE_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Constants.IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+            data?.let {
+                binding.profilePhotoProgress.visibility = View.VISIBLE
+                val inputStream = contentResolver.openInputStream(it.data!!)
+                Storage.uploadProfileImage(model, inputStream!!, this)
+            }
+        }
     }
 
     // Data Listeners
@@ -147,6 +184,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
         model.photoUrl = url
         Picasso.with(this).load(url).placeholder(R.drawable.ic_placeholder_user)
                 .transform(CropCircleTransformation()).into(binding.profilePhoto)
+        binding.profilePhotoProgress.visibility = View.GONE
     }
 
     override fun onNameChanged(name: String) {

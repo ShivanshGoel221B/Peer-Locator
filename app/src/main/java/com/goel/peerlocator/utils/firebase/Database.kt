@@ -326,4 +326,8 @@ object Database {
                 .addOnFailureListener { listener.networkError() }
     }
 
+    fun changeImageUrl (documentReference: DocumentReference, url : String) {
+        documentReference.update(Constants.DP, url)
+    }
+
 }
