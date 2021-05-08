@@ -89,8 +89,7 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
     override fun onInvitePhotoClicked(position: Int) {
         val model = viewModel.invitesList.value!![position]
         val isCircle = Constants.CIRCLES in model.reference.path
-        val imageViewFragment = ImageViewFragment.newInstance(url = model.photoUrl, editable = false,
-            isCircle = isCircle)
+        val imageViewFragment = ImageViewFragment.newInstance(url = model.photoUrl, isCircle = isCircle)
         val transaction = activity!!.supportFragmentManager.beginTransaction()
         transaction.addToBackStack(Constants.DP)
         transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)

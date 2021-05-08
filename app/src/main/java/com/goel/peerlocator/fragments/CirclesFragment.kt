@@ -85,8 +85,7 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
 
     override fun onCirclePhotoClicked(position: Int) {
         val model = viewModel.circleList.value!![position]
-        val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, editable = true,
-            isCircle = true, reference = model.circleReference)
+        val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = true)
         val transaction = activity!!.supportFragmentManager.beginTransaction()
         transaction.addToBackStack(Constants.DP)
         transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)

@@ -177,8 +177,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
 
     override fun onFriendPhotoClicked(position: Int) {
         val model = membersList[position]
-        val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, editable = false,
-            isCircle = false)
+        val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = false)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.addToBackStack(Constants.DP)
         transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)

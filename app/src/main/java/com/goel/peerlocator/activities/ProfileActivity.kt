@@ -57,8 +57,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     private fun setClickListeners () {
         // Profile Photo
         binding.profilePhoto.setOnClickListener {
-            val imageViewFragment = ImageViewFragment.newInstance(url = model.photoUrl, editable = true,
-                    isCircle = false, reference = model.documentReference)
+            val imageViewFragment = ImageViewFragment.newInstance(url = model.photoUrl, isCircle = false)
             val transaction = supportFragmentManager.beginTransaction()
             transaction.addToBackStack(Constants.DP)
             transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
