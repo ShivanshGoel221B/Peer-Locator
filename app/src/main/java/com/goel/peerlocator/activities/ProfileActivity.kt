@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,6 +22,9 @@ import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.utils.firebase.Storage
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
@@ -68,6 +72,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
         binding.camera.setOnClickListener { checkStoragePermission () }
         binding.onlineSwitch.setOnClickListener { changeOnlineStatus() }
         binding.visibleSwitch.setOnClickListener { changeVisibilityStatus() }
+        binding.logoutButton.setOnClickListener { showLogoutWarning() }
     }
 
     private fun editName () {
@@ -154,6 +159,33 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     }
     private fun changeVisibilityStatus () {
         Database.changeVisibilityStatus(binding.visibleSwitch.isChecked, this)
+    }
+
+    //Log out
+    private fun showLogoutWarning () {
+        AlertDialog.Builder(this).setTitle(R.string.log_out)
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton(R.string.ok) { dialog, _ ->
+                    FirebaseAuth.getInstance().signOut()
+                    dialog.dismiss()
+                    userLogout()
+                }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .show()
+    }
+
+    private fun userLogout () {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+        GoogleSignIn.getClient(this, gso).signOut()
+                .addOnFailureListener { Toast.makeText(applicationContext, "Failed to sign out", Toast.LENGTH_SHORT).show() }
+                .addOnSuccessListener {
+                    Toast.makeText(applicationContext, "Signed out successfully", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, SplashActivity::class.java))
+                }
     }
 
     // Data Listeners

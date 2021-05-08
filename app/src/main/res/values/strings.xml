@@ -70,5 +70,7 @@
     <string name="online">Online </string>
     <string name="visible_to_unknown">Visible to Unknown </string>
     <string name="block_list">Block List</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="log_out">Log out</string>
 
 </resources>
