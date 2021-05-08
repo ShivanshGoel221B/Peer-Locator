@@ -72,5 +72,7 @@
     <string name="block_list">Block List</string>
     <string name="delete_account">Delete Account</string>
     <string name="log_out">Log out</string>
+    <string name="people_blocked_by_you">People Blocked by You</string>
+    <string name="unblock_selected">Unblock Selected</string>
 
 </resources>

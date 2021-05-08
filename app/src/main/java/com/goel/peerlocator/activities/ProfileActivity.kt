@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityProfileBinding
+import com.goel.peerlocator.fragments.BlockListFragment
 import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.listeners.ProfileDataListener
 import com.goel.peerlocator.models.UserModel
@@ -62,6 +63,16 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
             transaction.addToBackStack(Constants.DP)
             transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
             transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)
+            transaction.commit()
+        }
+
+        //Block List
+        binding.blockListButton.setOnClickListener {
+            val blockListFragment = BlockListFragment.newInstance()
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.addToBackStack(Constants.BLOCKS)
+            transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+            transaction.replace(R.id.profile_photo_container, blockListFragment, Constants.BLOCKS)
             transaction.commit()
         }
 

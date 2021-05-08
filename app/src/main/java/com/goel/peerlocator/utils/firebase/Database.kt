@@ -6,11 +6,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.adapters.InvitesAdapter
-import com.goel.peerlocator.listeners.CircleDataListener
-import com.goel.peerlocator.listeners.FriendDataListener
-import com.goel.peerlocator.listeners.ProfileDataListener
-import com.goel.peerlocator.listeners.UserDataListener
-import com.goel.peerlocator.listeners.UserSearchListener
+import com.goel.peerlocator.listeners.*
 import com.goel.peerlocator.models.*
 import com.goel.peerlocator.utils.Constants
 import com.google.firebase.auth.FirebaseUser
@@ -336,6 +332,49 @@ object Database {
 
     fun changeVisibilityStatus(status: Boolean, listener: ProfileDataListener) {
         currentUserRef.update(Constants.VISIBLE, status).addOnSuccessListener { listener.onVisibilityStatusChanged(status) }
+    }
+
+    fun getMyBlockList(listener: BlockListener) {
+        currentUserRef.get()
+            .addOnFailureListener { listener.onNetworkError() }
+            .addOnSuccessListener {
+                var blocks = ArrayList<DocumentReference>()
+                try {
+                    blocks = it[Constants.BLOCKS] as ArrayList<DocumentReference>
+                }catch (e : NullPointerException){}
+
+                for (reference in blocks){
+                    reference.get().addOnFailureListener { listener.onNetworkError() }
+                        .addOnSuccessListener { user ->
+                            val model = UnknownUserModel(user.reference, displayName = user[Constants.NAME].toString(),
+                                                        photoUrl = user[Constants.DP].toString())
+                            listener.onBlockListUpdated(model)
+                        }
+                }
+            }
+    }
+
+    fun unblockSelected (list: List<String>, listener: BlockListener) {
+        var fullBlockList = ArrayList<DocumentReference>()
+
+        currentUserRef.get().addOnFailureListener { listener.onNetworkError() }
+            .addOnSuccessListener {
+                try {
+                    fullBlockList = it[Constants.BLOCKS] as ArrayList<DocumentReference>
+                } catch (e : NullPointerException) {}
+
+                val toUnblockList = ArrayList<DocumentReference>()
+                for (block in fullBlockList) {
+                    if (block.path in list)
+                        toUnblockList.add(block)
+                }
+                for (block in toUnblockList) {
+                    fullBlockList.remove(block)
+                }
+                currentUserRef.update(Constants.BLOCKS, fullBlockList).addOnFailureListener { listener.onNetworkError() }
+                    .addOnSuccessListener { listener.onUnblocked() }
+            }
+
     }
 
 }
