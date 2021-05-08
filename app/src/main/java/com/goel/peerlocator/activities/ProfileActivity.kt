@@ -61,11 +61,13 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
             transaction.commit()
         }
 
-        //Edit Name
+        //Edit
         binding.editName.setOnClickListener { editName() }
         binding.editNameDone.setOnClickListener { editNameSubmit(binding.editNameInput) }
         binding.editNameCancel.setOnClickListener { editNameDone() }
         binding.camera.setOnClickListener { checkStoragePermission () }
+        binding.onlineSwitch.setOnClickListener { changeOnlineStatus() }
+        binding.visibleSwitch.setOnClickListener { changeVisibilityStatus() }
     }
 
     private fun editName () {
@@ -144,6 +146,14 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
                 Storage.uploadProfileImage(model, inputStream!!, this)
             }
         }
+    }
+
+    // Change online status and visibility
+    private fun changeOnlineStatus () {
+        Database.changeOnlineStatus(binding.onlineSwitch.isChecked, this)
+    }
+    private fun changeVisibilityStatus () {
+        Database.changeVisibilityStatus(binding.visibleSwitch.isChecked, this)
     }
 
     // Data Listeners

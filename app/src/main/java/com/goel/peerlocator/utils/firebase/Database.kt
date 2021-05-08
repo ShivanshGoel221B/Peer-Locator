@@ -330,4 +330,12 @@ object Database {
         documentReference.update(Constants.DP, url)
     }
 
+    fun changeOnlineStatus(status: Boolean, listener: ProfileDataListener) {
+        currentUserRef.update(Constants.ONLINE, status).addOnSuccessListener { listener.onOnlineStatusChanged(status) }
+    }
+
+    fun changeVisibilityStatus(status: Boolean, listener: ProfileDataListener) {
+        currentUserRef.update(Constants.VISIBLE, status).addOnSuccessListener { listener.onVisibilityStatusChanged(status) }
+    }
+
 }
