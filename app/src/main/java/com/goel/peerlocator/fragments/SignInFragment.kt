@@ -9,12 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.facebook.AccessToken
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginResult
-import com.facebook.login.widget.LoginButton
 import com.goel.peerlocator.R
 import com.goel.peerlocator.activities.SplashActivity
 import com.goel.peerlocator.databinding.FragmentSignInBinding
@@ -22,7 +16,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
@@ -30,31 +23,21 @@ import com.google.firebase.auth.GoogleAuthProvider
 class SignInFragment : Fragment() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var callbackManager : CallbackManager
     private val rcSignIn = 10
     private lateinit var googleSignInButton : Button
-    private lateinit var fbSignInButton : LoginButton
     private lateinit var splash : SplashActivity
     private lateinit var auth : FirebaseAuth
     private var binding : FragmentSignInBinding? = null
-
-    companion object {
-        const val EMAIL = "shivanshgoel007@gmail.com"
-    }
 
     override fun onCreateView (inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentSignInBinding.inflate(inflater, container, false)
         val view = binding?.root
 
         googleSignInButton = binding!!.btnGoogleLogin
-        fbSignInButton = binding!!.btnFacebookLogin
 
         initializeGoogleAuthObject()
-        initializeFacebookAuthObject()
 
         googleSignInButton.setOnClickListener {googleSignIn()}
-        fbSignInButton.setPermissions(listOf(EMAIL))
-        fbSignInButton.fragment = this
 
         splash = activity!! as SplashActivity
         auth = splash.auth
@@ -93,7 +76,6 @@ class SignInFragment : Fragment() {
                 Log.w("Login Failed", "Google sign in failed", e)
             }
         }
-        callbackManager.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
@@ -113,49 +95,6 @@ class SignInFragment : Fragment() {
                     splash.hideProgress()
                 }
             }
-    }
-
-    //Configure Facebook Sign In
-    private fun initializeFacebookAuthObject () {
-        callbackManager = CallbackManager.Factory.create()
-        fbSignInButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onSuccess(loginResult: LoginResult) {
-                Log.d("TAG", "facebook:onSuccess:$loginResult")
-                handleFacebookAccessToken(loginResult.accessToken)
-                splash.hideProgress()
-            }
-            override fun onCancel() {
-                Log.d("TAG", "facebook:onCancel")
-                splash.hideProgress()
-            }
-
-            override fun onError(error: FacebookException) {
-                Log.d("TAG", "facebook:onError", error)
-                splash.hideProgress()
-            }
-        })
-
-    }
-
-    private fun handleFacebookAccessToken(token: AccessToken) {
-        Log.d("TAG", "handleFacebookAccessToken:$token")
-        splash.showProgress()
-        val credential = FacebookAuthProvider.getCredential(token.token)
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(activity!!) { task ->
-                    if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d("TAG", "signInWithCredential:success")
-                        val user = auth.currentUser
-                        splash.startMainActivity(user)
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w("TAG", "signInWithCredential:failure", task.exception)
-                        Toast.makeText(context, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show()
-                        splash.hideProgress()
-                    }
-                }
     }
 
     override fun onDestroyView() {
