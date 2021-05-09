@@ -205,6 +205,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
                 .addOnSuccessListener {
                     Toast.makeText(applicationContext, "Signed out successfully", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this, SplashActivity::class.java))
+                    finish()
                 }
     }
 
