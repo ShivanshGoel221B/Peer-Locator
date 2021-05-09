@@ -32,12 +32,5 @@
             android:textColor="@color/white"
             android:textSize="14sp" />
 
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/btn_facebook_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center_horizontal" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
