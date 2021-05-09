@@ -156,9 +156,19 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == Constants.IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
             data?.let {
-                binding.profilePhotoProgress.visibility = View.VISIBLE
                 val inputStream = contentResolver.openInputStream(it.data!!)
-                Storage.uploadProfileImage(model, inputStream!!, this)
+                val type = contentResolver.getType(it.data!!)
+                val size = contentResolver.openInputStream(it.data!!)!!.readBytes().size
+                when {
+                    type !in Constants.IMAGE_FILE_TYPES ->
+                        Toast.makeText(this, getString(R.string.image_type_warning), Toast.LENGTH_LONG).show()
+                    size > Constants.MAX_IMAGE_SIZE ->
+                        Toast.makeText(this, getString(R.string.image_size_warning), Toast.LENGTH_LONG).show()
+                    else -> {
+                        binding.profilePhotoProgress.visibility = View.VISIBLE
+                        Storage.uploadProfileImage(model, inputStream!!, this)
+                    }
+                }
             }
         }
     }

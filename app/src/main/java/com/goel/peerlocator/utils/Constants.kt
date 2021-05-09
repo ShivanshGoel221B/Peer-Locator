@@ -32,6 +32,8 @@ object Constants {
 
     const val IMAGE_REQUEST_CODE = 100
     const val PROFILE_PICTURES = "profile_pictures"
+    val IMAGE_FILE_TYPES = arrayOf("image/jpg", "image/jpeg")
+    const val MAX_IMAGE_SIZE = 1*1024*1024
 
     private const val validCharacters = "qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM"
     private const val emptyNameError = "Name should not be empty"
