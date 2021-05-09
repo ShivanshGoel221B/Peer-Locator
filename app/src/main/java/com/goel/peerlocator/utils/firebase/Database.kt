@@ -49,9 +49,11 @@ object Database {
 
     private fun createUserEntry (currentUserRef: DocumentReference, user: FirebaseUser) {
         user.let {
-            val newUser = hashMapOf<String, String>()
+            val newUser = hashMapOf<String, Any>()
             newUser[Constants.NAME] = user.displayName!!
             newUser[Constants.DP] = user.photoUrl!!.toString()
+            newUser[Constants.ONLINE] = true
+            newUser[Constants.VISIBLE] = true
             currentUser?.displayName = user.displayName!!
             currentUser?.photoUrl = user.photoUrl!!.toString()
             listener?.onUserCreated()
