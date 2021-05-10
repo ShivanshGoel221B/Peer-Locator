@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,10 +25,13 @@ class BlockListFragment : Fragment(), BlockListAdapter.BlockListClickListener, B
     private var binding : BlockListFragmentBinding? = null
     private lateinit var viewModel: BlockListViewModel
     private lateinit var adapter : BlockListAdapter
+    private lateinit var nothingFound : LinearLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = BlockListFragmentBinding.inflate(inflater, container, false)
+        nothingFound = binding?.nothingFound!!
+        nothingFound.visibility = View.GONE
         createRecyclerView()
         binding?.root?.setOnClickListener { return@setOnClickListener }
         binding?.closeButton?.setOnClickListener { activity!!.onBackPressed() }
@@ -56,7 +60,14 @@ class BlockListFragment : Fragment(), BlockListAdapter.BlockListClickListener, B
         viewModel.checkedList.add(viewModel.blockList[position])
     }
 
+    override fun noBlockFound() {
+        nothingFound.visibility = View.VISIBLE
+        binding?.unblockButton?.visibility = View.GONE
+    }
+
     override fun onBlockListUpdated(model: UnknownUserModel) {
+        nothingFound.visibility = View.GONE
+        binding?.unblockButton?.visibility = View.VISIBLE
         viewModel.blockList.add(model)
         adapter.notifyDataSetChanged()
     }

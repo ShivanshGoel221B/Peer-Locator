@@ -363,7 +363,8 @@ object Database {
                 try {
                     blocks = it[Constants.BLOCKS] as ArrayList<DocumentReference>
                 }catch (e : NullPointerException){}
-
+                if (blocks.isEmpty())
+                    listener.noBlockFound()
                 for (reference in blocks){
                     reference.get().addOnFailureListener { listener.onNetworkError() }
                         .addOnSuccessListener { user ->
