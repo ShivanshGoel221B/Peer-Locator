@@ -185,10 +185,18 @@ object Database {
 
 
     fun getAllInvites (database : FirebaseFirestore, invitesList : ArrayList<InviteModel>,
-                       invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout) {
+                       invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout) {
         FirebaseDatabase.getInstance().reference.child(Constants.INVITES).child(currentUser!!.uid)
             .addListenerForSingleValueEvent(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!snapshot.hasChildren()) {
+                        shimmer.visibility = View.GONE
+                        shimmer.stopShimmerAnimation()
+                        nothingFound.visibility = View.VISIBLE
+                    }
+                    else
+                        nothingFound.visibility - View.GONE
+
                     for (data in snapshot.children) {
                         val reference = database.document(data.key.toString().replace('!', '/'))
                         val timeStamp = data.value.toString()

@@ -1,6 +1,7 @@
 package com.goel.peerlocator.viewmodels
 
 import android.app.Application
+import android.widget.LinearLayout
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -16,7 +17,7 @@ class InvitesViewModel(application: Application) : AndroidViewModel(application)
         invitesList.value = InvitesRepository.instance.invitesList
     }
 
-    fun getAllInvites (invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout) {
-        InvitesRepository.instance.getAllInvites(invitesAdapter, shimmer)
+    fun getAllInvites (invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
+        InvitesRepository.instance.getAllInvites(invitesAdapter, shimmer, nothingFound)
     }
 }

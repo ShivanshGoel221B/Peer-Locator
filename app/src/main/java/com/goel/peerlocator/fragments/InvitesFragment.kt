@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,10 +25,12 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
     private var binding : InvitesFragmentBinding? = null
     private lateinit var viewModel: InvitesViewModel
     private lateinit var invitesAdapter: InvitesAdapter
+    private lateinit var nothingFound : LinearLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = InvitesFragmentBinding.inflate(inflater, container, false)
-
+        nothingFound = binding?.nothingFound!!
+        nothingFound.visibility = View.GONE
         return binding?.root
     }
 
@@ -47,6 +50,7 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
         val shimmer = binding?.shimmerLayout!!
         shimmer.startShimmerAnimation()
         shimmer.visibility = View.VISIBLE
+        nothingFound.visibility = View.GONE
 
         viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
             .get(InvitesViewModel::class.java)
@@ -59,7 +63,7 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
             invitesAdapter.notifyDataSetChanged()
         }
 
-        viewModel.getAllInvites(invitesAdapter, shimmer)
+        viewModel.getAllInvites(invitesAdapter, shimmer, nothingFound)
         ServicesHandler.stopInviteNotification(activity!!)
     }
 
