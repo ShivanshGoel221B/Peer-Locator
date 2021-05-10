@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/add_new_circle"
-        android:title="@string/add_new_circle" />
+        android:title="@string/create_new_circle" />
 
     <item android:id="@+id/app_settings"
         android:title="@string/settings" />

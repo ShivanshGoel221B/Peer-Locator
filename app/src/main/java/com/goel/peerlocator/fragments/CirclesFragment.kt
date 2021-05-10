@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,10 +26,12 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
     private lateinit var viewModel: CirclesViewModel
     private var binding : CirclesFragmentBinding? = null
     private lateinit var circlesAdapter: CirclesAdapter
+    private lateinit var nothingFound : LinearLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = CirclesFragmentBinding.inflate(inflater, container, false)
-
+        nothingFound = binding?.nothingFound!!
+        nothingFound.visibility = View.GONE
         return binding?.root
     }
 
@@ -53,6 +56,7 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
         val shimmer = binding?.shimmerLayout!!
         shimmer.startShimmerAnimation()
         shimmer.visibility = View.VISIBLE
+        nothingFound.visibility = View.GONE
 
         viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
             .get(CirclesViewModel::class.java)
@@ -65,7 +69,7 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
             circlesAdapter.notifyDataSetChanged()
         }
         
-        viewModel.getAllCircles(circlesAdapter, shimmer)
+        viewModel.getAllCircles(circlesAdapter, shimmer, nothingFound)
     }
 
     override fun onDestroyView() {

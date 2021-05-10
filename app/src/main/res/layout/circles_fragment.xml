@@ -73,9 +73,9 @@
         android:id="@+id/nothing_found"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,18 +83,18 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="280dp"
+            android:layout_height="250dp"
             android:src="@drawable/il_nothing_found" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_circles_found"
-            android:textSize="22sp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/bree_serif"
+            android:text="@string/no_circles_found"
             android:textColor="@color/grey"
-            android:fontFamily="@font/bree_serif"/>
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/button"
@@ -103,13 +103,13 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/button_background_grey"
             android:fontFamily="@font/kreon"
-            android:paddingStart="12dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="3dp"
-            android:text="@string/add_new_circle"
+            android:paddingStart="16dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="5dp"
+            android:text="@string/create_new_circle"
             android:textColor="@color/grey"
-            android:textSize="24sp" />
+            android:textSize="26sp" />
 
     </LinearLayout>
 

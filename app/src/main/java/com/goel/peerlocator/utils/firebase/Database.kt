@@ -2,6 +2,7 @@ package com.goel.peerlocator.utils.firebase
 
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.adapters.FriendsAdapter
@@ -62,8 +63,9 @@ object Database {
         }
     }
 
-    fun getAllCircles (userRef: CollectionReference, circleList: java.util.ArrayList<CircleModel>,
-                       circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout) {
+    fun getAllCircles (
+        userRef: CollectionReference, circleList: java.util.ArrayList<CircleModel>,
+        circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout) {
         var circleArray = java.util.ArrayList<DocumentReference>()
 
         userRef.document(currentUser!!.uid).get()
@@ -73,7 +75,7 @@ object Database {
                             circleArray = it[Constants.CIRCLES] as ArrayList<DocumentReference>
                         } catch (e: NullPointerException) {}
                         currentUser?.circlesCount = circleArray.size.toLong()
-                        addToList(circleArray, circleList, circlesAdapter, shimmer)
+                        addToList(circleArray, circleList, circlesAdapter, shimmer, nothingFound)
                     }
                 }
                 .addOnFailureListener {
@@ -83,8 +85,10 @@ object Database {
 
     // Adds circles to the list
     private fun addToList (circleArray: ArrayList<DocumentReference>, list: ArrayList<CircleModel>,
-                           circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout) {
+                           circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout) {
 
+        if (circleArray.isEmpty())
+            nothingFound.visibility = View.VISIBLE
         for (circle in circleArray) {
             circle.get()
                 .addOnSuccessListener {

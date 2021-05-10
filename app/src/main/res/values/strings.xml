@@ -23,7 +23,7 @@
     <string name="ok">OK</string>
     <string name="title_location_permission">Location Access</string>
     <string name="text_location_permission">You need to allow location access to continue</string>
-    <string name="add_new_circle">Add New Circle</string>
+    <string name="create_new_circle">Create New Circle</string>
 
     <plurals name="members_count">
         <item quantity="one">%d member</item>
