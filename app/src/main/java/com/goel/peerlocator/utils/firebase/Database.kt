@@ -89,6 +89,8 @@ object Database {
 
         if (circleArray.isEmpty())
             nothingFound.visibility = View.VISIBLE
+        else
+            nothingFound.visibility = View.GONE
         for (circle in circleArray) {
             circle.get()
                 .addOnSuccessListener {
@@ -117,7 +119,7 @@ object Database {
     }
 
     fun getAllFriends (userRef: CollectionReference, friendsList : java.util.ArrayList<FriendModel>,
-                       friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout) {
+                       friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout) {
         var circleArray =  java.util.ArrayList<DocumentReference>()
         var friendsArray =  java.util.ArrayList<DocumentReference>()
 
@@ -131,7 +133,7 @@ object Database {
                         friendsArray = it[Constants.FRIENDS] as ArrayList<DocumentReference>
                     } catch (e : java.lang.NullPointerException){}
                     currentUser?.friendsCount = friendsArray.size.toLong()
-                    addToList(friendsArray, circleArray, friendsList, friendsAdapter, shimmer)
+                    addToList(friendsArray, circleArray, friendsList, friendsAdapter, shimmer, nothingFound)
                 }
             }
             .addOnFailureListener {
@@ -141,7 +143,12 @@ object Database {
 
     // Adds friends to the list
     private fun addToList (friendsArray: ArrayList<DocumentReference>, circleArray: ArrayList<DocumentReference>,
-                           list: ArrayList<FriendModel>, friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout) {
+                           list: ArrayList<FriendModel>, friendsAdapter: FriendsAdapter,
+                           shimmer: ShimmerFrameLayout, nothingFound: LinearLayout) {
+        if (friendsArray.isEmpty())
+            nothingFound.visibility = View.VISIBLE
+        else
+            nothingFound.visibility = View.GONE
         for (friend in friendsArray) {
             friend.get()
                 .addOnSuccessListener {

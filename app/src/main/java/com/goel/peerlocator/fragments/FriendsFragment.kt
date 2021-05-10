@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,10 +27,12 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     private var binding : FriendsFragmentBinding? = null
     private lateinit var viewModel: FriendsViewModel
     private lateinit var friendsAdapter: FriendsAdapter
+    private lateinit var nothingFound : LinearLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FriendsFragmentBinding.inflate(inflater, container, false)
-
+        nothingFound = binding?.nothingFound!!
+        nothingFound.visibility = View.GONE
         return binding?.root
     }
 
@@ -49,6 +52,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         val shimmer = binding?.shimmerLayout!!
         shimmer.startShimmerAnimation()
         shimmer.visibility = View.VISIBLE
+        nothingFound.visibility = View.GONE
 
         viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
             .get(FriendsViewModel::class.java)
@@ -61,7 +65,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
             friendsAdapter.notifyDataSetChanged()
         }
 
-        viewModel.getAllFriends(friendsAdapter, shimmer)
+        viewModel.getAllFriends(friendsAdapter, shimmer, nothingFound)
 
     }
 

@@ -1,5 +1,6 @@
 package com.goel.peerlocator.repositories
 
+import android.widget.LinearLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.utils.firebase.Database
@@ -13,8 +14,8 @@ class FriendsRepository : UserRepository() {
 
     val friendsList = ArrayList<FriendModel> ()
 
-    fun getAllFriends (friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout) {
+    fun getAllFriends (friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
         friendsList.clear()
-        Database.getAllFriends(userRef, friendsList, friendsAdapter, shimmer)
+        Database.getAllFriends(userRef, friendsList, friendsAdapter, shimmer, nothingFound)
     }
 }

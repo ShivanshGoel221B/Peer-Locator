@@ -1,6 +1,7 @@
 package com.goel.peerlocator.viewmodels
 
 import android.app.Application
+import android.widget.LinearLayout
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -15,8 +16,8 @@ class FriendsViewModel(application: Application) : AndroidViewModel(application)
         friendsList.value = FriendsRepository.instance.friendsList
     }
 
-    fun getAllFriends (friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout) {
-        FriendsRepository.instance.getAllFriends(friendsAdapter, shimmer)
+    fun getAllFriends (friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
+        FriendsRepository.instance.getAllFriends(friendsAdapter, shimmer, nothingFound)
     }
 
 }
