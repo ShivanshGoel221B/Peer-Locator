@@ -76,5 +76,9 @@
     <string name="unblock_selected">Unblock Selected</string>
     <string name="image_size_warning">Image size should not exceed 1 MB</string>
     <string name="image_type_warning">Image should be of JPEG/JPG format</string>
+    <string name="add_new_friend">Add New Friend</string>
+    <string name="no_friends_found">No Friends Found</string>
+    <string name="no_circles_found">No Circles Found</string>
+    <string name="no_invitations">No Invitations</string>
 
 </resources>
