@@ -26,8 +26,8 @@
     <string name="create_new_circle">Create New Circle</string>
 
     <plurals name="members_count">
-        <item quantity="one">%d member</item>
-        <item quantity="other">%d members</item>
+        <item quantity="one">%d/20 member</item>
+        <item quantity="other">%d/20 members</item>
     </plurals>
 
     <plurals name="friends_count">
@@ -53,7 +53,6 @@
     <string name="unknown_privacy_warning">Profile details are visible to friends only</string>
     <string name="send_invitation">Send Invitation</string>
     <string name="block">Block</string>
-    <string name="block_report"><![CDATA[Block & Report]]></string>
     <string name="info_profile_image">info_profile_image</string>
     <string name="circles_in_common">Circles in Common</string>
     <string name="remove_friend">Remove Friend</string>
@@ -84,5 +83,6 @@
     <string name="enter_circle_name">Enter Circle Name</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
+    <string name="circle_size_warning">Circle Size should not exceed 20 members</string>
 
 </resources>

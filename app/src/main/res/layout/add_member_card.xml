@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="2dp"
-    android:layout_marginTop="2dp"
+    android:layout_marginTop="1dp"
     android:layout_marginEnd="2dp"
-    android:layout_marginBottom="2dp">
+    android:layout_marginBottom="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
