@@ -97,7 +97,7 @@
             android:textSize="22sp" />
 
         <TextView
-            android:id="@+id/button"
+            android:id="@+id/create_new_circle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

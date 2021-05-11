@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
 import com.goel.peerlocator.activities.CircleInfoActivity
+import com.goel.peerlocator.activities.NewCircleActivity
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.databinding.CirclesFragmentBinding
 import com.goel.peerlocator.utils.Constants
@@ -70,6 +71,10 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
         }
         
         viewModel.getAllCircles(circlesAdapter, shimmer, nothingFound)
+
+        binding?.createNewCircleButton?.setOnClickListener {
+            startActivity(Intent(activity, NewCircleActivity::class.java))
+        }
     }
 
     override fun onDestroyView() {
