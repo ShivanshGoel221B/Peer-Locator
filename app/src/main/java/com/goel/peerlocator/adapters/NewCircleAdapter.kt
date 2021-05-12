@@ -17,7 +17,7 @@ class NewCircleAdapter (private val context : Context, private val membersList :
     : RecyclerView.Adapter<NewCircleAdapter.NewMembersViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewMembersViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.add_member_card, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.added_member_card, parent, false)
         val viewHolder = NewMembersViewHolder(view)
         viewHolder.removeButton.setOnClickListener {
             if (viewHolder.adapterPosition != RecyclerView.NO_POSITION)

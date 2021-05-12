@@ -141,6 +141,28 @@ object Database {
             }
     }
 
+    fun getAllFriends (listener : GetListListener) {
+        currentUserRef.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                var references = ArrayList<DocumentReference>()
+                try {
+                    references = it[Constants.FRIENDS] as ArrayList<DocumentReference>
+                } catch (e : NullPointerException) {}
+
+                for (reference in references) {
+                    reference.get().addOnFailureListener { listener.onError() }
+                        .addOnSuccessListener { friend ->
+                            val name = friend[Constants.NAME].toString()
+                            val imageUrl = friend[Constants.DP].toString()
+
+                            val model = FriendModel(friendReference = friend.reference, friendName = name,
+                                        imageUrl = imageUrl, uid = friend.reference.path.substring(6))
+                            listener.onFriendRetrieved(model)
+                        }
+                }
+            }
+    }
+
     // Adds friends to the list
     private fun addToList (friendsArray: ArrayList<DocumentReference>, circleArray: ArrayList<DocumentReference>,
                            list: ArrayList<FriendModel>, friendsAdapter: FriendsAdapter,

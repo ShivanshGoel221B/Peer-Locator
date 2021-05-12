@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.NewCircleAdapter
 import com.goel.peerlocator.databinding.ActivityNewCircleBinding
+import com.goel.peerlocator.fragments.AddMembersFragment
+import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.viewmodels.NewCircleViewModel
@@ -60,7 +62,12 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     private fun setClickListeners() {
         binding.addMembersButton.setOnClickListener {
             if (membersCount < Constants.MAX_CIRCLE_SIZE) {
-
+                val addMembersFragment = AddMembersFragment.newInstance(viewModel.membersList)
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.addToBackStack(getString(R.string.add_members))
+                transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+                transaction.replace(R.id.add_members_fragment_container, addMembersFragment, getString(R.string.add_members))
+                transaction.commit()
             }
             else {
                 Toast.makeText(this, R.string.circle_size_warning, Toast.LENGTH_LONG).show()
