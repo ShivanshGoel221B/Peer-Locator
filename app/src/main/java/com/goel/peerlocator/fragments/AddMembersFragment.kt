@@ -39,6 +39,13 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
 
         initializeViewModel()
         updateCounter()
+        binding?.cancelButton?.setOnClickListener { activity!!.onBackPressed() }
+        binding?.addMembersButton?.setOnClickListener {
+            viewModel.selectedList.forEach {
+                alreadyAdded.add(it)
+            }
+            activity!!.onBackPressed()
+        }
         return binding?.root
     }
 
@@ -47,7 +54,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
             .get(AddMembersViewModel::class.java)
         createRecyclerView()
 
-        viewModel.getFriendsList(object : GetListListener {
+        viewModel.getFriendsList(alreadyAdded, object : GetListListener {
             override fun onFriendRetrieved(friend: FriendModel) {
                 viewModel.friendList.add(friend)
                 adapter.notifyDataSetChanged()
@@ -70,6 +77,11 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
     private fun updateCounter () {
         val count = initialCount + viewModel.addedCount
         binding?.membersCounter?.text = resources.getQuantityString(R.plurals.members_count, count, count)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
     override fun onAddClicked(position: Int) {

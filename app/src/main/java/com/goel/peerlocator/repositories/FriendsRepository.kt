@@ -20,7 +20,11 @@ class FriendsRepository : UserRepository() {
         Database.getAllFriends(userRef, friendsList, friendsAdapter, shimmer, nothingFound)
     }
 
-    fun getFriendsList(listener : GetListListener) {
-        Database.getAllFriends(listener)
+    fun getFriendsList(addedMembers : ArrayList<FriendModel>, listener : GetListListener) {
+        val addedIds = ArrayList<String>()
+        addedMembers.forEach {
+            addedIds.add(it.uid)
+        }
+        Database.getAllFriends(addedIds, listener)
     }
 }

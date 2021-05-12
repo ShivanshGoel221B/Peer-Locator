@@ -141,7 +141,7 @@ object Database {
             }
     }
 
-    fun getAllFriends (listener : GetListListener) {
+    fun getAllFriends (addedIds : ArrayList<String>, listener : GetListListener) {
         currentUserRef.get().addOnFailureListener { listener.onError() }
             .addOnSuccessListener {
                 var references = ArrayList<DocumentReference>()
@@ -152,12 +152,15 @@ object Database {
                 for (reference in references) {
                     reference.get().addOnFailureListener { listener.onError() }
                         .addOnSuccessListener { friend ->
-                            val name = friend[Constants.NAME].toString()
-                            val imageUrl = friend[Constants.DP].toString()
+                            if (getUid(friend.reference) !in addedIds) {
+                                val name = friend[Constants.NAME].toString()
+                                val imageUrl = friend[Constants.DP].toString()
 
-                            val model = FriendModel(friendReference = friend.reference, friendName = name,
-                                        imageUrl = imageUrl, uid = friend.reference.path.substring(6))
-                            listener.onFriendRetrieved(model)
+                                val model = FriendModel(friendReference = friend.reference, friendName = name,
+                                            imageUrl = imageUrl, uid = getUid(friend.reference)
+                                )
+                                listener.onFriendRetrieved(model)
+                            }
                         }
                 }
             }
@@ -189,7 +192,7 @@ object Database {
                     val newFriend = FriendModel(friendName = it[Constants.NAME].toString(),
                         friendReference = it.reference,
                         imageUrl = it[Constants.DP].toString(),
-                        commonCirclesCount = count, uid = it.reference.path.substring(6)
+                        commonCirclesCount = count, uid = getUid(it.reference)
                     )
                     list.add(newFriend)
                     friendsAdapter.notifyDataSetChanged()
@@ -337,7 +340,7 @@ object Database {
                 val friends = it[Constants.FRIENDS] as ArrayList<DocumentReference>
                 for(ref in friends) {
                     if (userPath == ref.path) {
-                        val friend = FriendModel(friendReference = reference, uid = reference.path.substring(6),
+                        val friend = FriendModel(friendReference = reference, uid = getUid(reference),
                                 friendName = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
                         listener.friendFound(friend)
                         return@addOnSuccessListener
@@ -355,7 +358,7 @@ object Database {
                 }
             }catch (e : NullPointerException){}
 
-            listener.userFound(UnknownUserModel(reference, reference.path.substring(6),
+            listener.userFound(UnknownUserModel(reference, getUid(reference),
                     displayName = it[Constants.NAME].toString(), photoUrl = it[Constants.DP].toString()))
         }
     }
@@ -420,5 +423,7 @@ object Database {
             }
 
     }
+
+    private fun getUid (reference: DocumentReference) = reference.path.substring(6)
 
 }

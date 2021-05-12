@@ -12,8 +12,8 @@ class AddMembersViewModel(application: Application) : AndroidViewModel(applicati
     val selectedList = ArrayList<FriendModel>()
     var addedCount = selectedList.size
 
-    fun getFriendsList (listener : GetListListener) {
+    fun getFriendsList (addedMembers : ArrayList<FriendModel>, listener : GetListListener) {
         friendList.clear()
-        FriendsRepository.instance.getFriendsList(listener)
+        FriendsRepository.instance.getFriendsList(addedMembers, listener)
     }
 }

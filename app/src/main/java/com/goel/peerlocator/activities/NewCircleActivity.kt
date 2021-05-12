@@ -75,6 +75,12 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        adapter.notifyDataSetChanged()
+        updateCounter(viewModel.membersList.size)
+    }
+
     override fun onRemoveClick(position: Int) {
         adapter.notifyItemRemoved(position)
         viewModel.membersList.removeAt(position)
