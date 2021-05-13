@@ -29,7 +29,7 @@ class FriendsAdapter (private val friendsList: ArrayList<FriendModel>, private v
 
     override fun onBindViewHolder(holder: FriendsViewHolder, position: Int) {
         val friend = friendsList[position]
-        val friendName = friend.friendName
+        val friendName = friend.name
         val profileUrl = friend.imageUrl
         val commonCircleCount = holder.itemView.resources
                                 .getQuantityString(R.plurals.common_circles_count, friend.commonCirclesCount, friend.commonCirclesCount)

@@ -46,10 +46,10 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
 
     private fun setData () {
         val photoUrl = model.imageUrl
-        val name = model.friendName
+        val name = model.name
         binding.infoToolbar.profileName.text = name
         Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user_big).into(binding.profileImageHolder)
-        Database.getFriendInfo(this, model.friendReference)
+        Database.getFriendInfo(this, model.documentReference)
     }
 
     private fun createRecyclerView () {
@@ -72,8 +72,8 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
         for(ref in commonCircleList) {
             ref.get().addOnSuccessListener {
                 if (it.exists()) {
-                    val circle = CircleModel(circleReference = it.reference, imageUrl = it[Constants.DP].toString(),
-                        circleName = it[Constants.NAME].toString(), adminReference = it[Constants.ADMIN] as DocumentReference
+                    val circle = CircleModel(documentReference = it.reference, imageUrl = it[Constants.DP].toString(),
+                        name = it[Constants.NAME].toString(), adminReference = it[Constants.ADMIN] as DocumentReference
                     )
                     try {
                         circle.memberCount = (it[Constants.MEMBERS] as ArrayList<Any>).size

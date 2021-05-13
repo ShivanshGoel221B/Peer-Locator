@@ -151,8 +151,8 @@ class MainActivity : AppCompatActivity(), UserDataListener {
             user = Database.currentUser!!
             val dpView = binding.customToolbar.profilePicture
             val nameView = binding.customToolbar.profileName
-            val displayName = user.displayName
-            val photoUrl = user.photoUrl
+            val displayName = user.name
+            val photoUrl = user.imageUrl
             nameView.text = displayName
             if (photoUrl.isNotEmpty())
                 Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user)

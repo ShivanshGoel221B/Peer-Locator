@@ -52,10 +52,10 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
 
     private fun setData () {
         val photoUrl = model.imageUrl
-        val name = model.circleName
+        val name = model.name
         binding.infoToolbar.profileName.text = name
         Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_circle_big).into(binding.profileImageHolder)
-        Database.getCircleInfo(this, model.circleReference)
+        Database.getCircleInfo(this, model.documentReference)
     }
 
     private fun createRecyclerView () {
@@ -82,14 +82,14 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
         for (ref in references) {
             ref.get().addOnSuccessListener {
                 if (it.exists()) {
-                    val friend = FriendModel(friendReference = it.reference, uid = it.reference.path.substring(6),
-                                            friendName = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
-                    if (model.adminReference.path == friend.friendReference.path) {
-                        binding.infoAdminCard.cardProfileName.text = friend.friendName
+                    val friend = FriendModel(documentReference = it.reference, uid = it.reference.path.substring(6),
+                                            name = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
+                    if (model.adminReference.path == friend.documentReference.path) {
+                        binding.infoAdminCard.cardProfileName.text = friend.name
                         Picasso.with(this).load(friend.imageUrl).placeholder(R.drawable.ic_placeholder_user)
                             .transform(CropCircleTransformation())
                             .into(binding.infoAdminCard.cardProfileImage)
-                        if (friend.friendReference.path == Database.currentUser?.documentReference?.path) {
+                        if (friend.documentReference.path == Database.currentUser?.documentReference?.path) {
                             binding.infoAdminCard.cardProfileName.text = getString(R.string.you)
                             binding.infoAdminCard.cardAdditionalDetail.visibility = View.GONE
                             binding.infoAdminCard.cardInfo.visibility = View.GONE
@@ -98,7 +98,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
                             try {
                                 var friendCircles: ArrayList<DocumentReference>
                                 var myCircle: ArrayList<DocumentReference>
-                                friend.friendReference.get().addOnSuccessListener { friendRef ->
+                                friend.documentReference.get().addOnSuccessListener { friendRef ->
                                     friendCircles = friendRef[Constants.CIRCLES] as ArrayList<DocumentReference>
                                     Database.currentUser?.documentReference?.get()?.addOnSuccessListener { myRef ->
                                         myCircle = myRef[Constants.CIRCLES] as ArrayList<DocumentReference>
@@ -124,7 +124,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
                         var friendCircles: ArrayList<DocumentReference>
                         var myCircle: ArrayList<DocumentReference>
                         try {
-                            friend.friendReference.get().addOnSuccessListener { friendRef ->
+                            friend.documentReference.get().addOnSuccessListener { friendRef ->
                                 friendCircles = friendRef[Constants.CIRCLES] as ArrayList<DocumentReference>
                                 Database.currentUser?.documentReference?.get()?.addOnSuccessListener { myRef ->
                                     myCircle = myRef[Constants.CIRCLES] as ArrayList<DocumentReference>
@@ -149,7 +149,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
 
     //Friends Click Listeners
     override fun onFriendClicked(position: Int) {
-        Database.findUser(membersList[position].friendReference, object : UserSearchListener {
+        Database.findUser(membersList[position].documentReference, object : UserSearchListener {
             override fun userFound(user: UnknownUserModel) {
                 UserInfoActivity.model = user
                 startActivity(Intent(applicationContext, UserInfoActivity::class.java))
@@ -186,7 +186,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
     }
 
     override fun onFriendInfoClicked(position: Int) {
-        Database.findUser(membersList[position].friendReference, object : UserSearchListener {
+        Database.findUser(membersList[position].documentReference, object : UserSearchListener {
             override fun userFound(user: UnknownUserModel) {
                 UserInfoActivity.model = user
                 startActivity(Intent(applicationContext, UserInfoActivity::class.java))

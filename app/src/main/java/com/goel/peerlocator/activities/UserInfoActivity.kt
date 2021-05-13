@@ -4,11 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
-import com.goel.peerlocator.databinding.ActivityFriendInfoBinding
 import com.goel.peerlocator.databinding.ActivityUserInfoBinding
 import com.goel.peerlocator.models.UnknownUserModel
-import com.goel.peerlocator.models.UserModel
-import com.goel.peerlocator.utils.firebase.Database
 import com.squareup.picasso.Picasso
 
 class UserInfoActivity : AppCompatActivity() {
@@ -37,8 +34,8 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
     private fun setData () {
-        val photoUrl = model.photoUrl
-        val name = model.displayName
+        val photoUrl = model.imageUrl
+        val name = model.name
         binding.infoToolbar.profileName.text = name
         Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user_big).into(binding.profileImageHolder)
     }

@@ -30,7 +30,7 @@ class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val
     override fun onBindViewHolder(holder: CircleViewHolder, position: Int) {
         val circle = circleList[position]
         val imageUri = circle.imageUrl
-        val circleName = circle.circleName
+        val circleName = circle.name
         val membersCount = holder.itemView.resources.getQuantityString(R.plurals.members_count, circle.memberCount, circle.memberCount)
         holder.controlsBar.visibility = View.GONE
         holder.circleName.text = circleName

@@ -45,11 +45,11 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     private fun setData () {
         model = Database.currentUser!!
 
-        binding.profileName.text = model.displayName
+        binding.profileName.text = model.name
 
         Database.getMyData(this)
 
-        Picasso.with(this).load(model.photoUrl).placeholder(R.drawable.ic_placeholder_user)
+        Picasso.with(this).load(model.imageUrl).placeholder(R.drawable.ic_placeholder_user)
                 .transform(CropCircleTransformation()).into(binding.profilePhoto)
         binding.profilePhotoProgress.visibility = View.GONE
     }
@@ -57,7 +57,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     private fun setClickListeners () {
         // Profile Photo
         binding.profilePhoto.setOnClickListener {
-            val imageViewFragment = ImageViewFragment.newInstance(url = model.photoUrl, isCircle = false)
+            val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = false)
             val transaction = supportFragmentManager.beginTransaction()
             transaction.addToBackStack(Constants.DP)
             transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
@@ -110,7 +110,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
         val newName = input.text.toString()
         val validity = Constants.isNameValid(newName)
         if (validity.contains(true)) {
-            if (newName != model.displayName)
+            if (newName != model.name)
                 Database.changeName(model.documentReference, newName, this)
             editNameDone()
         }
@@ -244,14 +244,14 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     }
 
     override fun onPhotoChanged(url: String) {
-        model.photoUrl = url
+        model.imageUrl = url
         Picasso.with(this).load(url).placeholder(R.drawable.ic_placeholder_user)
                 .transform(CropCircleTransformation()).into(binding.profilePhoto)
         binding.profilePhotoProgress.visibility = View.GONE
     }
 
     override fun onNameChanged(name: String) {
-        Database.currentUser?.displayName = name
+        Database.currentUser?.name = name
         binding.profileName.text = name
         Toast.makeText(this, "Name Changed", Toast.LENGTH_SHORT).show()
     }

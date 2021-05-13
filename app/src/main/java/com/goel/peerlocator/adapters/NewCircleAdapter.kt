@@ -28,7 +28,7 @@ class NewCircleAdapter (private val context : Context, private val membersList :
 
     override fun onBindViewHolder(holder: NewMembersViewHolder, position: Int) {
         val model = membersList[position]
-        val name = model.friendName
+        val name = model.name
         val url = model.imageUrl
         holder.nameHolder.text = name
         Picasso.with(context).load(url)

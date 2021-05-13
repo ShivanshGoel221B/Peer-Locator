@@ -6,6 +6,7 @@ object Constants {
 
     const val PREFS = "com.goel.peerlocator.shared"
     const val BACK_LOC = "background_location_access"
+    const val USERS = "users"
 
     const val NAME = "name"
     const val EMAIL = "email"
@@ -19,6 +20,7 @@ object Constants {
     const val ONLINE = "online"
     const val VISIBLE = "visible"
     const val BLOCKS = "blocks"
+    const val DEFAULT_IMAGE_URL = "null"
 
     const val LOC = "last_locations"
     const val LAT = "lat"

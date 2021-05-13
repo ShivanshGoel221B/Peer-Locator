@@ -28,14 +28,14 @@ class InvitesAdapter (private val invitesList: ArrayList<InviteModel>, private v
 
     override fun onBindViewHolder(holder: InvitesViewHolder, position: Int) {
         val invite = invitesList[position]
-        val reference = invite.reference.path
+        val reference = invite.documentReference.path
         val placeHolder = if ("circles/" in reference)
             R.drawable.ic_placeholder_circle
         else
             R.drawable.ic_placeholder_user
 
         val name = invite.name
-        val profileUrl = invite.photoUrl
+        val profileUrl = invite.imageUrl
         val timeStamp = invite.timeStamp
 
         holder.controlsBar.visibility = View.VISIBLE

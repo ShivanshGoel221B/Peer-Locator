@@ -1,5 +1,6 @@
 package com.goel.peerlocator.repositories
 
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
@@ -12,7 +13,7 @@ open class UserRepository {
     }
 
     protected val fireStoreDatabase = Firebase.firestore
-    protected val userRef = fireStoreDatabase.collection("users")
+    protected val userRef = fireStoreDatabase.collection(Constants.USERS)
 
     fun signIn (user : FirebaseUser) {
         Database.signIn(user, userRef)

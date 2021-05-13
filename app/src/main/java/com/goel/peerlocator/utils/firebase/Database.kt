@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import java.io.InputStream
 
 object Database {
 
@@ -38,8 +39,8 @@ object Database {
                         createUserEntry(currentUserRef, user)
                     }
                     else {
-                        currentUser?.displayName = it[Constants.NAME].toString()
-                        currentUser?.photoUrl = it[Constants.DP].toString()
+                        currentUser?.name = it[Constants.NAME].toString()
+                        currentUser?.imageUrl = it[Constants.DP].toString()
                         listener?.onUserCreated()
                     }
                 }
@@ -55,8 +56,8 @@ object Database {
             newUser[Constants.DP] = user.photoUrl!!.toString()
             newUser[Constants.ONLINE] = true
             newUser[Constants.VISIBLE] = true
-            currentUser?.displayName = user.displayName!!
-            currentUser?.photoUrl = user.photoUrl!!.toString()
+            currentUser?.name = user.displayName!!
+            currentUser?.imageUrl = user.photoUrl!!.toString()
             listener?.onUserCreated()
             newUser[Constants.EMAIL] = user.email!!
             currentUserRef.set(newUser)
@@ -99,8 +100,8 @@ object Database {
                         membersCount = (it[Constants.MEMBERS] as ArrayList<DocumentReference>).size
                     } catch (e: java.lang.NullPointerException) {
                     }
-                    val newCircle = CircleModel(circleName = it[Constants.NAME].toString(),
-                        circleReference = it.reference,
+                    val newCircle = CircleModel(name = it[Constants.NAME].toString(),
+                        documentReference = it.reference,
                         imageUrl = it[Constants.DP].toString(),
                         adminReference = it[Constants.ADMIN] as DocumentReference,
                         memberCount = membersCount)
@@ -156,7 +157,7 @@ object Database {
                                 val name = friend[Constants.NAME].toString()
                                 val imageUrl = friend[Constants.DP].toString()
 
-                                val model = FriendModel(friendReference = friend.reference, friendName = name,
+                                val model = FriendModel(documentReference = friend.reference, name = name,
                                             imageUrl = imageUrl, uid = getUid(friend.reference)
                                 )
                                 listener.onFriendRetrieved(model)
@@ -189,8 +190,8 @@ object Database {
                         }
                     }
 
-                    val newFriend = FriendModel(friendName = it[Constants.NAME].toString(),
-                        friendReference = it.reference,
+                    val newFriend = FriendModel(name = it[Constants.NAME].toString(),
+                        documentReference = it.reference,
                         imageUrl = it[Constants.DP].toString(),
                         commonCirclesCount = count, uid = getUid(it.reference)
                     )
@@ -223,14 +224,14 @@ object Database {
                         nothingFound.visibility - View.GONE
 
                     for (data in snapshot.children) {
-                        val reference = database.document(data.key.toString().replace('!', '/'))
+                        val reference = database.document(data.key.toString().toInvitationPath())
                         val timeStamp = data.value.toString()
 
 
                         reference.get().addOnSuccessListener {
                             val name = it[Constants.NAME].toString()
                             val photoUrl = it[Constants.DP].toString()
-                            val newInvite = InviteModel(reference = reference, name = name, photoUrl = photoUrl, timeStamp = timeStamp)
+                            val newInvite = InviteModel(documentReference = reference, name = name, imageUrl = photoUrl, timeStamp = timeStamp)
                             invitesList.add(newInvite)
                             invitesAdapter.notifyDataSetChanged()
                             shimmer.visibility = View.GONE
@@ -340,8 +341,8 @@ object Database {
                 val friends = it[Constants.FRIENDS] as ArrayList<DocumentReference>
                 for(ref in friends) {
                     if (userPath == ref.path) {
-                        val friend = FriendModel(friendReference = reference, uid = getUid(reference),
-                                friendName = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
+                        val friend = FriendModel(documentReference = reference, uid = getUid(reference),
+                                name = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
                         listener.friendFound(friend)
                         return@addOnSuccessListener
                     }
@@ -359,7 +360,7 @@ object Database {
             }catch (e : NullPointerException){}
 
             listener.userFound(UnknownUserModel(reference, getUid(reference),
-                    displayName = it[Constants.NAME].toString(), photoUrl = it[Constants.DP].toString()))
+                    name = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString()))
         }
     }
 
@@ -393,8 +394,8 @@ object Database {
                 for (reference in blocks){
                     reference.get().addOnFailureListener { listener.onNetworkError() }
                         .addOnSuccessListener { user ->
-                            val model = UnknownUserModel(user.reference, displayName = user[Constants.NAME].toString(),
-                                                        photoUrl = user[Constants.DP].toString())
+                            val model = UnknownUserModel(user.reference, name = user[Constants.NAME].toString(),
+                                                        imageUrl = user[Constants.DP].toString())
                             listener.onBlockListUpdated(model)
                         }
                 }
@@ -424,6 +425,60 @@ object Database {
 
     }
 
+    fun createNewCircle (
+        circleReference: CollectionReference,
+        name: String,
+        imageStream: InputStream?,
+        membersList: ArrayList<DocumentReference>,
+        listener: EditCircleListener
+    ) {
+        val reference = circleReference.document()
+        val uid = reference.id
+        val model = CircleModel(documentReference = reference, uid = uid,
+            adminReference = currentUserRef, memberCount = membersList.size+1,
+            name = name, imageUrl = Constants.DEFAULT_IMAGE_URL)
+
+        val circleMap = HashMap<String, Any>()
+        circleMap[Constants.NAME] = model.name
+        circleMap[Constants.ADMIN] = model.adminReference
+        circleMap[Constants.DP] = model.imageUrl
+        circleMap[Constants.MEMBERS] = arrayListOf(currentUserRef)
+
+        reference.set(circleMap).addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                if (imageStream == null) {
+                    listener.onCreationSuccessful()
+                    addMembers(reference,
+                        arrayListOf(currentUserRef), membersList, listener)
+                }
+                else {
+                    Storage.uploadProfileImage(model, reference, imageStream, arrayListOf(
+                        currentUserRef), membersList, listener)
+                }
+
+            }
+    }
+
+    fun inviteMembers (documentReference: DocumentReference, membersList: ArrayList<DocumentReference>) {
+        val ids = ArrayList<String>()
+        membersList.forEach {
+            ids.add(getUid(it))
+        }
+        val invitationPath = documentReference.path.toInvitationPath()
+        TODO("send invitations")
+    }
+
+    fun addMembers (documentReference: DocumentReference, initialMembers : ArrayList<DocumentReference>,
+                    newMembers : ArrayList<DocumentReference>, listener: EditCircleListener) {
+        newMembers.forEach {
+            initialMembers.add(it)
+        }
+        documentReference.update(Constants.MEMBERS, initialMembers)
+            .addOnFailureListener { listener.onError() }
+            .addOnSuccessListener { listener.membersAdditionSuccessful() }
+    }
+
     private fun getUid (reference: DocumentReference) = reference.path.substring(6)
+    private fun String.toInvitationPath () = this.replace('!', '/')
 
 }

@@ -44,9 +44,9 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         Location.locationListener = this
         marker = MarkerOptions()
 
-        binding.friendName.text = friend.friendName
+        binding.friendName.text = friend.name
 
-        marker.title(friend.friendName)
+        marker.title(friend.name)
 
         Location.currentFriend = friend
         Location.setListeners(friend)

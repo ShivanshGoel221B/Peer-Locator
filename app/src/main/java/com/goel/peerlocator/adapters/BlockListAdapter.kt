@@ -25,8 +25,8 @@ class BlockListAdapter (private val blockList : ArrayList<UnknownUserModel>, pri
 
     override fun onBindViewHolder(holder: BlockViewHolder, position: Int) {
         val user = blockList[position]
-        val url = user.photoUrl
-        val name = user.displayName
+        val url = user.imageUrl
+        val name = user.name
         Picasso.with(context)
             .load(url)
             .placeholder(R.drawable.ic_placeholder_user)

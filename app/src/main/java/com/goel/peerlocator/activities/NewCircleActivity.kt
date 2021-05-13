@@ -1,29 +1,42 @@
 package com.goel.peerlocator.activities
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.NewCircleAdapter
 import com.goel.peerlocator.databinding.ActivityNewCircleBinding
+import com.goel.peerlocator.dialogs.LoadingDialog
 import com.goel.peerlocator.fragments.AddMembersFragment
-import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.viewmodels.NewCircleViewModel
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
+import java.io.InputStream
 
-class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickListener {
+class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickListener,
+    EditCircleListener {
 
     private lateinit var binding : ActivityNewCircleBinding
     private lateinit var viewModel: NewCircleViewModel
     private lateinit var adapter : NewCircleAdapter
     private lateinit var membersCounter : TextView
     private var membersCount : Int = 1
+    private var imageStream: InputStream? = null
+    private lateinit var loadingDialogBox: LoadingDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +50,7 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     private fun setViews () {
         membersCounter = binding.circleMembersCounter
         Picasso.with(this)
-            .load(Database.currentUser?.photoUrl)
+            .load(Database.currentUser?.imageUrl)
             .placeholder(R.drawable.ic_placeholder_user)
             .transform(CropCircleTransformation())
             .into(binding.myProfilePicture)
@@ -73,6 +86,76 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
                 Toast.makeText(this, R.string.circle_size_warning, Toast.LENGTH_LONG).show()
             }
         }
+        binding.editNameDone.setOnClickListener {
+            it.hideKeyboard()
+            binding.editNameInput.clearFocus()
+        }
+
+        binding.camera.setOnClickListener { checkStoragePermission() }
+
+        binding.cancelButton.setOnClickListener { finish() }
+        binding.submitButton.setOnClickListener {
+            createCircle ()
+        }
+    }
+
+    private fun createCircle() {
+        loadingDialogBox = LoadingDialog(this)
+        loadingDialogBox.show(supportFragmentManager, "loading dialog")
+        val name = binding.editNameInput.text.toString()
+        viewModel.createCircle(name, imageStream, this)
+    }
+
+    // Profile Picture
+
+    private fun checkStoragePermission () {
+        if (ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_GRANTED) {
+            uploadImage()
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                Constants.READ_STORAGE_PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == Constants.READ_STORAGE_PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                uploadImage()
+        }
+    }
+
+    private fun uploadImage () {
+        val imageIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(imageIntent, Constants.IMAGE_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Constants.IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+            data?.let {
+                val type = contentResolver.getType(it.data!!)
+                val size = contentResolver.openInputStream(it.data!!)!!.readBytes().size
+                when {
+                    type !in Constants.IMAGE_FILE_TYPES ->
+                        Toast.makeText(this, getString(R.string.image_type_warning), Toast.LENGTH_LONG).show()
+                    size > Constants.MAX_IMAGE_SIZE ->
+                        Toast.makeText(this, getString(R.string.image_size_warning), Toast.LENGTH_LONG).show()
+                    else -> {
+                        imageStream = contentResolver.openInputStream(it.data!!)
+                        Picasso.with(this).load(it.data)
+                            .transform(CropCircleTransformation()).into(binding.circleProfilePhoto)
+                    }
+                }
+            }
+        }
+    }
+
+    ////////////////////////////////////////////////
+
+    private fun View.hideKeyboard() {
+        val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }
 
     override fun onBackPressed() {
@@ -84,5 +167,21 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     override fun onRemoveClick(position: Int) {
         adapter.notifyItemRemoved(position)
         viewModel.membersList.removeAt(position)
+    }
+
+    override fun onCreationSuccessful() {
+        loadingDialogBox.setProgress(30, 100)
+        loadingDialogBox.setMessage(R.string.adding_members)
+    }
+
+    override fun membersAdditionSuccessful() {
+        loadingDialogBox.setProgress(100, 100)
+        loadingDialogBox.setMessage(R.string.finishing_up)
+    }
+
+    override fun onFinalCompletion() { finish() }
+
+    override fun onError() {
+        Toast.makeText(applicationContext, R.string.error_message, Toast.LENGTH_SHORT).show()
     }
 }

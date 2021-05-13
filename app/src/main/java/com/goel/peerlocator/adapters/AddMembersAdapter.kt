@@ -26,7 +26,7 @@ class AddMembersAdapter (private val context : Context, private val friendsList 
 
     override fun onBindViewHolder(holder: MembersViewHolder, position: Int) {
         val model = friendsList[position]
-        val name = model.friendName
+        val name = model.name
         val url = model.imageUrl
         holder.profileName.text = name
         Picasso.with(context)

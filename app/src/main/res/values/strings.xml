@@ -86,5 +86,9 @@
     <string name="circle_size_warning">Circle Size should not exceed 20 members</string>
     <string name="add_selected">Add Selected</string>
     <string name="error_message">Some Error Occurred</string>
+    <string name="creating_circle">Creating Circle</string>
+    <string name="adding_members">Adding Members</string>
+    <string name="circle_created">Circle Created</string>
+    <string name="finishing_up">Finishing Up</string>
 
 </resources>
