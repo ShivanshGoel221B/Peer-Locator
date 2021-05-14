@@ -3,8 +3,8 @@ package com.goel.peerlocator.repositories
 import android.widget.LinearLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.InvitesAdapter
-import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.models.InviteModel
+import com.goel.peerlocator.utils.firebase.database.InvitationDatabase
 
 
 class InvitesRepository : UserRepository() {
@@ -17,6 +17,6 @@ class InvitesRepository : UserRepository() {
 
     fun getAllInvites (invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
         invitesList.clear()
-        Database.getAllInvites(fireStoreDatabase, invitesList, invitesAdapter, shimmer, nothingFound)
+        InvitationDatabase.instance.getAllInvites(fireStoreDatabase, invitesList, invitesAdapter, shimmer, nothingFound)
     }
 }

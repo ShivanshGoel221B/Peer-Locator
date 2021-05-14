@@ -1,7 +1,7 @@
 package com.goel.peerlocator.repositories
 
 import com.goel.peerlocator.listeners.BlockListener
-import com.goel.peerlocator.utils.firebase.Database
+import com.goel.peerlocator.utils.firebase.database.Database
 import com.google.firebase.firestore.DocumentReference
 
 class BlockRepository {

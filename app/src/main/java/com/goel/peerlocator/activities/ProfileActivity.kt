@@ -21,8 +21,8 @@ import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.listeners.ProfileDataListener
 import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.Database
-import com.goel.peerlocator.utils.firebase.Storage
+import com.goel.peerlocator.utils.firebase.database.Database
+import com.goel.peerlocator.utils.firebase.storage.Storage
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth

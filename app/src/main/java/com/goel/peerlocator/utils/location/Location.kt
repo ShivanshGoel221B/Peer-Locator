@@ -4,7 +4,7 @@ import android.location.Location
 import com.goel.peerlocator.listeners.LocationListener
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.Database
+import com.goel.peerlocator.utils.firebase.database.Database
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

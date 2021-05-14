@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.NewCircleAdapter
 import com.goel.peerlocator.databinding.ActivityNewCircleBinding
-import com.goel.peerlocator.dialogs.LoadingDialog
+import com.goel.peerlocator.dialogs.LoadingDialogHorizontal
 import com.goel.peerlocator.fragments.AddMembersFragment
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.Database
+import com.goel.peerlocator.utils.firebase.database.Database
 import com.goel.peerlocator.viewmodels.NewCircleViewModel
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
@@ -36,7 +36,7 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     private lateinit var membersCounter : TextView
     private var membersCount : Int = 1
     private var imageStream: InputStream? = null
-    private lateinit var loadingDialogBox: LoadingDialog
+    private lateinit var loadingDialogBox: LoadingDialogHorizontal
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,10 +100,20 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     }
 
     private fun createCircle() {
-        loadingDialogBox = LoadingDialog(this)
-        loadingDialogBox.show(supportFragmentManager, "loading dialog")
         val name = binding.editNameInput.text.toString()
-        viewModel.createCircle(name, imageStream, this)
+        val nameValidity = Constants.isNameValid(name)
+        if (true in nameValidity.keys) {
+            loadingDialogBox = LoadingDialogHorizontal(object : LoadingDialogHorizontal.ClickListener {
+                override fun onOkClicked() { finish() }
+            })
+            loadingDialogBox.show(supportFragmentManager, "loading dialog")
+            viewModel.createCircle(name, imageStream, this)
+        }
+        else
+        {
+            val message = nameValidity[false]
+            binding.editNameInput.error = message
+        }
     }
 
     // Profile Picture
@@ -171,15 +181,17 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
 
     override fun onCreationSuccessful() {
         loadingDialogBox.setProgress(30, 100)
-        loadingDialogBox.setMessage(R.string.adding_members)
+        loadingDialogBox.setMessage(R.string.inviting_members)
+    }
+
+    override fun onInvitationSent(completedPercentage: Int, nextPercentage: Int) {
+        loadingDialogBox.setProgress(completedPercentage, nextPercentage)
     }
 
     override fun membersAdditionSuccessful() {
         loadingDialogBox.setProgress(100, 100)
         loadingDialogBox.setMessage(R.string.finishing_up)
     }
-
-    override fun onFinalCompletion() { finish() }
 
     override fun onError() {
         Toast.makeText(applicationContext, R.string.error_message, Toast.LENGTH_SHORT).show()

@@ -1,10 +1,11 @@
-package com.goel.peerlocator.utils.firebase
+package com.goel.peerlocator.utils.firebase.storage
 
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.ProfileDataListener
-import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.utils.Constants
+import com.goel.peerlocator.utils.firebase.database.Database
+import com.goel.peerlocator.utils.firebase.database.InvitationDatabase
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -26,11 +27,11 @@ object Storage {
         }
     }
 
-    fun uploadProfileImage(model : CircleModel, documentReference: DocumentReference,
-                            inputStream: InputStream, initialMembers : ArrayList<DocumentReference>,
-                           newMembers : ArrayList<DocumentReference>,
-                           listener: EditCircleListener) {
-        val uploadTask = profilePictureRef.child(model.uid).putStream(inputStream)
+    fun uploadProfileImage(
+        documentReference: DocumentReference, inputStream: InputStream,
+        membersUIds : ArrayList<String>, listener: EditCircleListener
+    ) {
+        val uploadTask = profilePictureRef.child(documentReference.id).putStream(inputStream)
         uploadTask.addOnFailureListener { listener.onError() }
         uploadTask.addOnSuccessListener {
             it.storage.downloadUrl.addOnSuccessListener {url ->
@@ -38,7 +39,7 @@ object Storage {
                     .addOnFailureListener { listener.onError() }
                     .addOnSuccessListener {
                         listener.onCreationSuccessful()
-                        Database.addMembers(documentReference, initialMembers, newMembers, listener)
+                        InvitationDatabase.instance.sentInvitations(documentReference, membersUIds, listener)
                 }
             }
         }

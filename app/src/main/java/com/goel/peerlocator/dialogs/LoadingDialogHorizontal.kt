@@ -2,7 +2,6 @@ package com.goel.peerlocator.dialogs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -12,19 +11,19 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.goel.peerlocator.R
-import com.goel.peerlocator.listeners.EditCircleListener
 
 
-class LoadingDialog (private val listener : EditCircleListener) : AppCompatDialogFragment() {
+class LoadingDialogHorizontal(private val clickListener: ClickListener) : AppCompatDialogFragment() {
     private lateinit var builder : AlertDialog.Builder
     private lateinit var dialogview : View
 
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        builder = AlertDialog.Builder(activity!!.applicationContext)
+        builder = AlertDialog.Builder(context!!)
         builder.setCancelable(false)
-        dialogview = layoutInflater.inflate(R.layout.loading_dialog_box_horizontal, null)
-        builder.setView(view)
+        dialogview = activity!!.layoutInflater.inflate(R.layout.loading_dialog_box_horizontal, null, false)
+        builder.setView(dialogview).setTitle(R.string.please_wait)
+        this.isCancelable = false
         setProgress(0, 30)
         setMessage(R.string.creating_circle)
         return builder.create()
@@ -32,11 +31,10 @@ class LoadingDialog (private val listener : EditCircleListener) : AppCompatDialo
 
     fun setProgress(progress: Int, secondaryProgress : Int) {
         val progressBar : ProgressBar = dialogview.findViewById(R.id.loading_progress_bar)
+        progressBar.progress = progress
         progressBar.secondaryProgress = secondaryProgress
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            progressBar.setProgress(progress, true)
-        else
-            progressBar.progress = progress
+        if (progress >= 100)
+            doneLoading()
     }
 
     fun setMessage(resId : Int) {
@@ -49,7 +47,11 @@ class LoadingDialog (private val listener : EditCircleListener) : AppCompatDialo
         dialogview.findViewById<ConstraintLayout>(R.id.done_layout).visibility = View.VISIBLE
         dialogview.findViewById<Button>(R.id.ok_button).setOnClickListener {
             dismiss()
-            listener.onFinalCompletion()
+            clickListener.onOkClicked()
         }
+    }
+
+    interface ClickListener {
+        fun onOkClicked ()
     }
 }

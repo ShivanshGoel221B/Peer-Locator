@@ -12,8 +12,8 @@ import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.listeners.FriendDataListener
+import com.goel.peerlocator.utils.firebase.database.FriendsDatabase
 import com.google.firebase.firestore.DocumentReference
 import com.squareup.picasso.Picasso
 
@@ -49,7 +49,7 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
         val name = model.name
         binding.infoToolbar.profileName.text = name
         Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user_big).into(binding.profileImageHolder)
-        Database.getFriendInfo(this, model.documentReference)
+        FriendsDatabase.instance.getFriendInfo(this, model.documentReference)
     }
 
     private fun createRecyclerView () {

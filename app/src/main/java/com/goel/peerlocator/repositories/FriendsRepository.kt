@@ -4,8 +4,8 @@ import android.widget.LinearLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.listeners.GetListListener
-import com.goel.peerlocator.utils.firebase.Database
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.utils.firebase.database.FriendsDatabase
 
 class FriendsRepository : UserRepository() {
 
@@ -17,7 +17,7 @@ class FriendsRepository : UserRepository() {
 
     fun getAllFriends (friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
         friendsList.clear()
-        Database.getAllFriends(userRef, friendsList, friendsAdapter, shimmer, nothingFound)
+        FriendsDatabase.instance.getAllFriends(userRef, friendsList, friendsAdapter, shimmer, nothingFound)
     }
 
     fun getFriendsList(addedMembers : ArrayList<FriendModel>, listener : GetListListener) {
@@ -25,6 +25,6 @@ class FriendsRepository : UserRepository() {
         addedMembers.forEach {
             addedIds.add(it.uid)
         }
-        Database.getAllFriends(addedIds, listener)
+        FriendsDatabase.instance.getAllFriends(addedIds, listener)
     }
 }

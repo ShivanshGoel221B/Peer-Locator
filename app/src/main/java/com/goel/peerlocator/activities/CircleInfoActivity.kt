@@ -18,7 +18,8 @@ import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.Database
+import com.goel.peerlocator.utils.firebase.database.Database
+import com.goel.peerlocator.utils.firebase.database.CirclesDatabase
 import com.google.firebase.firestore.DocumentReference
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
@@ -55,7 +56,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
         val name = model.name
         binding.infoToolbar.profileName.text = name
         Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_circle_big).into(binding.profileImageHolder)
-        Database.getCircleInfo(this, model.documentReference)
+        CirclesDatabase.instance.getCircleInfo(this, model.documentReference)
     }
 
     private fun createRecyclerView () {

@@ -25,6 +25,8 @@ object Constants {
     const val LOC = "last_locations"
     const val LAT = "lat"
     const val LON = "lon"
+    const val NANOSECONDS = "nanoseconds"
+    const val SECONDS = "seconds"
 
     const val FINE = Manifest.permission.ACCESS_FINE_LOCATION
     const val COARSE = Manifest.permission.ACCESS_COARSE_LOCATION

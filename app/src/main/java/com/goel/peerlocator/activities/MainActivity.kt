@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,7 +17,7 @@ import com.goel.peerlocator.databinding.ActivityMainBinding
 import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.Database
+import com.goel.peerlocator.utils.firebase.database.Database
 import com.goel.peerlocator.listeners.UserDataListener
 import com.goel.peerlocator.utils.location.Location
 import com.google.android.gms.location.LocationServices
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Database.listener = this
+        Database.userDataListener = this
 
         createToolBar()
         setBackgroundLocationService()
@@ -132,6 +133,12 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_context_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.add_new_circle)
+            startActivity(Intent(this, NewCircleActivity::class.java))
+        return true
     }
 
     private fun setUserData() {
