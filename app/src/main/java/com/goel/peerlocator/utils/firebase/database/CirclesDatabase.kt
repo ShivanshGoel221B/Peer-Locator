@@ -8,6 +8,7 @@ import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.models.CircleModel
+import com.goel.peerlocator.repositories.InvitesRepository
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.storage.Storage
 import com.google.firebase.firestore.CollectionReference
@@ -95,7 +96,7 @@ class CirclesDatabase : Database() {
         circleReference: CollectionReference,
         name: String,
         imageStream: InputStream?,
-        membersIdList: ArrayList<String>,
+        membersList: ArrayList<DocumentReference>,
         listener: EditCircleListener
     ) {
         val reference = circleReference.document()
@@ -120,10 +121,10 @@ class CirclesDatabase : Database() {
                             .addOnSuccessListener {
                                 if (imageStream == null) {
                                     listener.onCreationSuccessful()
-                                    InvitationDatabase.instance.sentInvitations(reference, membersIdList, listener)
+                                    InvitesRepository.instance.sendInvitations(reference, membersList, listener)
                                 }
                                 else {
-                                    Storage.uploadProfileImage(reference, imageStream, membersIdList, listener)
+                                    Storage.uploadProfileImage(reference, imageStream, membersList, listener)
                                 }
                             }
                     }

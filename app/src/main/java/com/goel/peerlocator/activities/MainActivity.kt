@@ -136,8 +136,11 @@ class MainActivity : AppCompatActivity(), UserDataListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.add_new_circle)
-            startActivity(Intent(this, NewCircleActivity::class.java))
+        when(item.itemId)
+        {
+            R.id.add_new_circle -> startActivity(Intent(this, NewCircleActivity::class.java))
+            R.id.add_new_friend -> startActivity(Intent(this, AddFriendActivity::class.java))
+        }
         return true
     }
 

@@ -3,6 +3,7 @@ package com.goel.peerlocator.utils.firebase.storage
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.ProfileDataListener
 import com.goel.peerlocator.models.UserModel
+import com.goel.peerlocator.repositories.InvitesRepository
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
 import com.goel.peerlocator.utils.firebase.database.InvitationDatabase
@@ -29,7 +30,7 @@ object Storage {
 
     fun uploadProfileImage(
         documentReference: DocumentReference, inputStream: InputStream,
-        membersUIds : ArrayList<String>, listener: EditCircleListener
+        membersList : ArrayList<DocumentReference>, listener: EditCircleListener
     ) {
         val uploadTask = profilePictureRef.child(documentReference.id).putStream(inputStream)
         uploadTask.addOnFailureListener { listener.onError() }
@@ -39,7 +40,7 @@ object Storage {
                     .addOnFailureListener { listener.onError() }
                     .addOnSuccessListener {
                         listener.onCreationSuccessful()
-                        InvitationDatabase.instance.sentInvitations(documentReference, membersUIds, listener)
+                        InvitesRepository.instance.sendInvitations(documentReference, membersList, listener)
                 }
             }
         }

@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
+import com.goel.peerlocator.activities.AddFriendActivity
 import com.goel.peerlocator.activities.FriendActivity
 import com.goel.peerlocator.activities.FriendInfoActivity
 import com.goel.peerlocator.adapters.FriendsAdapter
@@ -66,6 +67,10 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         }
 
         viewModel.getAllFriends(friendsAdapter, shimmer, nothingFound)
+
+        binding?.addNewFriend?.setOnClickListener {
+            startActivity(Intent(context, AddFriendActivity::class.java))
+        }
 
     }
 

@@ -64,7 +64,7 @@ class InvitationDatabase : Database() {
             })
     }
 
-    fun sentInvitations (documentReference: DocumentReference, uIds: ArrayList<String>, listener : EditCircleListener) {
+    fun sendInvitations (documentReference: DocumentReference, uIds: ArrayList<String>, listener : EditCircleListener) {
         if (uIds.isEmpty()) {
             listener.onInvitationSent(100, 100)
             return

@@ -1,6 +1,5 @@
 package com.goel.peerlocator.repositories
 
-import android.util.Log
 import android.widget.LinearLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.CirclesAdapter
@@ -31,10 +30,10 @@ class CirclesRepository : UserRepository () {
 
     fun createNewCircle (name: String, imageStream: InputStream?,
                          membersList: java.util.ArrayList<FriendModel>, listener: EditCircleListener) {
-        val uIds = ArrayList<String>()
+        val referencesList = ArrayList<DocumentReference>()
         membersList.forEach {
-            uIds.add(it.documentReference.id)
+            referencesList.add(it.documentReference)
         }
-        CirclesDatabase.instance.createNewCircle(circlesReference, name, imageStream, uIds, listener)
+        CirclesDatabase.instance.createNewCircle(circlesReference, name, imageStream, referencesList, listener)
     }
 }
