@@ -14,7 +14,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlin.math.ceil
 
 class InvitationDatabase : Database() {
@@ -24,7 +23,7 @@ class InvitationDatabase : Database() {
     }
     private val invitesReference = FirebaseDatabase.getInstance().reference.child(Constants.INVITES)
 
-    fun getAllInvites (database : FirebaseFirestore, invitesList : ArrayList<InviteModel>,
+    fun getAllInvites (invitesList : ArrayList<InviteModel>,
                        invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout
     ) {
         invitesReference.child(currentUser!!.uid)
@@ -39,7 +38,7 @@ class InvitationDatabase : Database() {
                         nothingFound.visibility - View.GONE
 
                     for (data in snapshot.children) {
-                        val reference = database.document(data.key.toString().toReferencePath())
+                        val reference = fireStoreDatabase.document(data.key.toString().toReferencePath())
                         val timeHash = data.value as HashMap<String, Long>
                         val timeStamp = Timestamp(timeHash[Constants.SECONDS]!!, timeHash[Constants.NANOSECONDS]!!.toInt())
                         val date = timeStamp.toDate()
@@ -69,6 +68,7 @@ class InvitationDatabase : Database() {
             listener.onInvitationSent(100, 100)
             return
         }
+        val references = ArrayList<DocumentReference>()
         val timestamp = Timestamp.now()
         val invitationPath = documentReference.path.toInvitationPath()
         var completion = 30
@@ -79,6 +79,10 @@ class InvitationDatabase : Database() {
                 .addOnSuccessListener {
                     completion+= unit
                     listener.onInvitationSent(completion, completion+unit)
+                    references.add(userRef.document(uId))
+                    if (completion >= 100) {
+                        documentReference.update(Constants.SENT_INVITES, references)
+                    }
                 }
         }
     }

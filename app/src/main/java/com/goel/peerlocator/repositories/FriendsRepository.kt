@@ -17,7 +17,7 @@ class FriendsRepository : UserRepository() {
 
     fun getAllFriends (friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
         friendsList.clear()
-        FriendsDatabase.instance.getAllFriends(userRef, friendsList, friendsAdapter, shimmer, nothingFound)
+        FriendsDatabase.instance.getAllFriends(friendsList, friendsAdapter, shimmer, nothingFound)
     }
 
     fun getFriendsList(addedMembers : ArrayList<FriendModel>, listener : GetListListener) {
@@ -26,5 +26,9 @@ class FriendsRepository : UserRepository() {
             addedIds.add(it.uid)
         }
         FriendsDatabase.instance.getAllFriends(addedIds, listener)
+    }
+
+    fun getUsers (listener: GetListListener) {
+        FriendsDatabase.instance.getUsers(listener)
     }
 }

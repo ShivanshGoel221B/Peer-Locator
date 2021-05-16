@@ -19,7 +19,7 @@ class InvitesRepository : UserRepository() {
 
     fun getAllInvites (invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
         invitesList.clear()
-        InvitationDatabase.instance.getAllInvites(fireStoreDatabase, invitesList, invitesAdapter, shimmer, nothingFound)
+        InvitationDatabase.instance.getAllInvites(invitesList, invitesAdapter, shimmer, nothingFound)
     }
 
     fun sendInvitations (documentReference : DocumentReference, membersList : ArrayList<DocumentReference>, listener : EditCircleListener) {

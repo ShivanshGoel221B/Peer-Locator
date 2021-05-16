@@ -17,6 +17,7 @@ object Constants {
     const val MEMBERS = "members"
     const val FRIENDS = "friends"
     const val INVITES = "invites"
+    const val SENT_INVITES = "sent_invites"
     const val ONLINE = "online"
     const val VISIBLE = "visible"
     const val BLOCKS = "blocks"

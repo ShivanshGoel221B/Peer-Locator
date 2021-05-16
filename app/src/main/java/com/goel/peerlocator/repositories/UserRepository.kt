@@ -12,8 +12,7 @@ open class UserRepository {
         val instance = UserRepository()
     }
 
-    protected val fireStoreDatabase = Firebase.firestore
-    protected val userRef = fireStoreDatabase.collection(Constants.USERS)
+    private val userRef = Firebase.firestore.collection(Constants.USERS)
 
     fun signIn (user : FirebaseUser) {
         Database.signIn(user, userRef)

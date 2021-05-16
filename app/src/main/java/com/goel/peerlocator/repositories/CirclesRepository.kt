@@ -6,7 +6,6 @@ import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
-import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.CirclesDatabase
 import com.google.firebase.firestore.DocumentReference
 import java.io.InputStream
@@ -18,14 +17,13 @@ class CirclesRepository : UserRepository () {
     }
 
     val circleList = ArrayList<CircleModel> ()
-    private val circlesReference = fireStoreDatabase.collection(Constants.CIRCLES)
 
     fun getAllCircles (
         circlesAdapter: CirclesAdapter,
         shimmer: ShimmerFrameLayout,
         nothingFound: LinearLayout) {
         circleList.clear()
-        CirclesDatabase.instance.getAllCircles(userRef, circleList, circlesAdapter, shimmer, nothingFound)
+        CirclesDatabase.instance.getAllCircles(circleList, circlesAdapter, shimmer, nothingFound)
     }
 
     fun createNewCircle (name: String, imageStream: InputStream?,
@@ -34,6 +32,6 @@ class CirclesRepository : UserRepository () {
         membersList.forEach {
             referencesList.add(it.documentReference)
         }
-        CirclesDatabase.instance.createNewCircle(circlesReference, name, imageStream, referencesList, listener)
+        CirclesDatabase.instance.createNewCircle(name, imageStream, referencesList, listener)
     }
 }

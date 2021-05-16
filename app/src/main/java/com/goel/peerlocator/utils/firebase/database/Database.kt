@@ -7,8 +7,14 @@ import com.goel.peerlocator.utils.Constants
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 abstract class Database {
+
+    protected val fireStoreDatabase = Firebase.firestore
+    protected val userRef = fireStoreDatabase.collection(Constants.USERS)
+    protected val circlesReference = fireStoreDatabase.collection(Constants.CIRCLES)
 
     companion object {
         lateinit var currentUserRef : DocumentReference

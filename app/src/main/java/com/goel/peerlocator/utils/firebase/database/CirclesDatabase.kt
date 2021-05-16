@@ -22,7 +22,7 @@ class CirclesDatabase : Database() {
     }
 
     fun getAllCircles (
-        userRef: CollectionReference, circleList: java.util.ArrayList<CircleModel>,
+        circleList: java.util.ArrayList<CircleModel>,
         circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout
     ) {
         var circleArray = java.util.ArrayList<DocumentReference>()
@@ -93,13 +93,12 @@ class CirclesDatabase : Database() {
 
     //Create/Edit new Circle
     fun createNewCircle (
-        circleReference: CollectionReference,
         name: String,
         imageStream: InputStream?,
         membersList: ArrayList<DocumentReference>,
         listener: EditCircleListener
     ) {
-        val reference = circleReference.document()
+        val reference = circlesReference.document()
 
         val circleMap = HashMap<String, Any>()
         circleMap[Constants.NAME] = name

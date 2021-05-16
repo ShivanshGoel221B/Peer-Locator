@@ -9,6 +9,7 @@ import com.goel.peerlocator.listeners.FriendDataListener
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.Constants
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 
@@ -17,7 +18,7 @@ class FriendsDatabase : Database() {
          val instance = FriendsDatabase()
      }
 
-    fun getAllFriends (userRef: CollectionReference, friendsList : java.util.ArrayList<FriendModel>,
+    fun getAllFriends (friendsList : java.util.ArrayList<FriendModel>,
                        friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout
     ) {
         var circleArray =  java.util.ArrayList<DocumentReference>()
@@ -143,5 +144,26 @@ class FriendsDatabase : Database() {
                 }
             }
         }
+    }
+
+    fun getUsers(listener: GetListListener) {
+        val friends = ArrayList<String>()
+        val invites = ArrayList<String>()
+        val myId = currentUser!!.uid
+        currentUserRef.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                try {
+                    val friendReferences = it[Constants.FRIENDS] as ArrayList<DocumentReference>
+                    friendReferences.forEach {friend ->
+                        friends.add(friend.id)
+                    }
+                } catch (e : NullPointerException) {}
+
+                FirebaseDatabase.getInstance().reference.child(Constants.INVITES).get()
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {invites ->
+                        invites.children
+                    }
+            }
     }
 }
