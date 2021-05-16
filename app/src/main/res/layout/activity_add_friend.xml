@@ -55,6 +55,10 @@
 
             <include layout="@layout/shimmer_layout" />
 
+            <include layout="@layout/shimmer_layout" />
+
+            <include layout="@layout/shimmer_layout" />
+
         </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -105,5 +109,17 @@
             android:textSize="22sp" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/image_fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

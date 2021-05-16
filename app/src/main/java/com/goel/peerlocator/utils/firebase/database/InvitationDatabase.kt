@@ -5,8 +5,10 @@ import android.view.View
 import android.widget.LinearLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.InvitesAdapter
+import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.models.InviteModel
+import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
 import com.google.firebase.Timestamp
 import com.google.firebase.database.DataSnapshot
@@ -85,6 +87,28 @@ class InvitationDatabase : Database() {
                     }
                 }
         }
+    }
+
+    fun sendInvitation(recipient: UnknownUserModel, listener: AddFriendListener) {
+        var initialSent = ArrayList<DocumentReference>()
+        currentUserRef.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                try {
+                    initialSent = it[Constants.SENT_INVITES] as ArrayList<DocumentReference>
+                } catch (e: NullPointerException) {}
+
+                initialSent.add(recipient.documentReference)
+
+                currentUserRef.update(Constants.SENT_INVITES, initialSent)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {
+                        invitesReference.child(recipient.uid)
+                            .child(currentUserRef.path.toInvitationPath())
+                            .setValue(Timestamp.now())
+                            .addOnFailureListener { listener.onError() }
+                            .addOnSuccessListener { listener.onInvitationSent(recipient) }
+                    }
+            }
     }
 
     private fun String.toReferencePath () = this.replace('!', '/')

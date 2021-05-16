@@ -1,5 +1,6 @@
 package com.goel.peerlocator.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -10,10 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.AddFriendAdapter
 import com.goel.peerlocator.databinding.ActivityAddFriendBinding
+import com.goel.peerlocator.fragments.ImageViewFragment
+import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.UnknownUserModel
+import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.AddFriendViewModel
 
 class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
@@ -89,14 +93,36 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
     }
 
     override fun onInviteClicked(position: Int) {
-        TODO("Not yet implemented")
+        viewModel.sendInvitation(position, object :  AddFriendListener{
+            override fun onInvitationSent(model: UnknownUserModel) {
+                val index = viewModel.usersList.indexOf(model)
+                adapter.notifyItemRemoved(index)
+                viewModel.usersList.remove(model)
+                Toast.makeText(this@AddFriendActivity, R.string.invitation_sent, Toast.LENGTH_SHORT).show()
+                if (viewModel.usersList.isEmpty()) {
+                    stopShimmer()
+                    binding.nothingFound.visibility = View.VISIBLE
+                }
+            }
+
+            override fun onError() {
+                Toast.makeText(this@AddFriendActivity, R.string.error_message, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onUserClicked(position: Int) {
-        TODO("Not yet implemented")
+        UserInfoActivity.model = viewModel.usersList[position]
+        startActivity(Intent(this, UserInfoActivity::class.java))
     }
 
     override fun onPhotoClicked(position: Int) {
-        TODO("Not yet implemented")
+        val url = viewModel.usersList[position].imageUrl
+        val imageViewFragment = ImageViewFragment.newInstance(url = url, isCircle = false)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.addToBackStack(Constants.DP)
+        transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+        transaction.replace(R.id.image_fragment_container, imageViewFragment, Constants.DP)
+        transaction.commit()
     }
 }

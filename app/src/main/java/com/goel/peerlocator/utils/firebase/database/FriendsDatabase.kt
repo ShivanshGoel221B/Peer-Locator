@@ -185,7 +185,7 @@ class FriendsDatabase : Database() {
 
                 userRef.get().addOnFailureListener { listener.onError() }
                     .addOnSuccessListener { users ->
-                        if (excludeList.size == users.documents.size)
+                        if (excludeList.size >= users.documents.size)
                             listener.foundEmptyList()
                         for (user in users.documents) {
                             if (user.reference.id !in excludeList) {
