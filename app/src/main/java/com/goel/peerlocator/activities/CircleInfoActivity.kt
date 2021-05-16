@@ -145,6 +145,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
                 }
             }
         }
+        TODO("improve this code and handle it in database using listener")
     }
 
 

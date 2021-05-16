@@ -61,6 +61,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
             }
             override fun onCircleRetrieved(circle: CircleModel) {}
             override fun onUserRetrieved(user: UnknownUserModel) {}
+            override fun foundEmptyList() {}
             override fun onError() {
                 Toast.makeText(context, R.string.error_message, Toast.LENGTH_SHORT).show()
             }

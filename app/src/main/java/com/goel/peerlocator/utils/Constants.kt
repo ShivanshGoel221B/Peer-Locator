@@ -21,6 +21,7 @@ object Constants {
     const val ONLINE = "online"
     const val VISIBLE = "visible"
     const val BLOCKS = "blocks"
+    const val BLOCKED_BY = "blocked_by"
     const val DEFAULT_IMAGE_URL = "null"
 
     const val LOC = "last_locations"

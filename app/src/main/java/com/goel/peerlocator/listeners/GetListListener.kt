@@ -8,5 +8,6 @@ interface GetListListener {
     fun onFriendRetrieved(friend: FriendModel)
     fun onCircleRetrieved(circle: CircleModel)
     fun onUserRetrieved(user: UnknownUserModel)
+    fun foundEmptyList()
     fun onError ()
 }

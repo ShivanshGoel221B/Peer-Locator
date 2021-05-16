@@ -92,5 +92,6 @@
     <string name="finishing_up">Finishing Up</string>
     <string name="inviting_members">Inviting Members</string>
     <string name="please_wait">Please Wait</string>
+    <string name="no_users_found">No Users Found</string>
 
 </resources>

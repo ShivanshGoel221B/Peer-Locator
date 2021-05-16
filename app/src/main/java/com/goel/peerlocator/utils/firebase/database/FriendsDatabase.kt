@@ -8,9 +8,8 @@ import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.listeners.FriendDataListener
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 
 class FriendsDatabase : Database() {
@@ -148,8 +147,10 @@ class FriendsDatabase : Database() {
 
     fun getUsers(listener: GetListListener) {
         val friends = ArrayList<String>()
-        val invites = ArrayList<String>()
-        val myId = currentUser!!.uid
+        val sendInvites = ArrayList<String>()
+        val blocked = ArrayList<String>()
+        val blockedBy = ArrayList<String>()
+
         currentUserRef.get().addOnFailureListener { listener.onError() }
             .addOnSuccessListener {
                 try {
@@ -159,10 +160,44 @@ class FriendsDatabase : Database() {
                     }
                 } catch (e : NullPointerException) {}
 
-                FirebaseDatabase.getInstance().reference.child(Constants.INVITES).get()
-                    .addOnFailureListener { listener.onError() }
-                    .addOnSuccessListener {invites ->
-                        invites.children
+                try {
+                    val invitesReferences = it[Constants.SENT_INVITES] as ArrayList<DocumentReference>
+                    invitesReferences.forEach {invitationRef ->
+                        sendInvites.add(invitationRef.id)
+                    }
+                } catch (e: NullPointerException) {}
+
+                try {
+                    val blocksReference = it[Constants.BLOCKS] as ArrayList<DocumentReference>
+                    blocksReference.forEach {ref ->
+                        blocked.add(ref.id)
+                    }
+                } catch (e: NullPointerException) {}
+
+                try {
+                    val blocks = it[Constants.BLOCKED_BY] as ArrayList<DocumentReference>
+                    blocks.forEach {blockRef ->
+                        blockedBy.add(blockRef.id)
+                    }
+                } catch (e: NullPointerException) {}
+
+                val excludeList = friends + sendInvites + blocked + blockedBy + listOf(currentUser?.uid)
+
+                userRef.get().addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener { users ->
+                        if (excludeList.size == users.documents.size)
+                            listener.foundEmptyList()
+                        for (user in users.documents) {
+                            if (user.reference.id !in excludeList) {
+                                val userReference = user.reference
+                                val name = user[Constants.NAME].toString()
+                                val url = user[Constants.DP].toString()
+                                val id = user.reference.id
+
+                                val model = UnknownUserModel(userReference, id, name, url)
+                                listener.onUserRetrieved(model)
+                            }
+                        }
                     }
             }
     }
