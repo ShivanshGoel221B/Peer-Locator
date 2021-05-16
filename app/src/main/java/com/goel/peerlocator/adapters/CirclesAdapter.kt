@@ -32,7 +32,7 @@ class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val
         val imageUri = circle.imageUrl
         val circleName = circle.name
         val membersCount = holder.itemView.resources.getQuantityString(R.plurals.members_count, circle.memberCount, circle.memberCount)
-        holder.controlsBar.visibility = View.GONE
+
         holder.circleName.text = circleName
         holder.membersCount.text = membersCount
         Picasso.with(context).load(imageUri).placeholder(R.drawable.ic_placeholder_circle)
@@ -46,8 +46,11 @@ class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val
         val circleImage : ImageView = itemView.findViewById(R.id.card_profile_image)
         val circleName : TextView = itemView.findViewById(R.id.card_profile_name)
         val membersCount : TextView = itemView.findViewById(R.id.card_additional_detail)
-        val controlsBar : LinearLayout = itemView.findViewById(R.id.controls_bar)
+        private val controlsBar : LinearLayout = itemView.findViewById(R.id.controls_bar)
         val infoButton : ImageView = itemView.findViewById(R.id.card_info)
+        init {
+            controlsBar.visibility = View.GONE
+        }
     }
 
     interface CircleClickListener {

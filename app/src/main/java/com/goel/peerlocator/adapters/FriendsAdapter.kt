@@ -34,7 +34,6 @@ class FriendsAdapter (private val friendsList: ArrayList<FriendModel>, private v
         val commonCircleCount = holder.itemView.resources
                                 .getQuantityString(R.plurals.common_circles_count, friend.commonCirclesCount, friend.commonCirclesCount)
 
-        holder.controlsBar.visibility = View.GONE
         holder.friendName.text = friendName
         holder.commonCirclesCount.text = commonCircleCount
         Picasso.with(context).load(profileUrl).placeholder(R.drawable.ic_placeholder_user)
@@ -48,8 +47,11 @@ class FriendsAdapter (private val friendsList: ArrayList<FriendModel>, private v
         val friendImage : ImageView = itemView.findViewById(R.id.card_profile_image)
         val friendName : TextView = itemView.findViewById(R.id.card_profile_name)
         val commonCirclesCount : TextView = itemView.findViewById(R.id.card_additional_detail)
-        val controlsBar : LinearLayout = itemView.findViewById(R.id.controls_bar)
+        private val controlsBar : LinearLayout = itemView.findViewById(R.id.controls_bar)
         val infoButton : ImageView = itemView.findViewById(R.id.card_info)
+        init {
+            controlsBar.visibility = View.GONE
+        }
     }
 
     interface FriendClickListener {
