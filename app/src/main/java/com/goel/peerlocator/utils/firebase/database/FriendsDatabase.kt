@@ -188,7 +188,8 @@ class FriendsDatabase : Database() {
                         if (excludeList.size >= users.documents.size)
                             listener.foundEmptyList()
                         for (user in users.documents) {
-                            if (user.reference.id !in excludeList) {
+                            val isVisible = user[Constants.VISIBLE] as Boolean
+                            if (user.reference.id !in excludeList && isVisible) {
                                 val userReference = user.reference
                                 val name = user[Constants.NAME].toString()
                                 val url = user[Constants.DP].toString()
