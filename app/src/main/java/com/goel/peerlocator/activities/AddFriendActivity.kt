@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.AddFriendAdapter
 import com.goel.peerlocator.databinding.ActivityAddFriendBinding
+import com.goel.peerlocator.dialogs.InvitationLoadingDialog
 import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.GetListListener
@@ -31,6 +32,7 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
     private lateinit var viewModel: AddFriendViewModel
     private lateinit var adapter : AddFriendAdapter
     private lateinit var watcher: TextWatcher
+    private lateinit var loadingDialog: InvitationLoadingDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +50,7 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
             }
 
         }
+        loadingDialog = InvitationLoadingDialog(getString(R.string.sending_invitation))
     }
 
     override fun onResume() {
@@ -152,9 +155,11 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
     }
 
     override fun onInviteClicked(position: Int) {
+        loadingDialog.show(supportFragmentManager, "loading dialog")
         viewModel.sendInvitation(position, object :  AddFriendListener{
             override fun onInvitationSent(model: UnknownUserModel) {
                 val index = viewModel.usersList.indexOf(model)
+                loadingDialog.dismiss()
                 adapter.notifyItemRemoved(index)
                 viewModel.usersList.remove(model)
                 Toast.makeText(this@AddFriendActivity, R.string.invitation_sent, Toast.LENGTH_SHORT).show()
@@ -165,6 +170,7 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
             }
 
             override fun onError() {
+                loadingDialog.dismiss()
                 Toast.makeText(this@AddFriendActivity, R.string.error_message, Toast.LENGTH_SHORT).show()
             }
         })

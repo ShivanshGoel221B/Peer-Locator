@@ -95,5 +95,6 @@
     <string name="no_users_found">No Users Found</string>
     <string name="invitation_sent">Invitation Sent</string>
     <string name="search_for_people">Search for People</string>
+    <string name="sending_invitation">Sending Invitation</string>
 
 </resources>

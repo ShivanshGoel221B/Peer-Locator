@@ -15,14 +15,14 @@ import com.goel.peerlocator.R
 
 class LoadingDialogHorizontal(private val clickListener: ClickListener) : AppCompatDialogFragment() {
     private lateinit var builder : AlertDialog.Builder
-    private lateinit var dialogview : View
+    private lateinit var dialogView : View
 
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         builder = AlertDialog.Builder(context!!)
         builder.setCancelable(false)
-        dialogview = activity!!.layoutInflater.inflate(R.layout.loading_dialog_box_horizontal, null, false)
-        builder.setView(dialogview).setTitle(R.string.please_wait)
+        dialogView = activity!!.layoutInflater.inflate(R.layout.loading_dialog_box_horizontal, null, false)
+        builder.setView(dialogView).setTitle(R.string.please_wait)
         this.isCancelable = false
         setProgress(0, 30)
         setMessage(R.string.creating_circle)
@@ -30,7 +30,7 @@ class LoadingDialogHorizontal(private val clickListener: ClickListener) : AppCom
     }
 
     fun setProgress(progress: Int, secondaryProgress : Int) {
-        val progressBar : ProgressBar = dialogview.findViewById(R.id.loading_progress_bar)
+        val progressBar : ProgressBar = dialogView.findViewById(R.id.loading_progress_bar)
         progressBar.progress = progress
         progressBar.secondaryProgress = secondaryProgress
         if (progress >= 100)
@@ -39,13 +39,13 @@ class LoadingDialogHorizontal(private val clickListener: ClickListener) : AppCom
 
     fun setMessage(resId : Int) {
         val message = resources.getString(resId)
-        dialogview.findViewById<TextView>(R.id.loading_message).text = message
+        dialogView.findViewById<TextView>(R.id.loading_message).text = message
     }
 
     fun doneLoading () {
-        dialogview.findViewById<ConstraintLayout>(R.id.progress_container).visibility = View.GONE
-        dialogview.findViewById<ConstraintLayout>(R.id.done_layout).visibility = View.VISIBLE
-        dialogview.findViewById<Button>(R.id.ok_button).setOnClickListener {
+        dialogView.findViewById<ConstraintLayout>(R.id.progress_container).visibility = View.GONE
+        dialogView.findViewById<ConstraintLayout>(R.id.done_layout).visibility = View.VISIBLE
+        dialogView.findViewById<Button>(R.id.ok_button).setOnClickListener {
             dismiss()
             clickListener.onOkClicked()
         }
