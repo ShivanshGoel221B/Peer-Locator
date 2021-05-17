@@ -94,5 +94,6 @@
     <string name="please_wait">Please Wait</string>
     <string name="no_users_found">No Users Found</string>
     <string name="invitation_sent">Invitation Sent</string>
+    <string name="search_for_people">Search for People</string>
 
 </resources>
