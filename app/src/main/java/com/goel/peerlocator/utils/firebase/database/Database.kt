@@ -180,6 +180,12 @@ abstract class Database {
                     }
                     for (block in toUnblockList) {
                         fullBlockList.remove(block)
+                        block.get().addOnFailureListener { listener.onNetworkError() }
+                            .addOnSuccessListener { blockedRef ->
+                                val blockedByList = blockedRef[Constants.BLOCKED_BY] as ArrayList<DocumentReference>
+                                blockedByList.remove(currentUserRef)
+                                block.update(Constants.BLOCKED_BY, blockedByList)
+                            }
                     }
                     currentUserRef.update(Constants.BLOCKS, fullBlockList).addOnFailureListener { listener.onNetworkError() }
                         .addOnSuccessListener { listener.onUnblocked() }

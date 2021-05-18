@@ -70,23 +70,29 @@ class InvitationDatabase : Database() {
             listener.onInvitationSent(100, 100)
             return
         }
-        val references = ArrayList<DocumentReference>()
+        var references = ArrayList<DocumentReference>()
         val timestamp = Timestamp.now()
         val invitationPath = documentReference.path.toInvitationPath()
         var completion = 30
         val unit = ceil((70/uIds.size).toDouble()).toInt()
-        for (uId in uIds) {
-            invitesReference.child(uId).child(invitationPath.toInvitationPath()).setValue(timestamp)
-                .addOnFailureListener { listener.onError() }
-                .addOnSuccessListener {
-                    completion+= unit
-                    listener.onInvitationSent(completion, completion+unit)
-                    references.add(userRef.document(uId))
-                    if (completion >= 100) {
-                        documentReference.update(Constants.SENT_INVITES, references)
-                    }
+        documentReference.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                try {
+                    references = it[Constants.SENT_INVITES] as ArrayList<DocumentReference>
+                } catch (e: java.lang.NullPointerException) {}
+                for (uId in uIds) {
+                    invitesReference.child(uId).child(invitationPath.toInvitationPath()).setValue(timestamp)
+                        .addOnFailureListener { listener.onError() }
+                        .addOnSuccessListener {
+                            completion+= unit
+                            listener.onInvitationSent(completion, completion+unit)
+                            references.add(userRef.document(uId))
+                            if (completion >= 100) {
+                                documentReference.update(Constants.SENT_INVITES, references)
+                            }
+                        }
                 }
-        }
+            }
     }
 
     fun sendInvitation(recipient: UnknownUserModel, listener: AddFriendListener) {
