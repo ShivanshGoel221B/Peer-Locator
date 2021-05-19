@@ -68,7 +68,7 @@ class InvitationDatabase : Database() {
 
     fun sendInvitations (documentReference: DocumentReference, uIds: ArrayList<String>, listener : EditCircleListener) {
         if (uIds.isEmpty()) {
-            listener.onInvitationSent(100, 100)
+            listener.membersAdditionSuccessful()
             return
         }
         var references = ArrayList<DocumentReference>()
@@ -86,10 +86,11 @@ class InvitationDatabase : Database() {
                         .addOnFailureListener { listener.onError() }
                         .addOnSuccessListener {
                             completion+= unit
-                            listener.onInvitationSent(completion, completion+unit)
                             references.add(userRef.document(uId))
                             if (completion >= 100) {
                                 documentReference.update(Constants.SENT_INVITES, references)
+                                    .addOnFailureListener { listener.onError() }
+                                    .addOnSuccessListener { listener.membersAdditionSuccessful() }
                             }
                         }
                 }

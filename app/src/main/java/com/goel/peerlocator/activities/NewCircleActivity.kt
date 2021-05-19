@@ -17,7 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.NewCircleAdapter
 import com.goel.peerlocator.databinding.ActivityNewCircleBinding
-import com.goel.peerlocator.dialogs.LoadingDialogHorizontal
+import com.goel.peerlocator.dialogs.DoneDialog
+import com.goel.peerlocator.dialogs.LoadingBasicDialog
 import com.goel.peerlocator.fragments.AddMembersFragment
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.utils.Constants
@@ -36,7 +37,8 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     private lateinit var membersCounter : TextView
     private var membersCount : Int = 1
     private var imageStream: InputStream? = null
-    private lateinit var loadingDialogBox: LoadingDialogHorizontal
+    private lateinit var loadingDialogBox: LoadingBasicDialog
+    private lateinit var doneDialog: DoneDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,7 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
         setContentView(binding.root)
         setViews()
         setRecyclerView()
+        initializeDialogs()
         setClickListeners()
     }
 
@@ -70,6 +73,16 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
 
         val manager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.membersRecyclerView.layoutManager = manager
+    }
+
+    private fun initializeDialogs () {
+        loadingDialogBox = LoadingBasicDialog(getString(R.string.creating_circle))
+        doneDialog = DoneDialog(getString(R.string.circle_created), object : DoneDialog.ClickListener {
+            override fun onOkClicked() {
+                doneDialog.dismiss()
+                finish()
+            }
+        })
     }
 
     private fun setClickListeners() {
@@ -103,9 +116,6 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
         val name = binding.editNameInput.text.toString()
         val nameValidity = Constants.isNameValid(name)
         if (true in nameValidity.keys) {
-            loadingDialogBox = LoadingDialogHorizontal(object : LoadingDialogHorizontal.ClickListener {
-                override fun onOkClicked() { finish() }
-            })
             loadingDialogBox.show(supportFragmentManager, "loading dialog")
             viewModel.createCircle(name, imageStream, this)
         }
@@ -180,20 +190,18 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     }
 
     override fun onCreationSuccessful() {
-        loadingDialogBox.setProgress(30, 100)
-        loadingDialogBox.setMessage(R.string.inviting_members)
-    }
-
-    override fun onInvitationSent(completedPercentage: Int, nextPercentage: Int) {
-        loadingDialogBox.setProgress(completedPercentage, nextPercentage)
+        loadingDialogBox.setMessage(getString(R.string.inviting_members))
     }
 
     override fun membersAdditionSuccessful() {
-        loadingDialogBox.setProgress(100, 100)
-        loadingDialogBox.setMessage(R.string.finishing_up)
+        loadingDialogBox.setMessage(getString(R.string.finishing_up))
+        loadingDialogBox.dismiss()
+        doneDialog.show(supportFragmentManager, "done loading")
     }
 
     override fun onError() {
+        loadingDialogBox.dismiss()
+        doneDialog.dismiss()
         Toast.makeText(applicationContext, R.string.error_message, Toast.LENGTH_SHORT).show()
     }
 }
