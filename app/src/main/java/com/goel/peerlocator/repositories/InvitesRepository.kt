@@ -5,6 +5,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.EditCircleListener
+import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.firebase.database.InvitationDatabase
@@ -34,5 +35,13 @@ class InvitesRepository : UserRepository() {
 
     fun sendInvitation (recipient: UnknownUserModel, listener: AddFriendListener) {
         InvitationDatabase.instance.sendInvitation(recipient, listener)
+    }
+
+    fun getSentInvitations (listener: GetListListener) {
+        InvitationDatabase.instance.getSentInvitations(listener)
+    }
+
+    fun unSendInvitation (model: UnknownUserModel, listener: AddFriendListener) {
+        InvitationDatabase.instance.unSendInvitation(model, listener)
     }
 }

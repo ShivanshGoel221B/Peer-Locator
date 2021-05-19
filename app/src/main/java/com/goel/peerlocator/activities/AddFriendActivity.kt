@@ -169,6 +169,8 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
                 }
             }
 
+            override fun onInvitationUnsent(model: UnknownUserModel) {}
+
             override fun onError() {
                 loadingDialog.dismiss()
                 Toast.makeText(this@AddFriendActivity, R.string.error_message, Toast.LENGTH_SHORT).show()

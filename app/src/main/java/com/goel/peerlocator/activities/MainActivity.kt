@@ -140,6 +140,7 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         {
             R.id.add_new_circle -> startActivity(Intent(this, NewCircleActivity::class.java))
             R.id.add_new_friend -> startActivity(Intent(this, AddFriendActivity::class.java))
+            R.id.sent_invitations -> startActivity(Intent(this, SentInvitationActivity::class.java))
         }
         return true
     }

@@ -7,6 +7,9 @@
     <item android:id="@+id/add_new_friend"
         android:title="@string/add_new_friend" />
 
+    <item android:id="@+id/sent_invitations"
+        android:title="@string/sent_invitations"/>
+
     <item android:id="@+id/app_settings"
         android:title="@string/settings" />
 

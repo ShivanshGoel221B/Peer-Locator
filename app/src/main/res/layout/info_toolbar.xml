@@ -11,8 +11,7 @@
         android:id="@+id/back_button"
         android:layout_width="40dp"
         android:layout_height="24dp"
-        android:src="@color/dark_sea_green"
-        app:srcCompat="@drawable/ic_arrow_back" />
+        android:src="@drawable/ic_arrow_back" />
 
     <TextView
         android:id="@+id/profile_name"

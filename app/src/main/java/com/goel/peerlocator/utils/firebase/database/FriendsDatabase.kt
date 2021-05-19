@@ -185,8 +185,7 @@ class FriendsDatabase : Database() {
 
                 userRef.get().addOnFailureListener { listener.onError() }
                     .addOnSuccessListener { users ->
-                        if (excludeList.size >= users.documents.size)
-                            listener.foundEmptyList()
+                        listener.foundEmptyList()
                         for (user in users.documents) {
                             val isVisible = user[Constants.VISIBLE] as Boolean
                             if (user.reference.id !in excludeList && isVisible) {

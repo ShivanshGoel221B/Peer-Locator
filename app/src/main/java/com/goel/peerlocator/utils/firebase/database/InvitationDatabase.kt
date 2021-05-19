@@ -7,6 +7,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.EditCircleListener
+import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
@@ -113,6 +114,52 @@ class InvitationDatabase : Database() {
                             .setValue(Timestamp.now())
                             .addOnFailureListener { listener.onError() }
                             .addOnSuccessListener { listener.onInvitationSent(recipient) }
+                    }
+            }
+    }
+
+    fun getSentInvitations (listener: GetListListener) {
+        currentUserRef.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                var referenceList = ArrayList<DocumentReference>()
+                try {
+                    referenceList = it[Constants.SENT_INVITES] as ArrayList<DocumentReference>
+                } catch (e : NullPointerException) {}
+                if (referenceList.isEmpty())
+                    listener.foundEmptyList()
+                for (reference in referenceList) {
+                    reference.get().addOnFailureListener { listener.onError() }
+                        .addOnSuccessListener { user ->
+                            val name = user[Constants.NAME].toString()
+                            val url = user[Constants.DP].toString()
+                            val model = UnknownUserModel(user.reference, user.reference.id, name, url)
+                            listener.onUserRetrieved(model)
+                        }
+                }
+            }
+    }
+
+    fun unSendInvitation (model: UnknownUserModel, listener: AddFriendListener) {
+        val reference = model.documentReference
+        var initialSentList = ArrayList<DocumentReference>()
+        val updatedSentList = ArrayList<DocumentReference>()
+        val path = currentUserRef.path
+        currentUserRef.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                try {
+                    initialSentList = it[Constants.SENT_INVITES] as ArrayList<DocumentReference>
+                } catch (e: NullPointerException) {}
+                for (documentReference in initialSentList) {
+                    if (documentReference.id != reference.id)
+                        updatedSentList.add(documentReference)
+                }
+                currentUserRef.update(Constants.SENT_INVITES, updatedSentList)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {
+                        invitesReference.child(reference.id).child(path.toInvitationPath()).removeValue()
+                            .addOnFailureListener { listener.onError() }
+                            .addOnSuccessListener { listener.onInvitationUnsent(model) }
+
                     }
             }
     }

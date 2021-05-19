@@ -96,5 +96,8 @@
     <string name="invitation_sent">Invitation Sent</string>
     <string name="search_for_people">Search for People</string>
     <string name="sending_invitation">Sending Invitation</string>
+    <string name="sent_invitations">Sent Invitations</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 
 </resources>
