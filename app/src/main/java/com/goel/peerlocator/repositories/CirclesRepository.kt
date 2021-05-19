@@ -4,6 +4,7 @@ import android.widget.LinearLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.listeners.EditCircleListener
+import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.firebase.database.CirclesDatabase
@@ -16,14 +17,8 @@ class CirclesRepository : UserRepository () {
         val instance = CirclesRepository()
     }
 
-    val circleList = ArrayList<CircleModel> ()
-
-    fun getAllCircles (
-        circlesAdapter: CirclesAdapter,
-        shimmer: ShimmerFrameLayout,
-        nothingFound: LinearLayout) {
-        circleList.clear()
-        CirclesDatabase.instance.getAllCircles(circleList, circlesAdapter, shimmer, nothingFound)
+    fun getAllCircles (listener: GetListListener) {
+        CirclesDatabase.instance.getAllCircles(listener)
     }
 
     fun createNewCircle (name: String, imageStream: InputStream?,

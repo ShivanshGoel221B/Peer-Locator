@@ -2,16 +2,13 @@ package com.goel.peerlocator.utils.firebase.database
 
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
-import com.facebook.shimmer.ShimmerFrameLayout
-import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.listeners.EditCircleListener
+import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.repositories.InvitesRepository
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.storage.Storage
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import java.io.InputStream
 
@@ -21,10 +18,7 @@ class CirclesDatabase : Database() {
         val instance = CirclesDatabase()
     }
 
-    fun getAllCircles (
-        circleList: java.util.ArrayList<CircleModel>,
-        circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout
-    ) {
+    fun getAllCircles (listener: GetListListener) {
         var circleArray = java.util.ArrayList<DocumentReference>()
 
         userRef.document(currentUser!!.uid).get()
@@ -34,47 +28,36 @@ class CirclesDatabase : Database() {
                         circleArray = it[Constants.CIRCLES] as ArrayList<DocumentReference>
                     } catch (e: NullPointerException) {}
                     currentUser?.circlesCount = circleArray.size.toLong()
-                    addToList(circleArray, circleList, circlesAdapter, shimmer, nothingFound)
+                    addToList(circleArray, listener)
                 }
             }
             .addOnFailureListener {
-                Log.d("Error", it.toString())
+                listener.onError()
             }
     }
 
     // Adds circles to the list
-    private fun addToList (circleArray: ArrayList<DocumentReference>, list: ArrayList<CircleModel>,
-                           circlesAdapter: CirclesAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout) {
-
+    private fun addToList (circleArray: ArrayList<DocumentReference>, listener: GetListListener) {
         if (circleArray.isEmpty())
-            nothingFound.visibility = View.VISIBLE
-        else
-            nothingFound.visibility = View.GONE
-        for (circle in circleArray) {
-            circle.get()
-                .addOnSuccessListener {
-                    var membersCount = 0
-                    try {
-                        membersCount = (it[Constants.MEMBERS] as ArrayList<DocumentReference>).size
-                    } catch (e: java.lang.NullPointerException) {
+            listener.foundEmptyList()
+        else {
+            for (circle in circleArray) {
+                circle.get().addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {
+                        var membersCount = 0
+                        try {
+                            membersCount = (it[Constants.MEMBERS] as ArrayList<DocumentReference>).size
+                        } catch (e: java.lang.NullPointerException) {
+                        }
+                        val model = CircleModel(name = it[Constants.NAME].toString(),
+                            documentReference = it.reference,
+                            imageUrl = it[Constants.DP].toString(),
+                            adminReference = it[Constants.ADMIN] as DocumentReference,
+                            memberCount = membersCount)
+                            listener.onCircleRetrieved(model)
                     }
-                    val newCircle = CircleModel(name = it[Constants.NAME].toString(),
-                        documentReference = it.reference,
-                        imageUrl = it[Constants.DP].toString(),
-                        adminReference = it[Constants.ADMIN] as DocumentReference,
-                        memberCount = membersCount)
-
-                    list.add(newCircle)
-                    circlesAdapter.notifyDataSetChanged()
-                    shimmer.visibility = View.GONE
-                    shimmer.stopShimmerAnimation()
-                }
-                .addOnFailureListener {
-                    Log.d("Error", it.toString())
-                }
+            }
         }
-        shimmer.visibility = View.GONE
-        shimmer.stopShimmerAnimation()
     }
 
     fun getCircleInfo(listener: CircleDataListener, circleReference: DocumentReference) {
