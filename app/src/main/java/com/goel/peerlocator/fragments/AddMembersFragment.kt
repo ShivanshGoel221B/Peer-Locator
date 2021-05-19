@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goel.peerlocator.R
@@ -17,6 +18,9 @@ import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.AddMembersViewModel
+import com.google.firebase.firestore.DocumentReference
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListeners {
 
@@ -37,6 +41,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
         binding = AddMembersFragmentBinding.inflate(inflater, container, false)
         binding?.root?.setOnClickListener { return@setOnClickListener }
 
+        binding?.nothingFound?.visibility = View.GONE
         initializeViewModel()
         updateCounter()
         binding?.cancelButton?.setOnClickListener { activity!!.onBackPressed() }
@@ -46,6 +51,14 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
             }
             activity!!.onBackPressed()
         }
+        binding?.searchBar?.setOnQueryTextListener (object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = true
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                searchInFriends(newText)
+                return true
+            }
+        })
         return binding?.root
     }
 
@@ -61,7 +74,9 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
             }
             override fun onCircleRetrieved(circle: CircleModel) {}
             override fun onUserRetrieved(user: UnknownUserModel) {}
-            override fun foundEmptyList() {}
+            override fun foundEmptyList() {
+                binding?.nothingFound?.visibility = View.VISIBLE
+            }
             override fun onError() {
                 Toast.makeText(context, R.string.error_message, Toast.LENGTH_SHORT).show()
             }
@@ -73,6 +88,27 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
         binding?.friendsRecyclerView?.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding?.friendsRecyclerView?.layoutManager = layoutManager
+    }
+
+    private fun searchInFriends (query: String?) {
+        query?.let {
+            if (it.isNotEmpty()) {
+                val newList = viewModel.friendList.filter { friend ->
+                    query.toLowerCase(Locale.ROOT) in friend.name.toLowerCase(Locale.ROOT)
+                } as ArrayList<FriendModel>
+                binding?.friendsRecyclerView?.adapter = AddMembersAdapter(context!!, newList,
+                                                        viewModel.selectedList, this)
+                if (newList.isEmpty())
+                    binding?.nothingFound?.visibility = View.VISIBLE
+                else
+                    binding?.nothingFound?.visibility = View.GONE
+            }
+            else {
+                binding?.friendsRecyclerView?.adapter = adapter
+                if (viewModel.friendList.isNotEmpty())
+                    binding?.nothingFound?.visibility = View.GONE
+            }
+        }
     }
 
     private fun updateCounter () {

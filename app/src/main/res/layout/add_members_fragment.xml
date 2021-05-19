@@ -18,6 +18,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <SearchView
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:orientation="horizontal"
+            android:queryHint="Search for friends"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/members_counter" />
+
+        <LinearLayout
+            android:id="@+id/nothing_found"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_bar">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:src="@drawable/il_nothing_found" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/bree_serif"
+                android:text="@string/no_friends_found"
+                android:textColor="@color/grey"
+                android:textSize="22sp" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/members_counter"
             android:layout_width="wrap_content"
@@ -25,12 +66,12 @@
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/fjord_one"
-            tools:text="13/20 Members"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="13/20 Members" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/friends_recycler_view"
@@ -42,7 +83,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/members_counter"
+            app:layout_constraintTop_toBottomOf="@+id/search_bar"
             tools:itemCount="15"
             tools:listitem="@layout/add_members_card" />
 
@@ -50,22 +91,22 @@
             android:id="@+id/buttons_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            android:orientation="horizontal"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent">
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cancel_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="4dp"
                 android:layout_weight="1"
                 app:cardElevation="4dp"
@@ -91,11 +132,11 @@
                 android:id="@+id/add_members_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="4dp"
+                android:layout_weight="1"
                 app:cardElevation="4dp"
                 app:cardMaxElevation="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -117,6 +158,6 @@
 
         </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

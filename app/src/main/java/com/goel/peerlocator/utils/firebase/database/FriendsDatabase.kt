@@ -49,6 +49,9 @@ class FriendsDatabase : Database() {
                     references = it[Constants.FRIENDS] as ArrayList<DocumentReference>
                 } catch (e : NullPointerException) {}
 
+                if (addedIds.size >= references.size)
+                    listener.foundEmptyList()
+
                 for (reference in references) {
                     reference.get().addOnFailureListener { listener.onError() }
                         .addOnSuccessListener { friend ->
