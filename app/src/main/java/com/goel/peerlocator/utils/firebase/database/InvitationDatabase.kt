@@ -1,10 +1,5 @@
 package com.goel.peerlocator.utils.firebase.database
 
-import android.util.Log
-import android.view.View
-import android.widget.LinearLayout
-import com.facebook.shimmer.ShimmerFrameLayout
-import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.GetListListener

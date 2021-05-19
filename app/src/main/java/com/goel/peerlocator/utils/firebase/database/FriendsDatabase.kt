@@ -1,10 +1,5 @@
 package com.goel.peerlocator.utils.firebase.database
 
-import android.util.Log
-import android.view.View
-import android.widget.LinearLayout
-import com.facebook.shimmer.ShimmerFrameLayout
-import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.listeners.FriendDataListener
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.FriendModel
@@ -17,13 +12,11 @@ class FriendsDatabase : Database() {
          val instance = FriendsDatabase()
      }
 
-    fun getAllFriends (friendsList : java.util.ArrayList<FriendModel>,
-                       friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout
-    ) {
+    fun getAllFriends (listener: GetListListener) {
         var circleArray =  java.util.ArrayList<DocumentReference>()
         var friendsArray =  java.util.ArrayList<DocumentReference>()
 
-        userRef.document(currentUser!!.uid).get()
+        userRef.document(currentUser!!.uid).get().addOnFailureListener { listener.onError() }
             .addOnSuccessListener {
                 if (it.exists()) {
                     try {
@@ -33,14 +26,12 @@ class FriendsDatabase : Database() {
                         friendsArray = it[Constants.FRIENDS] as ArrayList<DocumentReference>
                     } catch (e : java.lang.NullPointerException){}
                     currentUser?.friendsCount = friendsArray.size.toLong()
-                    addToList(friendsArray, circleArray, friendsList, friendsAdapter, shimmer, nothingFound)
+                    addToList(friendsArray, circleArray, listener)
                 }
-            }
-            .addOnFailureListener {
-                Log.d("Error", it.toString())
             }
     }
 
+    //Adding Members in a circle
     fun getAllFriends (addedIds : ArrayList<String>, listener : GetListListener) {
         currentUserRef.get().addOnFailureListener { listener.onError() }
             .addOnSuccessListener {
@@ -71,44 +62,36 @@ class FriendsDatabase : Database() {
 
     // Adds friends to the list
     private fun addToList (friendsArray: ArrayList<DocumentReference>, circleArray: ArrayList<DocumentReference>,
-                           list: ArrayList<FriendModel>, friendsAdapter: FriendsAdapter,
-                           shimmer: ShimmerFrameLayout, nothingFound: LinearLayout) {
+                           listener: GetListListener) {
         if (friendsArray.isEmpty())
-            nothingFound.visibility = View.VISIBLE
-        else
-            nothingFound.visibility = View.GONE
-        for (friend in friendsArray) {
-            friend.get()
-                .addOnSuccessListener {
-                    var circles = ArrayList<DocumentReference>()
-                    try {
-                        circles =  it[Constants.CIRCLES] as ArrayList<DocumentReference>
-                    } catch (e : java.lang.NullPointerException){}
-                    var count = 0
-                    for (circleOne in circles) {
-                        for (circleTwo in circleArray) {
-                            if (circleOne.path == circleTwo.path)
-                                count++
+            listener.foundEmptyList()
+        else {
+            for (friend in friendsArray) {
+                friend.get().addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {
+                        var circles = ArrayList<DocumentReference>()
+                        try {
+                            circles = it[Constants.CIRCLES] as ArrayList<DocumentReference>
+                        } catch (e: java.lang.NullPointerException) {
                         }
+                        var count = 0
+                        for (circleOne in circles) {
+                            for (circleTwo in circleArray) {
+                                if (circleOne.path == circleTwo.path)
+                                    count++
+                            }
+                        }
+
+                        val model = FriendModel(
+                            name = it[Constants.NAME].toString(),
+                            documentReference = it.reference,
+                            imageUrl = it[Constants.DP].toString(),
+                            commonCirclesCount = count, uid = it.reference.id
+                        )
+                        listener.onFriendRetrieved(model)
                     }
-
-                    val newFriend = FriendModel(name = it[Constants.NAME].toString(),
-                        documentReference = it.reference,
-                        imageUrl = it[Constants.DP].toString(),
-                        commonCirclesCount = count, uid = it.reference.id
-                    )
-                    list.add(newFriend)
-                    friendsAdapter.notifyDataSetChanged()
-                    shimmer.visibility = View.GONE
-                    shimmer.stopShimmerAnimation()
-                }
-                .addOnFailureListener {
-                    Log.d("Error", it.toString())
-                }
+            }
         }
-
-        shimmer.visibility = View.GONE
-        shimmer.stopShimmerAnimation()
     }
 
     fun getFriendInfo (listener: FriendDataListener, reference: DocumentReference) {

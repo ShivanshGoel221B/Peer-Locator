@@ -13,11 +13,8 @@ class FriendsRepository : UserRepository() {
         val instance = FriendsRepository()
     }
 
-    val friendsList = ArrayList<FriendModel> ()
-
-    fun getAllFriends (friendsAdapter: FriendsAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
-        friendsList.clear()
-        FriendsDatabase.instance.getAllFriends(friendsList, friendsAdapter, shimmer, nothingFound)
+    fun getAllFriends (listener: GetListListener) {
+        FriendsDatabase.instance.getAllFriends(listener)
     }
 
     fun getFriendsList(addedMembers : ArrayList<FriendModel>, listener : GetListListener) {

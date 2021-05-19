@@ -1,7 +1,5 @@
 package com.goel.peerlocator.utils.firebase.database
 
-import android.util.Log
-import android.view.View
 import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.GetListListener
