@@ -26,41 +26,43 @@ class InvitationDatabase : Database() {
     }
     private val invitesReference = FirebaseDatabase.getInstance().reference.child(Constants.INVITES)
 
-    fun getAllInvites (invitesList : ArrayList<InviteModel>,
-                       invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout, nothingFound: LinearLayout
+    fun getAllInvites (listener: GetListListener
     ) {
         invitesReference.child(currentUser!!.uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (!snapshot.hasChildren()) {
-                        shimmer.visibility = View.GONE
-                        shimmer.stopShimmerAnimation()
-                        nothingFound.visibility = View.VISIBLE
+                        listener.foundEmptyList()
                     }
-                    else
-                        nothingFound.visibility - View.GONE
+                    else {
+                        for (data in snapshot.children) {
+                            val reference =
+                                fireStoreDatabase.document(data.key.toString().toReferencePath())
+                            val timeHash = data.value as HashMap<String, Long>
+                            val timeStamp = Timestamp(
+                                timeHash[Constants.SECONDS]!!,
+                                timeHash[Constants.NANOSECONDS]!!.toInt()
+                            )
+                            val date = timeStamp.toDate()
 
-                    for (data in snapshot.children) {
-                        val reference = fireStoreDatabase.document(data.key.toString().toReferencePath())
-                        val timeHash = data.value as HashMap<String, Long>
-                        val timeStamp = Timestamp(timeHash[Constants.SECONDS]!!, timeHash[Constants.NANOSECONDS]!!.toInt())
-                        val date = timeStamp.toDate()
 
-
-                        reference.get().addOnSuccessListener {
-                            val name = it[Constants.NAME].toString()
-                            val photoUrl = it[Constants.DP].toString()
-                            val newInvite = InviteModel(documentReference = reference, name = name, imageUrl = photoUrl, timeStamp = date.toString())
-                            invitesList.add(newInvite)
-                            invitesAdapter.notifyDataSetChanged()
-                            shimmer.visibility = View.GONE
-                            shimmer.stopShimmerAnimation()
+                            reference.get().addOnSuccessListener {
+                                val name = it[Constants.NAME].toString()
+                                val photoUrl = it[Constants.DP].toString()
+                                val model = InviteModel(
+                                    documentReference = reference,
+                                    name = name,
+                                    imageUrl = photoUrl,
+                                    timeStamp = date.toString()
+                                )
+                                listener.onInvitationRetrieved(model)
+                            }
                         }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.d("Error: ", error.message)
+                    listener.onError()
                 }
 
             })

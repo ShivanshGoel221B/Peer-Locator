@@ -15,6 +15,7 @@ import com.goel.peerlocator.databinding.AddMembersFragmentBinding
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.AddMembersViewModel
@@ -74,6 +75,8 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
             }
             override fun onCircleRetrieved(circle: CircleModel) {}
             override fun onUserRetrieved(user: UnknownUserModel) {}
+            override fun onInvitationRetrieved(invitation: InviteModel) {}
+
             override fun foundEmptyList() {
                 binding?.nothingFound?.visibility = View.VISIBLE
             }

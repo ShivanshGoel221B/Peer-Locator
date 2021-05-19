@@ -15,6 +15,7 @@ import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.viewmodels.SentInvitationViewModel
 
@@ -66,6 +67,7 @@ class SentInvitationActivity : AppCompatActivity() {
         viewModel.getSentInvitations(object : GetListListener {
             override fun onFriendRetrieved(friend: FriendModel) {}
             override fun onCircleRetrieved(circle: CircleModel) {}
+            override fun onInvitationRetrieved(invitation: InviteModel) {}
 
             override fun onUserRetrieved(user: UnknownUserModel) {
                 viewModel.sentInvitationList.add(user)

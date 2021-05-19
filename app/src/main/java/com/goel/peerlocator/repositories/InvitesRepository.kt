@@ -18,11 +18,8 @@ class InvitesRepository : UserRepository() {
         val instance = InvitesRepository()
     }
 
-    val invitesList = ArrayList<InviteModel> ()
-
-    fun getAllInvites (invitesAdapter: InvitesAdapter, shimmer: ShimmerFrameLayout, nothingFound : LinearLayout) {
-        invitesList.clear()
-        InvitationDatabase.instance.getAllInvites(invitesList, invitesAdapter, shimmer, nothingFound)
+    fun getAllInvites (listener: GetListListener) {
+        InvitationDatabase.instance.getAllInvites(listener)
     }
 
     fun sendInvitations (documentReference : DocumentReference, membersList : ArrayList<DocumentReference>, listener : EditCircleListener) {

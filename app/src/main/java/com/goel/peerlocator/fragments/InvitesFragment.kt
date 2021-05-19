@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.databinding.InvitesFragmentBinding
+import com.goel.peerlocator.listeners.GetListListener
+import com.goel.peerlocator.models.CircleModel
+import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.InviteModel
+import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.InvitesViewModel
@@ -47,36 +53,65 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
 
     override fun onResume() {
         super.onResume()
-        val shimmer = binding?.shimmerLayout!!
-        shimmer.startShimmerAnimation()
-        shimmer.visibility = View.VISIBLE
+        startShimmer()
         nothingFound.visibility = View.GONE
+        createRecyclerView()
 
+        ServicesHandler.stopInviteNotification(activity!!)
+    }
+
+    private fun createRecyclerView () {
         viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
             .get(InvitesViewModel::class.java)
-
-        invitesAdapter = InvitesAdapter(viewModel.invitesList.value!!, context!!, this)
-
+        //initialize adapter
+        invitesAdapter = InvitesAdapter(viewModel.invitesList, context!!, this)
         setAdapter()
 
-        viewModel.invitesList.observe(this) {
-            invitesAdapter.notifyDataSetChanged()
-        }
+        viewModel.getAllInvites(object : GetListListener {
+            override fun onFriendRetrieved(friend: FriendModel) {}
+            override fun onCircleRetrieved(circle: CircleModel) {}
+            override fun onUserRetrieved(user: UnknownUserModel) {}
 
-        viewModel.getAllInvites(invitesAdapter, shimmer, nothingFound)
-        ServicesHandler.stopInviteNotification(activity!!)
+            override fun onInvitationRetrieved(invitation: InviteModel) {
+                stopShimmer()
+                nothingFound.visibility = View.GONE
+                viewModel.invitesList.add(invitation)
+                invitesAdapter.notifyDataSetChanged()
+            }
+
+            override fun foundEmptyList() {
+                stopShimmer()
+                nothingFound.visibility = View.VISIBLE
+            }
+
+            override fun onError() {
+                stopShimmer()
+                Toast.makeText(context, R.string.error_message, Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onPause() {
         super.onPause()
         ServicesHandler.startInviteNotification(activity!!)
-        viewModel.invitesList.value?.clear()
+        viewModel.invitesList.clear()
+        invitesAdapter.notifyDataSetChanged()
     }
 
     private fun setAdapter() {
         binding?.invitesRecyclerView?.adapter = invitesAdapter
         val lm = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         binding?.invitesRecyclerView?.layoutManager = lm
+    }
+
+    private fun startShimmer () {
+        binding?.shimmerLayout?.visibility = View.VISIBLE
+        binding?.shimmerLayout?.startShimmerAnimation()
+    }
+
+    private fun stopShimmer () {
+        binding?.shimmerLayout?.visibility = View.GONE
+        binding?.shimmerLayout?.stopShimmerAnimation()
     }
 
     override fun onDestroyView() {
@@ -91,7 +126,7 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
     }
 
     override fun onInvitePhotoClicked(position: Int) {
-        val model = viewModel.invitesList.value!![position]
+        val model = viewModel.invitesList[position]
         val isCircle = Constants.CIRCLES in model.documentReference.path
         val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = isCircle)
         val transaction = activity!!.supportFragmentManager.beginTransaction()
