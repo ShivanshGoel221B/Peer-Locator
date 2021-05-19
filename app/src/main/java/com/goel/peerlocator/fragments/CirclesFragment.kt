@@ -119,10 +119,6 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
         TODO("Not yet implemented")
     }
 
-    override fun onCircleLongClicked(position: Int): Boolean {
-        TODO("Not yet implemented")
-    }
-
     override fun onCirclePhotoClicked(position: Int) {
         val model = viewModel.circleList[position]
         val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = true)

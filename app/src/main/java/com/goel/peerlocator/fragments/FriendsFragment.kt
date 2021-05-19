@@ -128,10 +128,6 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         startActivity(Intent(context, FriendActivity::class.java))
     }
 
-    override fun onFriendLongClicked(position: Int): Boolean {
-        TODO("Not yet implemented")
-    }
-
     override fun onFriendPhotoClicked(position: Int) {
         val model = viewModel.friendsList[position]
         val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = false)
