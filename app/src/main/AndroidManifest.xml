@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PeerLocator">
-        <activity android:name=".activities.SentInvitationActivity"></activity>
+        <activity android:name=".activities.InviteInfoActivity"></activity>
+        <activity android:name=".activities.SentInvitationActivity" />
         <activity android:name=".activities.AddFriendActivity" />
         <activity android:name=".activities.NewCircleActivity" />
         <activity android:name=".activities.ProfileActivity" />

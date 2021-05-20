@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso
 class UserInfoActivity : AppCompatActivity() {
 
     companion object {
+        @JvmStatic
         lateinit var model : UnknownUserModel
     }
 

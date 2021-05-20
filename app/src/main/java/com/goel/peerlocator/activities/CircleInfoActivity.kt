@@ -173,10 +173,6 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
         })
     }
 
-    override fun onFriendLongClicked(position: Int): Boolean {
-        TODO("Not yet implemented")
-    }
-
     override fun onFriendPhotoClicked(position: Int) {
         val model = membersList[position]
         val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = false)

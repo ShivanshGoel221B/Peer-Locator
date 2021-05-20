@@ -99,5 +99,6 @@
     <string name="sent_invitations">Sent Invitations</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="invitation_rejected">Invitation Rejected</string>
 
 </resources>

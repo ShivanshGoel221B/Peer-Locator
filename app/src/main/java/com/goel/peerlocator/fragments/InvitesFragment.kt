@@ -1,5 +1,6 @@
 package com.goel.peerlocator.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +12,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
+import com.goel.peerlocator.activities.InviteInfoActivity
 import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.databinding.InvitesFragmentBinding
+import com.goel.peerlocator.dialogs.LoadingBasicDialog
 import com.goel.peerlocator.listeners.GetListListener
+import com.goel.peerlocator.listeners.InvitationListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.InviteModel
@@ -22,7 +26,7 @@ import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.InvitesViewModel
 
-class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
+class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, InvitationListener {
 
     companion object {
         fun newInstance() = InvitesFragment()
@@ -32,11 +36,15 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
     private lateinit var viewModel: InvitesViewModel
     private lateinit var invitesAdapter: InvitesAdapter
     private lateinit var nothingFound : LinearLayout
+    private lateinit var acceptDialog: LoadingBasicDialog
+    private lateinit var rejectDialog: LoadingBasicDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = InvitesFragmentBinding.inflate(inflater, container, false)
         nothingFound = binding?.nothingFound!!
         nothingFound.visibility = View.GONE
+        acceptDialog = LoadingBasicDialog("Accepting Invitation")
+        rejectDialog = LoadingBasicDialog("Rejecting Invitation")
         return binding?.root
     }
 
@@ -122,7 +130,8 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
 
     //Click Listeners
     override fun onInviteClicked(position: Int) {
-        TODO("Not yet implemented")
+        InviteInfoActivity.model = viewModel.invitesList[position]
+        startActivity(Intent(activity, InviteInfoActivity::class.java))
     }
 
     override fun onInvitePhotoClicked(position: Int) {
@@ -137,10 +146,35 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener {
     }
 
     override fun onAcceptClicked(position: Int) {
-        TODO("Not yet implemented")
+        acceptDialog.show(activity!!.supportFragmentManager, "loading")
+        viewModel.acceptInvitation(viewModel.invitesList[position], this)
     }
 
     override fun onRejectClicked(position: Int) {
-        TODO("Not yet implemented")
+        rejectDialog.show(activity!!.supportFragmentManager, "loading")
+        viewModel.rejectInvitation(viewModel.invitesList[position], this)
+    }
+
+    override fun onInvitationAccepted(model: InviteModel) {
+        val index = viewModel.invitesList.indexOf(model)
+        acceptDialog.dismiss()
+        invitesAdapter.notifyItemRemoved(index)
+        viewModel.invitesList.remove(model)
+        val message = "You are now friend with ${model.name}"
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onInvitationRejected(model: InviteModel) {
+        val index = viewModel.invitesList.indexOf(model)
+        rejectDialog.dismiss()
+        invitesAdapter.notifyItemRemoved(index)
+        viewModel.invitesList.remove(model)
+        Toast.makeText(context, R.string.invitation_rejected, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onError() {
+        acceptDialog.dismiss()
+        rejectDialog.dismiss()
+        Toast.makeText(context, R.string.error_message, Toast.LENGTH_SHORT).show()
     }
 }
