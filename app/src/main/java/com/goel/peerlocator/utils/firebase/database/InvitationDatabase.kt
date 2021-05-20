@@ -204,6 +204,9 @@ class InvitationDatabase : Database() {
                 if (Constants.CIRCLES in model.documentReference.path) {
                     CirclesDatabase.instance.addMember(model, listener)
                 }
+                else if (Constants.USERS in model.documentReference.path) {
+                    FriendsDatabase.instance.addMeToFriend(model, listener)
+                }
             }
 
             override fun onError() {

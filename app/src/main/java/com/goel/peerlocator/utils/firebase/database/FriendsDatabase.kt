@@ -2,7 +2,9 @@ package com.goel.peerlocator.utils.firebase.database
 
 import com.goel.peerlocator.listeners.FriendDataListener
 import com.goel.peerlocator.listeners.GetListListener
+import com.goel.peerlocator.listeners.InvitationListener
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
 import com.google.firebase.firestore.DocumentReference
@@ -185,6 +187,22 @@ class FriendsDatabase : Database() {
                             }
                         }
                     }
+            }
+    }
+
+    fun addMeToFriend (model: InviteModel, listener: InvitationListener) {
+        val documentReference = model.documentReference
+        var friendsList = ArrayList<DocumentReference>()
+
+        documentReference.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                try {
+                    friendsList = it[Constants.FRIENDS] as ArrayList<DocumentReference>
+                } catch (e: java.lang.NullPointerException){}
+                friendsList.add(currentUserRef)
+                documentReference.update(Constants.FRIENDS, friendsList)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener { addFriend(model, listener) }
             }
     }
 }
