@@ -195,4 +195,36 @@ abstract class Database {
 
     }
 
+    protected fun addCircle (model: InviteModel, listener: InvitationListener) {
+        val documentReference = model.documentReference
+        var circlesList = ArrayList<DocumentReference>()
+
+        currentUserRef.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                try {
+                    circlesList = it[Constants.CIRCLES] as ArrayList<DocumentReference>
+                } catch (e: java.lang.NullPointerException){}
+                circlesList.add(documentReference)
+                currentUserRef.update(Constants.CIRCLES, circlesList)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener { listener.onInvitationAccepted(model) }
+            }
+    }
+
+    protected fun addFriend (model: InviteModel, listener: InvitationListener) {
+        val documentReference = model.documentReference
+        var friendsList = ArrayList<DocumentReference>()
+
+        currentUserRef.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                try {
+                    friendsList = it[Constants.FRIENDS] as ArrayList<DocumentReference>
+                } catch (e: java.lang.NullPointerException){}
+                friendsList.add(documentReference)
+                currentUserRef.update(Constants.FRIENDS, friendsList)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener { listener.onInvitationAccepted(model) }
+            }
+    }
+
 }

@@ -3,6 +3,7 @@ package com.goel.peerlocator.utils.firebase.database
 import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.GetListListener
+import com.goel.peerlocator.listeners.InvitationListener
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
@@ -21,8 +22,7 @@ class InvitationDatabase : Database() {
     }
     private val invitesReference = FirebaseDatabase.getInstance().reference.child(Constants.INVITES)
 
-    fun getAllInvites (listener: GetListListener
-    ) {
+    fun getAllInvites (listener: GetListListener) {
         invitesReference.child(currentUser!!.uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -158,6 +158,80 @@ class InvitationDatabase : Database() {
                             .addOnFailureListener { listener.onError() }
                             .addOnSuccessListener { listener.onInvitationUnsent(model) }
 
+                    }
+            }
+    }
+
+    fun checkSentInvitation (inviteModel: InviteModel, listener: InvitationListener) {
+        val id = inviteModel.documentReference.id
+        val friendListener = object : AddFriendListener {
+            override fun onInvitationSent(model: UnknownUserModel) {}
+            override fun onInvitationUnsent(model: UnknownUserModel) {
+                acceptInvitation(inviteModel, listener)
+            }
+            override fun onError() {
+                listener.onError()
+            }
+        }
+
+        val mySentInvitations = ArrayList<String>()
+        currentUserRef.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                try {
+                    val sentList = it[Constants.SENT_INVITES] as ArrayList<DocumentReference>
+                    for (reference in sentList) {
+                        mySentInvitations.add(reference.id)
+                    }
+                } catch (e: NullPointerException) {}
+
+                if (id in mySentInvitations)
+                {
+                    val userModel = UnknownUserModel(documentReference = inviteModel.documentReference,
+                                                    uid = inviteModel.documentReference.id,
+                                                    name = inviteModel.name,
+                                                    imageUrl = inviteModel.imageUrl)
+                    unSendInvitation(userModel, friendListener)
+                }
+                else
+                    acceptInvitation(inviteModel, listener)
+            }
+    }
+
+    private fun acceptInvitation (inviteModel: InviteModel, listener: InvitationListener) {
+        rejectInvitation(inviteModel, object : InvitationListener {
+            override fun onInvitationAccepted(model: InviteModel) {}
+            override fun onInvitationRejected(model: InviteModel) {
+                if (Constants.CIRCLES in model.documentReference.path) {
+                    CirclesDatabase.instance.addMember(model, listener)
+                }
+            }
+
+            override fun onError() {
+                listener.onError()
+            }
+        })
+    }
+
+    fun rejectInvitation (inviteModel: InviteModel, listener: InvitationListener) {
+        val reference = inviteModel.documentReference
+
+        invitesReference.child(currentUserRef.id).child(reference.path.toInvitationPath()).removeValue()
+            .addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                val updatedSentList = ArrayList<DocumentReference>()
+                reference.get().addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener { document->
+                        try {
+                            val initialList = document[Constants.SENT_INVITES] as ArrayList<DocumentReference>
+                            for (documentReference in initialList) {
+                                if (documentReference.id != currentUserRef.id)
+                                    updatedSentList.add(documentReference)
+                            }
+                        } catch (e: java.lang.NullPointerException){}
+
+                        reference.update(Constants.SENT_INVITES, updatedSentList)
+                            .addOnFailureListener { listener.onError() }
+                            .addOnSuccessListener { listener.onInvitationRejected(inviteModel) }
                     }
             }
     }

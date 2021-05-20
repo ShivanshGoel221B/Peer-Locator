@@ -1,11 +1,9 @@
 package com.goel.peerlocator.repositories
 
-import android.widget.LinearLayout
-import com.facebook.shimmer.ShimmerFrameLayout
-import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.listeners.AddFriendListener
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.GetListListener
+import com.goel.peerlocator.listeners.InvitationListener
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.firebase.database.InvitationDatabase
@@ -40,5 +38,13 @@ class InvitesRepository : UserRepository() {
 
     fun unSendInvitation (model: UnknownUserModel, listener: AddFriendListener) {
         InvitationDatabase.instance.unSendInvitation(model, listener)
+    }
+
+    fun acceptInvitation (model: InviteModel, listener: InvitationListener) {
+        InvitationDatabase.instance.checkSentInvitation(model, listener)
+    }
+
+    fun rejectInvitation (model: InviteModel, listener: InvitationListener) {
+        InvitationDatabase.instance.rejectInvitation(model, listener)
     }
 }

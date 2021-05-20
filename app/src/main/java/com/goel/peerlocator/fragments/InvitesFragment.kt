@@ -160,7 +160,12 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
         acceptDialog.dismiss()
         invitesAdapter.notifyItemRemoved(index)
         viewModel.invitesList.remove(model)
-        val message = "You are now friend with ${model.name}"
+        val name = model.name
+        val message = if (Constants.USERS in model.documentReference.path) {
+            "You are now friend with $name"
+        } else {
+            "You are now a part of $name"
+        }
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 

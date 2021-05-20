@@ -3,7 +3,9 @@ package com.goel.peerlocator.utils.firebase.database
 import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.GetListListener
+import com.goel.peerlocator.listeners.InvitationListener
 import com.goel.peerlocator.models.CircleModel
+import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.repositories.InvitesRepository
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.storage.Storage
@@ -111,13 +113,18 @@ class CirclesDatabase : Database() {
             }
     }
 
-    fun addMembers (documentReference: DocumentReference, initialMembers : ArrayList<DocumentReference>,
-                    newMembers : ArrayList<DocumentReference>, listener: EditCircleListener) {
-        newMembers.forEach {
-            initialMembers.add(it)
-        }
-        documentReference.update(Constants.MEMBERS, initialMembers)
-            .addOnFailureListener { listener.onError() }
-            .addOnSuccessListener { listener.membersAdditionSuccessful() }
+    fun addMember (model: InviteModel, listener: InvitationListener) {
+        val documentReference = model.documentReference
+        var membersList = ArrayList<DocumentReference>()
+        documentReference.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener { circle->
+                try {
+                    membersList = circle[Constants.MEMBERS] as ArrayList<DocumentReference>
+                } catch (e: NullPointerException) {}
+                membersList.add(currentUserRef)
+                documentReference.update(Constants.MEMBERS, membersList)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener { addCircle(model, listener) }
+            }
     }
 }
