@@ -166,6 +166,8 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
         } else {
             "You are now a part of $name"
         }
+        if (viewModel.invitesList.isEmpty())
+            onResume()
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
@@ -174,6 +176,8 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
         rejectDialog.dismiss()
         invitesAdapter.notifyItemRemoved(index)
         viewModel.invitesList.remove(model)
+        if (viewModel.invitesList.isEmpty())
+            onResume()
         Toast.makeText(context, R.string.invitation_rejected, Toast.LENGTH_SHORT).show()
     }
 
