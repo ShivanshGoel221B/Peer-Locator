@@ -100,5 +100,6 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="invitation_rejected">Invitation Rejected</string>
+    <string name="continue_with_phone">Continue With Phone</string>
 
 </resources>
