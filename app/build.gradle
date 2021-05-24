@@ -76,4 +76,7 @@ dependencies {
     //lotte
     implementation 'com.airbnb.android:lottie:3.7.0'
 
+    //Pin View
+    implementation 'com.chaos.view:pinview:1.4.3'
+
 }

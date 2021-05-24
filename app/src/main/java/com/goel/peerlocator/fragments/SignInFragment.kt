@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.goel.peerlocator.R
 import com.goel.peerlocator.activities.SplashActivity
 import com.goel.peerlocator.databinding.FragmentSignInBinding
+import com.goel.peerlocator.utils.Constants
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -38,6 +39,14 @@ class SignInFragment : Fragment() {
         initializeGoogleAuthObject()
 
         googleSignInButton.setOnClickListener {googleSignIn()}
+        binding?.btnPhoneLogin?.setOnClickListener {
+            val phoneFragment = PhoneLoginFragment.newInstance()
+            val transaction = activity!!.supportFragmentManager.beginTransaction()
+            transaction.addToBackStack(Constants.DP)
+            transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+            transaction.replace(R.id.phone_fragment_container, phoneFragment, Constants.PHONE)
+            transaction.commit()
+        }
 
         splash = activity!! as SplashActivity
         auth = splash.auth
