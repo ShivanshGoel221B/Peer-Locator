@@ -107,6 +107,9 @@
     <string name="enter_mobile_number">Enter Mobile Number</string>
     <string name="sending_otp">Sending OTP</string>
     <string name="enter_your_mobile_number">Enter Your Mobile Number with Country Code</string>
+    <string name="empty_phone_error">Please enter a valid phone number</string>
+    <string name="verifying_otp">Verifying OTP</string>
+    <string name="enter_OTP">Enter OTP sent to your mobile number</string>
 
     <!--    String Array of countries and code-->
     <!--    country names-->

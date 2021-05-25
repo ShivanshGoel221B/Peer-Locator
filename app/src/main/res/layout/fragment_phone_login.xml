@@ -78,7 +78,7 @@
                 android:paddingStart="10dp"
                 android:paddingEnd="2dp"
                 android:textColor="@color/secondary_color"
-                android:textSize="22sp" />
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/get_otp_button"
@@ -108,23 +108,34 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView3">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_OTP"
+                android:textSize="18sp"
+                android:layout_marginBottom="15dp"
+                android:textAlignment="center"
+                android:textColor="@color/dark_grey"
+                android:fontFamily="@font/fjord_one"
+                android:layout_gravity="center_horizontal"/>
+
             <com.chaos.view.PinView
                 android:id="@+id/otp"
                 style="@style/PinWidget.PinView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="30dp"
                 android:cursorVisible="true"
                 android:inputType="number"
-                android:itemBackground="#65EAEAEA"
+                android:itemBackground="@color/ultra_light_grey"
                 app:cursorColor="@color/black"
                 app:hideLineWhenFilled="true"
                 app:itemCount="6"
-                app:itemHeight="50dp"
+                app:itemHeight="35dp"
                 app:itemRadius="5dp"
-                app:itemWidth="50dp"
+                app:itemWidth="35dp"
                 app:lineColor="@color/primary_color"
+                android:textColor="@color/primary_color"
                 app:lineWidth="1dp" />
 
             <Button
@@ -142,18 +153,18 @@
             android:id="@+id/loading_layout"
             android:visibility="gone"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_marginBottom="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/close_button">
+            app:layout_constraintTop_toBottomOf="@+id/imageView3">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="7"
+                android:layout_height="150dp"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
                 app:lottie_rawRes="@raw/anim_otp" />
@@ -162,7 +173,6 @@
                 android:id="@+id/loading_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
                 android:textSize="24sp"
