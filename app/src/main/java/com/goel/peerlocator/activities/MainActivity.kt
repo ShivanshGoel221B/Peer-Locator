@@ -26,7 +26,7 @@ import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 
-class MainActivity : AppCompatActivity(), UserDataListener {
+class MainActivity : AppCompatActivity() {
     private lateinit var user : UserModel
     private lateinit var binding: ActivityMainBinding
 
@@ -37,10 +37,13 @@ class MainActivity : AppCompatActivity(), UserDataListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Database.userDataListener = this
 
         createToolBar()
         setBackgroundLocationService()
+        getLocationPermission()
+        binding.customToolbar.profilePicture.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
 
     override fun onResume() {
@@ -183,13 +186,4 @@ class MainActivity : AppCompatActivity(), UserDataListener {
             ServicesHandler.startBackgroundLocation(this)
         }
     }
-
-    override fun onUserCreated() {
-        getLocationPermission()
-        setUserData()
-        binding.customToolbar.profilePicture.setOnClickListener {
-            startActivity(Intent(this, ProfileActivity::class.java))
-        }
-    }
-
 }

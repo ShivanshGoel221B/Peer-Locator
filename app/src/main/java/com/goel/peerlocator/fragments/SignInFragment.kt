@@ -23,6 +23,12 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 class SignInFragment : Fragment() {
 
+    companion object {
+        fun getInstance (activity: SplashActivity) = SignInFragment().apply {
+            this.splash = activity
+        }
+    }
+
     private lateinit var googleSignInClient: GoogleSignInClient
     private val rcSignIn = 10
     private lateinit var googleSignInButton : Button
@@ -40,15 +46,13 @@ class SignInFragment : Fragment() {
 
         googleSignInButton.setOnClickListener {googleSignIn()}
         binding?.btnPhoneLogin?.setOnClickListener {
-            val phoneFragment = PhoneLoginFragment.newInstance()
+            val phoneFragment = PhoneLoginFragment.newInstance(splash)
             val transaction = activity!!.supportFragmentManager.beginTransaction()
             transaction.addToBackStack(Constants.DP)
             transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
             transaction.replace(R.id.phone_fragment_container, phoneFragment, Constants.PHONE)
             transaction.commit()
         }
-
-        splash = activity!! as SplashActivity
         auth = splash.auth
 
         return view
@@ -83,6 +87,7 @@ class SignInFragment : Fragment() {
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
                 Log.w("Login Failed", "Google sign in failed", e)
+                splash.hideProgress()
             }
         }
     }
@@ -95,8 +100,8 @@ class SignInFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("LogIn Success", "signInWithCredential:success")
-                    val user = auth.currentUser
-                    splash.startMainActivity(user)
+                    val user = auth.currentUser!!
+                    splash.signInUser(user)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("LogIn Fail", "signInWithCredential:failure", task.exception)

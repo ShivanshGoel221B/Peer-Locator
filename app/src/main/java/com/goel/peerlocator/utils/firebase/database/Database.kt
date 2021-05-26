@@ -1,11 +1,8 @@
 package com.goel.peerlocator.utils.firebase.database
 
-import android.util.Log
 import com.goel.peerlocator.listeners.*
 import com.goel.peerlocator.models.*
 import com.goel.peerlocator.utils.Constants
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -18,50 +15,59 @@ abstract class Database {
 
     companion object {
         lateinit var currentUserRef : DocumentReference
-        var currentUser : UserModel? = null
-        var userDataListener : UserDataListener? = null
+        lateinit var currentUser : UserModel
 
-        fun signIn(user : FirebaseUser, userRef: CollectionReference) {
-            currentUserRef = userRef.document(user.uid)
-            currentUser = UserModel(documentReference = currentUserRef, uid = user.uid,
-                email = user.email, phoneNumber = user.phoneNumber)
+        fun signIn(user : UserModel, listener: UserDataListener) {
+            currentUserRef = user.documentReference
+            currentUser = user
 
             currentUserRef.get()
                 .addOnSuccessListener {
                     if (!it.exists()) {
-                        createUserEntry(currentUserRef, user)
+                        if (currentUser.email == null) {
+                            if (currentUser.name.isNotEmpty())
+                                createUserEntry(listener)
+                            else
+                                listener.newPhoneFound()
+                        }
+                        else
+                            createUserEntry(listener)
                     }
                     else {
-                        currentUser?.name = it[Constants.NAME].toString()
-                        currentUser?.imageUrl = it[Constants.DP].toString()
-                        userDataListener?.onUserCreated()
+                        currentUser.name = it[Constants.NAME].toString()
+                        currentUser.imageUrl = it[Constants.DP].toString()
+                        listener.onUserCreated()
                     }
                 }
                 .addOnFailureListener {
-                    Log.d("Error", it.toString())
+                    listener.onError()
                 }
         }
 
-        private fun createUserEntry (currentUserRef: DocumentReference, user: FirebaseUser) {
-            user.let {
+        private fun createUserEntry (listener: UserDataListener) {
+            currentUser.let {
                 val newUser = hashMapOf<String, Any>()
-                newUser[Constants.NAME] = user.displayName!!
-                newUser[Constants.DP] = user.photoUrl!!.toString()
+                newUser[Constants.NAME] = it.name
+                newUser[Constants.DP] = it.imageUrl
                 newUser[Constants.ONLINE] = true
                 newUser[Constants.VISIBLE] = true
-                currentUser?.name = user.displayName!!
-                currentUser?.imageUrl = user.photoUrl!!.toString()
-                userDataListener?.onUserCreated()
-                newUser[Constants.EMAIL] = user.email!!
+                it.email?.let { email->
+                    newUser[Constants.EMAIL] = email
+                }
+                it.phoneNumber?.let { phone->
+                    newUser[Constants.PHONE] = phone
+                }
                 currentUserRef.set(newUser)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener { listener.onUserCreated() }
             }
         }
 
         fun getMyData (listener : ProfileDataListener) {
-            currentUser!!.documentReference.get().addOnFailureListener {
+            currentUser.documentReference.get().addOnFailureListener {
                 listener.networkError()
             }
-            currentUser!!.documentReference.get().addOnSuccessListener {
+            currentUser.documentReference.get().addOnSuccessListener {
                 var friendCount = 0
                 try {
                     val friendList = it[Constants.FRIENDS] as ArrayList<*>
@@ -95,7 +101,7 @@ abstract class Database {
 
         fun findUser(reference: DocumentReference, listener: UserSearchListener) {
             reference.get().addOnSuccessListener {
-                val userPath = currentUser?.documentReference?.path
+                val userPath = currentUser.documentReference.path
                 try {
                     val friends = it[Constants.FRIENDS] as ArrayList<DocumentReference>
                     for(ref in friends) {

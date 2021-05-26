@@ -21,12 +21,13 @@ class PhoneLoginFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = PhoneLoginFragment()
+        fun newInstance(activity: SplashActivity) = PhoneLoginFragment().apply { this.splash = activity }
     }
 
     private var binding: FragmentPhoneLoginBinding? = null
     private lateinit var auth : FirebaseAuth
     private lateinit var storedVerificationId: String
+    private lateinit var splash: SplashActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -115,9 +116,10 @@ class PhoneLoginFragment : Fragment() {
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential).addOnSuccessListener {
-            val user = it?.user
+            val user = it.user!!
+            splash.signInUser(user)
             activity!!.onBackPressed()
-            (activity!! as SplashActivity).showProgress()
+            splash.showProgress()
         }.addOnFailureListener {
             Toast.makeText(context, "Couldn't Verify, Try Again", Toast.LENGTH_SHORT).show()
             hideLoading()
