@@ -21,18 +21,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
 
-class SignInFragment : Fragment() {
-
-    companion object {
-        fun getInstance (activity: SplashActivity) = SignInFragment().apply {
-            this.splash = activity
-        }
-    }
+class SignInFragment(private val splash: SplashActivity) : Fragment() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private val rcSignIn = 10
     private lateinit var googleSignInButton : Button
-    private lateinit var splash : SplashActivity
     private lateinit var auth : FirebaseAuth
     private var binding : FragmentSignInBinding? = null
 
@@ -46,7 +39,7 @@ class SignInFragment : Fragment() {
 
         googleSignInButton.setOnClickListener {googleSignIn()}
         binding?.btnPhoneLogin?.setOnClickListener {
-            val phoneFragment = PhoneLoginFragment.newInstance(splash)
+            val phoneFragment = PhoneLoginFragment(splash)
             val transaction = activity!!.supportFragmentManager.beginTransaction()
             transaction.addToBackStack(Constants.DP)
             transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)

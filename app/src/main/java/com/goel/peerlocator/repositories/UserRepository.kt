@@ -26,4 +26,9 @@ open class UserRepository {
         Database.signIn(model, listener)
     }
 
+    fun createProfile (name: String, listener: UserDataListener) {
+        Database.currentUser.name = name
+        Database.signIn(Database.currentUser, listener)
+    }
+
 }

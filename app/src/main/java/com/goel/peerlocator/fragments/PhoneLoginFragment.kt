@@ -17,17 +17,11 @@ import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import java.util.concurrent.TimeUnit
 
-class PhoneLoginFragment : Fragment() {
-
-    companion object {
-        @JvmStatic
-        fun newInstance(activity: SplashActivity) = PhoneLoginFragment().apply { this.splash = activity }
-    }
+class PhoneLoginFragment(private val splash: SplashActivity) : Fragment() {
 
     private var binding: FragmentPhoneLoginBinding? = null
     private lateinit var auth : FirebaseAuth
     private lateinit var storedVerificationId: String
-    private lateinit var splash: SplashActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

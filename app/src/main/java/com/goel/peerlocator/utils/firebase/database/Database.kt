@@ -24,7 +24,8 @@ abstract class Database {
             currentUserRef.get()
                 .addOnSuccessListener {
                     if (!it.exists()) {
-                        if (currentUser.email == null) {
+                        val email = currentUser.email
+                        if (email == null || email.isEmpty()) {
                             if (currentUser.name.isNotEmpty())
                                 createUserEntry(listener)
                             else
@@ -52,10 +53,12 @@ abstract class Database {
                 newUser[Constants.ONLINE] = true
                 newUser[Constants.VISIBLE] = true
                 it.email?.let { email->
-                    newUser[Constants.EMAIL] = email
+                    if (email.isNotEmpty())
+                        newUser[Constants.EMAIL] = email
                 }
                 it.phoneNumber?.let { phone->
-                    newUser[Constants.PHONE] = phone
+                    if (phone.isNotEmpty())
+                        newUser[Constants.PHONE] = phone
                 }
                 currentUserRef.set(newUser)
                     .addOnFailureListener { listener.onError() }
