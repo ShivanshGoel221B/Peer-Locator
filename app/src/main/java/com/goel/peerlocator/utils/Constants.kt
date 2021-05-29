@@ -8,6 +8,10 @@ object Constants {
     const val BACK_LOC = "background_location_access"
     const val USERS = "users"
 
+    const val INACCESSIBLE = -1
+    const val UNKNOWN = 0
+    const val FRIEND = 1
+
     const val NAME = "name"
     const val EMAIL = "email"
     const val PHONE = "phone"
