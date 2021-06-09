@@ -53,7 +53,7 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     private fun setViews () {
         membersCounter = binding.circleMembersCounter
         Picasso.with(this)
-            .load(Database.currentUser?.imageUrl)
+            .load(Database.currentUser.imageUrl)
             .placeholder(R.drawable.ic_placeholder_user)
             .transform(CropCircleTransformation())
             .into(binding.myProfilePicture)

@@ -23,7 +23,7 @@ class InvitationDatabase : Database() {
     private val invitesReference = FirebaseDatabase.getInstance().reference.child(Constants.INVITES)
 
     fun getAllInvites (listener: GetListListener) {
-        invitesReference.child(currentUser!!.uid)
+        invitesReference.child(currentUser.uid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (!snapshot.hasChildren()) {

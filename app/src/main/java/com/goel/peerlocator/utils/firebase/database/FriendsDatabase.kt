@@ -18,7 +18,7 @@ class FriendsDatabase : Database() {
         var circleArray =  java.util.ArrayList<DocumentReference>()
         var friendsArray =  java.util.ArrayList<DocumentReference>()
 
-        userRef.document(currentUser!!.uid).get().addOnFailureListener { listener.onError() }
+        userRef.document(currentUser.uid).get().addOnFailureListener { listener.onError() }
             .addOnSuccessListener {
                 if (it.exists()) {
                     try {
@@ -27,7 +27,7 @@ class FriendsDatabase : Database() {
                     try {
                         friendsArray = it[Constants.FRIENDS] as ArrayList<DocumentReference>
                     } catch (e : java.lang.NullPointerException){}
-                    currentUser?.friendsCount = friendsArray.size.toLong()
+                    currentUser.friendsCount = friendsArray.size.toLong()
                     addToList(friendsArray, circleArray, listener)
                 }
             }
@@ -169,7 +169,7 @@ class FriendsDatabase : Database() {
                     }
                 } catch (e: NullPointerException) {}
 
-                val excludeList = friends + sendInvites + blocked + blockedBy + listOf(currentUser?.uid)
+                val excludeList = friends + sendInvites + blocked + blockedBy + listOf(currentUser.uid)
 
                 userRef.get().addOnFailureListener { listener.onError() }
                     .addOnSuccessListener { users ->

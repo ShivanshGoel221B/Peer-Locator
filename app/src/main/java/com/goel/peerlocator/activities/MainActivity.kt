@@ -18,10 +18,8 @@ import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
-import com.goel.peerlocator.listeners.UserDataListener
 import com.goel.peerlocator.utils.location.Location
 import com.google.android.gms.location.LocationServices
-import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
@@ -149,20 +147,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUserData() {
-
-        if (Database.currentUser == null) {
-            AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage("Your Profile could not be retrieved, Please try again later")
-                .setPositiveButton("OK") { dialog, _ -> Log.d("Error: ", "Could not Retrieve Data")
-                    dialog.dismiss()
-                    FirebaseAuth.getInstance().signOut()
-                    startActivity(Intent(this, SplashActivity::class.java))
-                }.show()
-        }
-        Database.currentUser?.let {
+        Database.currentUser.let {
             user = it
-            user = Database.currentUser!!
+            user = Database.currentUser
             val dpView = binding.customToolbar.profilePicture
             val nameView = binding.customToolbar.profileName
             val displayName = user.name

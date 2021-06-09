@@ -43,7 +43,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     }
 
     private fun setData () {
-        model = Database.currentUser!!
+        model = Database.currentUser
 
         binding.profileName.text = model.name
 
@@ -251,7 +251,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     }
 
     override fun onNameChanged(name: String) {
-        Database.currentUser?.name = name
+        Database.currentUser.name = name
         binding.profileName.text = name
         Toast.makeText(this, "Name Changed", Toast.LENGTH_SHORT).show()
     }
