@@ -191,6 +191,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
             membersList.add(member)
             adapter.notifyDataSetChanged()
         }
+        onMemberCountComplete((membersList.size + 1).toLong())
     }
 
     private fun showRemoveWarning (member: MemberModel) {
@@ -212,6 +213,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
             object : RemoveMemberListener {
                 override fun memberRemoved(member: MemberModel) {
                     membersList.remove(member)
+                    onMemberCountComplete((membersList.size + 1).toLong())
                     adapter.notifyDataSetChanged()
                     loadingDialog.dismiss()
                     Toast.makeText(this@CircleInfoActivity, "${member.name} Removed", Toast.LENGTH_SHORT).show()
