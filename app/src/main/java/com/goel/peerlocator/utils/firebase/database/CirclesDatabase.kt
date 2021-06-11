@@ -108,7 +108,15 @@ class CirclesDatabase : Database() {
         membersList.forEach {
             it.get().addOnFailureListener { listener.onError() }
                 .addOnSuccessListener {member->
-                    if (member.id in myFriends) {
+                    if (member.id == currentUser.uid) {
+                        val name = "You"
+                        val url = currentUser.imageUrl
+                        val flag = Constants.ME
+                        val model = MemberModel(documentReference = currentUserRef, uid = currentUser.uid,
+                                    name = name, imageUrl = url, flag = flag)
+                        listener.onMemberRetrieved(model)
+                    }
+                    else if (member.id in myFriends) {
                         val name = member[Constants.NAME].toString()
                         val url = member[Constants.DP].toString()
                         val flag = Constants.FRIEND

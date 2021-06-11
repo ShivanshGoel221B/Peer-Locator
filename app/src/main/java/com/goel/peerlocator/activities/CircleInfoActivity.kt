@@ -2,6 +2,7 @@ package com.goel.peerlocator.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -92,6 +93,9 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
             Constants.INACCESSIBLE -> {
                 Toast.makeText(this, R.string.inaccessible_user_warning, Toast.LENGTH_SHORT).show()
             }
+            Constants.ME -> {
+                startActivity(Intent(this, ProfileActivity::class.java))
+            }
         }
     }
 
@@ -108,6 +112,9 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
             }
             Constants.INACCESSIBLE -> {
                 Toast.makeText(this, R.string.inaccessible_user_warning, Toast.LENGTH_SHORT).show()
+            }
+            Constants.ME -> {
+                startActivity(Intent(this, ProfileActivity::class.java))
             }
         }
     }
@@ -128,6 +135,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
                 .placeholder(R.drawable.ic_placeholder_user)
                 .transform(CropCircleTransformation())
                 .into(binding.infoAdminCard.cardProfileImage)
+            binding.infoAdminCard.cardAdditionalDetail.visibility = View.GONE
             binding.infoAdminCard.root.setOnClickListener { openMember(member) }
             binding.infoAdminCard.cardInfo.setOnClickListener { openMemberInfo(member) }
             binding.infoAdminCard.cardProfileImage.setOnClickListener { loadPhoto(member) }
@@ -193,7 +201,10 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
     override fun onLongClicked(position: Int): Boolean {
         if (Database.currentUser.uid != model.adminReference.id)
             return false
-        showRemoveWarning (membersList[position])
+        val member = membersList[position]
+        if (member.flag == Constants.ME)
+            return false
+        showRemoveWarning (member)
         return true
     }
 }
