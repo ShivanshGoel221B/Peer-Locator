@@ -1,5 +1,6 @@
 package com.goel.peerlocator.activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -101,6 +102,7 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
     }
 
     override fun onInfoClicked(position: Int) {
-        TODO("Not yet implemented")
+        CircleInfoActivity.model = commonList[position]
+        startActivity(Intent(this, CircleInfoActivity::class.java))
     }
 }
