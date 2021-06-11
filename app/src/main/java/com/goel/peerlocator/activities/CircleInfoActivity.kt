@@ -3,20 +3,24 @@ package com.goel.peerlocator.activities
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.MembersAdapter
 import com.goel.peerlocator.databinding.ActivityCircleInfoBinding
+import com.goel.peerlocator.dialogs.LoadingBasicDialog
 import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.listeners.CircleDataListener
+import com.goel.peerlocator.listeners.RemoveMemberListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.MemberModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.repositories.CirclesRepository
 import com.goel.peerlocator.utils.Constants
+import com.goel.peerlocator.utils.firebase.database.Database
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
@@ -134,6 +138,37 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
         }
     }
 
+    private fun showRemoveWarning (member: MemberModel) {
+        AlertDialog.Builder(this).setTitle(R.string.remove_member_title)
+            .setMessage("Are you sure you want to remove ${member.name} from ${model.name}?")
+            .setNegativeButton(R.string.no) {dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(R.string.yes) {dialog, _ ->
+                dialog.dismiss()
+                val loadingDialog = LoadingBasicDialog("Removing member")
+                removeMember (member, loadingDialog)
+            }.show()
+    }
+
+    private fun removeMember(member: MemberModel, loadingDialog: LoadingBasicDialog) {
+        loadingDialog.show(supportFragmentManager, "Removing Member")
+        CirclesRepository.instance.removeMember(model.documentReference, member,
+            object : RemoveMemberListener {
+                override fun memberRemoved(member: MemberModel) {
+                    membersList.remove(member)
+                    adapter.notifyDataSetChanged()
+                    loadingDialog.dismiss()
+                    Toast.makeText(this@CircleInfoActivity, "${member.name} Removed", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onError() {
+                    loadingDialog.dismiss()
+                    Toast.makeText(this@CircleInfoActivity, "Some Error Occurred", Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
     override fun onError() {
         Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show()
         finish()
@@ -155,4 +190,10 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
         openMemberInfo(member)
     }
 
+    override fun onLongClicked(position: Int): Boolean {
+        if (Database.currentUser.uid != model.adminReference.id)
+            return false
+        showRemoveWarning (membersList[position])
+        return true
+    }
 }

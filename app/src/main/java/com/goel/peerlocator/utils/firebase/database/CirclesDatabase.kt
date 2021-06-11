@@ -1,9 +1,6 @@
 package com.goel.peerlocator.utils.firebase.database
 
-import com.goel.peerlocator.listeners.CircleDataListener
-import com.goel.peerlocator.listeners.EditCircleListener
-import com.goel.peerlocator.listeners.GetListListener
-import com.goel.peerlocator.listeners.InvitationListener
+import com.goel.peerlocator.listeners.*
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.MemberModel
@@ -204,6 +201,49 @@ class CirclesDatabase : Database() {
                 documentReference.update(Constants.MEMBERS, membersList)
                     .addOnFailureListener { listener.onError() }
                     .addOnSuccessListener { addCircle(model, listener) }
+            }
+    }
+
+    fun removeMember (circleReference: DocumentReference, memberModel: MemberModel,
+                      listener: RemoveMemberListener) {
+        circleReference.get()
+            .addOnFailureListener { listener.onError() }
+            .addOnSuccessListener { circle->
+                var membersList = ArrayList<DocumentReference>()
+                try {
+                    membersList = circle[Constants.MEMBERS] as ArrayList<DocumentReference>
+                }catch (e: NullPointerException) {}
+
+                val newMembersList = membersList.filter {
+                    it.id != memberModel.uid
+                }
+                circleReference.update(Constants.MEMBERS, newMembersList)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {
+                        memberModel.documentReference.get()
+                            .addOnFailureListener {
+                                circleReference.update(Constants.MEMBERS, membersList)
+                                listener.onError()
+                            }
+                            .addOnSuccessListener {member ->
+                                var circleList = ArrayList<DocumentReference>()
+                                try {
+                                    circleList = member[Constants.CIRCLES] as ArrayList<DocumentReference>
+                                } catch (e: NullPointerException) {}
+
+                                val newCircleList = circleList.filter {
+                                    it.id != circleReference.id
+                                }
+
+                                memberModel.documentReference
+                                    .update(Constants.CIRCLES, newCircleList)
+                                    .addOnFailureListener {
+                                        circleReference.update(Constants.MEMBERS, membersList)
+                                        listener.onError()
+                                    }
+                                    .addOnSuccessListener { listener.memberRemoved(memberModel) }
+                            }
+                    }
             }
     }
 }

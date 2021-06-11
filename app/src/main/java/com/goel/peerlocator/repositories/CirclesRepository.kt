@@ -1,13 +1,11 @@
 package com.goel.peerlocator.repositories
 
-import android.widget.LinearLayout
-import com.facebook.shimmer.ShimmerFrameLayout
-import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.listeners.CircleDataListener
 import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.GetListListener
-import com.goel.peerlocator.models.CircleModel
+import com.goel.peerlocator.listeners.RemoveMemberListener
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.MemberModel
 import com.goel.peerlocator.utils.firebase.database.CirclesDatabase
 import com.google.firebase.firestore.DocumentReference
 import java.io.InputStream
@@ -33,5 +31,9 @@ class CirclesRepository : UserRepository () {
 
     fun getAllMembers (documentReference: DocumentReference, listener: CircleDataListener) {
         CirclesDatabase.instance.getAllMembers(documentReference, listener)
+    }
+
+    fun removeMember (documentReference: DocumentReference, member: MemberModel, listener: RemoveMemberListener) {
+        CirclesDatabase.instance.removeMember(documentReference, member, listener)
     }
 }

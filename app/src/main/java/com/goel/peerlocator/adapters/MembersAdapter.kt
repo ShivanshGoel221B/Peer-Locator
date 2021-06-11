@@ -21,6 +21,7 @@ class MembersAdapter (private val membersList: ArrayList<MemberModel>, private v
         val view = LayoutInflater.from(context).inflate(R.layout.details_card, parent, false)
         val viewHolder = MembersViewHolder(view)
         view.setOnClickListener {clickListener.onMemberClicked(viewHolder.adapterPosition)}
+        view.setOnLongClickListener { clickListener.onLongClicked(viewHolder.adapterPosition) }
         viewHolder.memberImage.setOnClickListener {clickListener.onMemberPhotoClicked(viewHolder.adapterPosition)}
         viewHolder.infoButton.setOnClickListener {clickListener.onMemberInfoClicked(viewHolder.adapterPosition)}
         return viewHolder
@@ -56,5 +57,6 @@ class MembersAdapter (private val membersList: ArrayList<MemberModel>, private v
         fun onMemberClicked (position: Int)
         fun onMemberPhotoClicked (position: Int)
         fun onMemberInfoClicked (position: Int)
+        fun onLongClicked (position: Int) :Boolean
     }
 }

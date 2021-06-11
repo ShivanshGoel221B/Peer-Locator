@@ -115,6 +115,7 @@
     <string name="invalid_name_warning">Please Enter a valid Name</string>
     <string name="signing_up">Signing Up</string>
     <string name="inaccessible_user_warning">You are not allowed to access this user</string>
+    <string name="remove_member_title">Remove Member</string>
 
     <!--    String Array of countries and code-->
     <!--    country names-->
