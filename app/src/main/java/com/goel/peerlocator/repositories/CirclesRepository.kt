@@ -36,4 +36,11 @@ class CirclesRepository : UserRepository () {
     fun removeMember (documentReference: DocumentReference, member: MemberModel, listener: RemoveMemberListener) {
         CirclesDatabase.instance.removeMember(documentReference, member, listener)
     }
+
+    fun leaveCircle(
+        documentReference: DocumentReference,
+        isAdmin: Boolean,
+        listener: RemoveMemberListener) {
+        CirclesDatabase.instance.leaveCircle(documentReference, isAdmin, listener)
+    }
 }

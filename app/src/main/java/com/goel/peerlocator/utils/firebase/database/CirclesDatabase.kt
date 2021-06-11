@@ -254,4 +254,56 @@ class CirclesDatabase : Database() {
                     }
             }
     }
+
+    fun leaveCircle(
+        documentReference: DocumentReference,
+        isAdmin: Boolean,
+        listener: RemoveMemberListener) {
+        val model = MemberModel(currentUserRef, currentUser.uid,
+            currentUser.name, currentUser.imageUrl, flag = Constants.ME)
+        removeMember(documentReference, model, object : RemoveMemberListener {
+            override fun memberRemoved(member: MemberModel) {
+                documentReference.get()
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {
+                        val members = it[Constants.MEMBERS] as ArrayList<*>
+                        when {
+                            members.size == 0 -> {
+                                documentReference.delete()
+                                    .addOnFailureListener { listener.onError() }
+                                    .addOnSuccessListener { listener.memberRemoved(model) }
+                            }
+                            isAdmin -> {
+                                switchAdmin(documentReference, model, listener)
+                            }
+                            else -> {
+                                listener.memberRemoved(model)
+                            }
+                        }
+                    }
+            }
+
+            override fun onError() {
+                listener.onError()
+            }
+        })
+    }
+
+    private fun switchAdmin(
+        documentReference: DocumentReference,
+        model: MemberModel,
+        listener: RemoveMemberListener
+    ) {
+        documentReference.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
+                var membersList = ArrayList<DocumentReference>()
+                try {
+                    membersList = it[Constants.MEMBERS] as ArrayList<DocumentReference>
+                } catch (e: java.lang.NullPointerException) {}
+
+                documentReference.update(Constants.ADMIN, membersList.first())
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener { listener.memberRemoved(model) }
+            }
+    }
 }

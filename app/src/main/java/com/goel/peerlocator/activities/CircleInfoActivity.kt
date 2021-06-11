@@ -44,6 +44,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
     override fun onResume() {
         super.onResume()
         setData()
+        setButtons()
     }
 
     private fun createToolBar() {
@@ -53,6 +54,20 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
         supportActionBar?.title = ""
     }
 
+    private fun setButtons () {
+        if (Database.currentUser.uid == model.adminReference.id) {
+            binding.addMembersButton.visibility = View.VISIBLE
+            binding.addMembersButton.setOnClickListener {
+
+            }
+        }
+        else
+            binding.addMembersButton.visibility = View.GONE
+
+        binding.leaveCircleButton.setOnClickListener {
+            showLeaveWarning()
+        }
+    }
 
     private fun setData () {
         val photoUrl = model.imageUrl
@@ -69,6 +84,38 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
         val lm = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.infoMembersRecyclerView.layoutManager = lm
         CirclesRepository.instance.getAllMembers(model.documentReference, this)
+    }
+
+    private fun showLeaveWarning () {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.leave_circle)
+            .setMessage("Are you sure you want to leave this circle?")
+            .setNegativeButton(R.string.no) {dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(R.string.yes) {dialog, _ ->
+                dialog.dismiss()
+                val loadingDialog = LoadingBasicDialog("Leaving Circle")
+                leaveCircle(loadingDialog)
+            }.show()
+    }
+
+    private fun leaveCircle(loadingDialog: LoadingBasicDialog) {
+        loadingDialog.show(supportFragmentManager, "Removing Member")
+        CirclesRepository.instance.leaveCircle(model.documentReference,
+            model.adminReference.id == Database.currentUser.uid,
+            object : RemoveMemberListener {
+                override fun memberRemoved(member: MemberModel) {
+                    loadingDialog.dismiss()
+                    finish()
+                    Toast.makeText(this@CircleInfoActivity, "Left ${model.name}", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onError() {
+                    loadingDialog.dismiss()
+                    Toast.makeText(this@CircleInfoActivity, "Some Error Occurred", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
 
