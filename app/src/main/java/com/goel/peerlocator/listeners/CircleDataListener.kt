@@ -1,8 +1,9 @@
 package com.goel.peerlocator.listeners
 
-import com.google.firebase.firestore.DocumentReference
+import com.goel.peerlocator.models.MemberModel
 
 interface CircleDataListener {
     fun onMemberCountComplete (members : Long)
-    fun onMembersRetrieved (references : ArrayList<DocumentReference>)
+    fun onMemberRetrieved (member: MemberModel)
+    fun onError ()
 }

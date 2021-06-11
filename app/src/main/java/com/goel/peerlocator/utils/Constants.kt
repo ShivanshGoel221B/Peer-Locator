@@ -11,6 +11,7 @@ object Constants {
     const val INACCESSIBLE = -1
     const val UNKNOWN = 0
     const val FRIEND = 1
+    const val INACCESSIBLE_NAME = "Inaccessible User"
 
     const val NAME = "name"
     const val EMAIL = "email"

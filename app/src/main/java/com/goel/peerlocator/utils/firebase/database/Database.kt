@@ -102,38 +102,6 @@ abstract class Database {
             }
         }
 
-        fun findUser(reference: DocumentReference, listener: UserSearchListener) {
-            reference.get().addOnSuccessListener {
-                val userPath = currentUser.documentReference.path
-                try {
-                    val friends = it[Constants.FRIENDS] as ArrayList<DocumentReference>
-                    for(ref in friends) {
-                        if (userPath == ref.path) {
-                            val friend = FriendModel(documentReference = reference, uid = getUid(reference),
-                                name = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
-                            listener.friendFound(friend)
-                            return@addOnSuccessListener
-                        }
-                    }
-                }catch (e : java.lang.NullPointerException){ }
-
-                try {
-                    val blocks = it[Constants.BLOCKS] as ArrayList<DocumentReference>
-                    for (ref in blocks) {
-                        if (userPath == ref.path) {
-                            listener.blockedFound()
-                            return@addOnSuccessListener
-                        }
-                    }
-                }catch (e : NullPointerException){}
-
-                listener.userFound(UnknownUserModel(reference, getUid(reference),
-                    name = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString()))
-            }
-        }
-
-        // To check the possibility of removing this redundant method
-        private fun getUid (reference: DocumentReference) = reference.path.substring(6)
 
         fun changeName(documentReference: DocumentReference, newName: String, listener: ProfileDataListener) {
             documentReference.update(Constants.NAME, newName).addOnSuccessListener { listener.onNameChanged(newName) }

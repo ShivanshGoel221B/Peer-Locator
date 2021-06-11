@@ -6,6 +6,7 @@ import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.listeners.InvitationListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.InviteModel
+import com.goel.peerlocator.models.MemberModel
 import com.goel.peerlocator.repositories.InvitesRepository
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.storage.Storage
@@ -21,13 +22,13 @@ class CirclesDatabase : Database() {
     fun getAllCircles (listener: GetListListener) {
         var circleArray = java.util.ArrayList<DocumentReference>()
 
-        userRef.document(currentUser!!.uid).get()
+        userRef.document(currentUser.uid).get()
             .addOnSuccessListener {
                 if (it.exists()) {
                     try {
                         circleArray = it[Constants.CIRCLES] as ArrayList<DocumentReference>
                     } catch (e: NullPointerException) {}
-                    currentUser?.circlesCount = circleArray.size.toLong()
+                    currentUser.circlesCount = circleArray.size.toLong()
                     addToList(circleArray, listener)
                 }
             }
@@ -60,16 +61,94 @@ class CirclesDatabase : Database() {
         }
     }
 
-    fun getCircleInfo(listener: CircleDataListener, circleReference: DocumentReference) {
-        circleReference.get().addOnSuccessListener {
-            if (it.exists()) {
-                var membersList = ArrayList<DocumentReference>()
+    fun getAllMembers (documentReference: DocumentReference, listener: CircleDataListener) {
+        var members = ArrayList<DocumentReference>()
+        val inAccessible = ArrayList<String>()
+        documentReference.get().addOnFailureListener { listener.onError() }
+            .addOnSuccessListener {
                 try {
-                    membersList = it[Constants.MEMBERS] as ArrayList<DocumentReference>
-                } catch (e : NullPointerException){}
-                listener.onMemberCountComplete(membersList.size.toLong())
-                listener.onMembersRetrieved(membersList)
+                    members = it[Constants.MEMBERS] as ArrayList<DocumentReference>
+                } catch (e: NullPointerException){}
+
+                currentUserRef.get().addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {me->
+                        val myFriends = ArrayList<String>()
+                        // Collect Friends
+                        try {
+                            val friendReferences = me[Constants.FRIENDS] as ArrayList<DocumentReference>
+                            for (friend in friendReferences) {
+                                myFriends.add(friend.id)
+                            }
+                        } catch (e: NullPointerException){}
+
+                        //Collect Blocks
+                        try {
+                            val blocks = me[Constants.BLOCKS] as ArrayList<DocumentReference>
+                            for (block in blocks) {
+                                inAccessible.add(block.id)
+                            }
+                        } catch (e: java.lang.NullPointerException) {}
+
+                        try {
+                            val blocks = me[Constants.BLOCKED_BY] as ArrayList<DocumentReference>
+                            for (block in blocks) {
+                                inAccessible.add(block.id)
+                            }
+                        } catch (e: java.lang.NullPointerException) {}
+
+
+                        createMemberModels (members, myFriends, inAccessible, listener)
+                    }
             }
+    }
+
+    private fun createMemberModels (
+        membersList: ArrayList<DocumentReference>,
+        myFriends: ArrayList<String>,
+        inAccessible: ArrayList<String>,
+        listener: CircleDataListener
+    ) {
+        membersList.forEach {
+            it.get().addOnFailureListener { listener.onError() }
+                .addOnSuccessListener {member->
+                    if (member.id in myFriends) {
+                        val name = member[Constants.NAME].toString()
+                        val url = member[Constants.DP].toString()
+                        val flag = Constants.FRIEND
+                        val model = MemberModel(documentReference = member.reference, uid = member.id,
+                            name = name, imageUrl = url, flag = flag)
+                        listener.onMemberRetrieved(model)
+                    }
+                    else if (member.id !in inAccessible) {
+                        val visible = member[Constants.VISIBLE] as Boolean
+                        if (visible) {
+                            val name = member[Constants.NAME].toString()
+                            val url = member[Constants.DP].toString()
+                            val flag = Constants.UNKNOWN
+                            val model = MemberModel(documentReference = member.reference, uid = member.id,
+                                name = name, imageUrl = url, flag = flag)
+                            listener.onMemberRetrieved(model)
+                        }
+                        else {
+                            val name = Constants.INACCESSIBLE_NAME
+                            val url = Constants.DEFAULT_IMAGE_URL
+                            val flag = Constants.INACCESSIBLE
+
+                            val model = MemberModel(documentReference = member.reference, uid = member.id,
+                                name = name, imageUrl = url, flag = flag)
+                            listener.onMemberRetrieved(model)
+                        }
+                    }
+                    else {
+                        val name = Constants.INACCESSIBLE_NAME
+                        val url = Constants.DEFAULT_IMAGE_URL
+                        val flag = Constants.INACCESSIBLE
+
+                        val model = MemberModel(documentReference = member.reference, uid = member.id,
+                            name = name, imageUrl = url, flag = flag)
+                        listener.onMemberRetrieved(model)
+                    }
+                }
         }
     }
 

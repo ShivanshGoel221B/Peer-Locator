@@ -2,43 +2,42 @@ package com.goel.peerlocator.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
-import com.goel.peerlocator.adapters.FriendsAdapter
+import com.goel.peerlocator.adapters.MembersAdapter
 import com.goel.peerlocator.databinding.ActivityCircleInfoBinding
 import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.listeners.CircleDataListener
-import com.goel.peerlocator.listeners.UserSearchListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
+import com.goel.peerlocator.models.MemberModel
 import com.goel.peerlocator.models.UnknownUserModel
+import com.goel.peerlocator.repositories.CirclesRepository
 import com.goel.peerlocator.utils.Constants
-import com.goel.peerlocator.utils.firebase.database.Database
-import com.goel.peerlocator.utils.firebase.database.CirclesDatabase
-import com.google.firebase.firestore.DocumentReference
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
-class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapter.FriendClickListener {
+class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapter.MemberClickedListener {
 
     companion object {
         lateinit var model : CircleModel
     }
     private lateinit var binding: ActivityCircleInfoBinding
-    private lateinit var membersList : ArrayList<FriendModel>
-    private lateinit var adapter : FriendsAdapter
+    private lateinit var membersList : ArrayList<MemberModel>
+    private lateinit var adapter : MembersAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCircleInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         createToolBar()
+    }
+
+    override fun onResume() {
+        super.onResume()
         setData()
     }
 
@@ -46,7 +45,6 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
         val toolbar : androidx.appcompat.widget.Toolbar = binding.infoToolbar.root
         setSupportActionBar(toolbar)
         binding.infoToolbar.backButton.setOnClickListener {onBackPressed()}
-        binding.infoToolbar.backButton.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_arrow_back))
         supportActionBar?.title = ""
     }
 
@@ -56,126 +54,62 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
         val name = model.name
         binding.infoToolbar.profileName.text = name
         Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_circle_big).into(binding.profileImageHolder)
-        CirclesDatabase.instance.getCircleInfo(this, model.documentReference)
+        createRecyclerView()
     }
 
     private fun createRecyclerView () {
         membersList = ArrayList()
-        adapter = FriendsAdapter(membersList, this, this)
+        adapter = MembersAdapter(membersList, this, this)
         binding.infoMembersRecyclerView.adapter = adapter
         val lm = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.infoMembersRecyclerView.layoutManager = lm
+        CirclesRepository.instance.getAllMembers(model.documentReference, this)
     }
 
-
-    private fun showBlockedMessage () {
-
-    }
 
     // Circle Listeners
     override fun onMemberCountComplete(members: Long) {
         binding.infoMembersCount.text = resources.getQuantityString(R.plurals.members_count, members.toInt(), members)
     }
 
-    override fun onMembersRetrieved(references: ArrayList<DocumentReference>) {
-        createRecyclerView()
 
-        for (ref in references) {
-            ref.get().addOnSuccessListener {
-                if (it.exists()) {
-                    val friend = FriendModel(documentReference = it.reference, uid = it.reference.path.substring(6),
-                                            name = it[Constants.NAME].toString(), imageUrl = it[Constants.DP].toString())
-                    if (model.adminReference.path == friend.documentReference.path) {
-                        binding.infoAdminCard.cardProfileName.text = friend.name
-                        Picasso.with(this).load(friend.imageUrl).placeholder(R.drawable.ic_placeholder_user)
-                            .transform(CropCircleTransformation())
-                            .into(binding.infoAdminCard.cardProfileImage)
-                        if (friend.documentReference.path == Database.currentUser?.documentReference?.path) {
-                            binding.infoAdminCard.cardProfileName.text = getString(R.string.you)
-                            binding.infoAdminCard.cardAdditionalDetail.visibility = View.GONE
-                            binding.infoAdminCard.cardInfo.visibility = View.GONE
-                        }
-                        else {
-                            try {
-                                var friendCircles: ArrayList<DocumentReference>
-                                var myCircle: ArrayList<DocumentReference>
-                                friend.documentReference.get().addOnSuccessListener { friendRef ->
-                                    friendCircles = friendRef[Constants.CIRCLES] as ArrayList<DocumentReference>
-                                    Database.currentUser?.documentReference?.get()?.addOnSuccessListener { myRef ->
-                                        myCircle = myRef[Constants.CIRCLES] as ArrayList<DocumentReference>
-                                        var counter = 1
-                                        for (c1 in friendCircles) {
-                                            for (c2 in myCircle) {
-                                                if (c1.path == c2.path) {
-                                                    counter++
-                                                }
-                                            }
-                                        }
-                                        binding.infoAdminCard.
-                                        cardAdditionalDetail.text = resources
-                                            .getQuantityString(R.plurals.common_circles_count, counter, counter)
-                                    }
-                                }
-                            } catch (e: NullPointerException) { }
-                        }
-                    }
-                    else if (friend.uid != Database.currentUser?.uid) {
-                        membersList.add(friend)
-                        adapter.notifyDataSetChanged()
-                        var friendCircles: ArrayList<DocumentReference>
-                        var myCircle: ArrayList<DocumentReference>
-                        try {
-                            friend.documentReference.get().addOnSuccessListener { friendRef ->
-                                friendCircles = friendRef[Constants.CIRCLES] as ArrayList<DocumentReference>
-                                Database.currentUser?.documentReference?.get()?.addOnSuccessListener { myRef ->
-                                    myCircle = myRef[Constants.CIRCLES] as ArrayList<DocumentReference>
-
-                                    for (c1 in friendCircles) {
-                                        for (c2 in myCircle) {
-                                            if (c1.path == c2.path) {
-                                                friend.commonCirclesCount++
-                                                adapter.notifyDataSetChanged()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (e: NullPointerException) { }
-                    }
-                }
+    private fun openMember (member: MemberModel) {
+        when (member.flag) {
+            Constants.FRIEND -> {
+                FriendActivity.friend = FriendModel(documentReference = member.documentReference, name = member.name, imageUrl = member.imageUrl)
+                startActivity(Intent(this, FriendActivity::class.java))
+            }
+            Constants.UNKNOWN -> {
+                UserInfoActivity.model = UnknownUserModel(documentReference = member.documentReference,
+                    uid = member.uid, name = member.name, imageUrl = member.imageUrl)
+                startActivity(Intent(this, UserInfoActivity::class.java))
+                Toast.makeText(this, "You must be friend with this user to access location", Toast.LENGTH_SHORT).show()
+            }
+            Constants.INACCESSIBLE -> {
+                Toast.makeText(this, R.string.inaccessible_user_warning, Toast.LENGTH_SHORT).show()
             }
         }
-        TODO("improve this code and handle it in database using listener")
     }
 
-
-    //Friends Click Listeners
-    override fun onFriendClicked(position: Int) {
-        Database.findUser(membersList[position].documentReference, object : UserSearchListener {
-            override fun userFound(user: UnknownUserModel) {
-                UserInfoActivity.model = user
-                startActivity(Intent(applicationContext, UserInfoActivity::class.java))
-                Toast.makeText(applicationContext, "You must be friend with this person to track", Toast.LENGTH_LONG).show()
+    private fun openMemberInfo (member: MemberModel) {
+        when (member.flag) {
+            Constants.FRIEND -> {
+                FriendInfoActivity.model = FriendModel(documentReference = member.documentReference, name = member.name, imageUrl = member.imageUrl)
+                startActivity(Intent(this, FriendInfoActivity::class.java))
             }
-
-            override fun friendFound(friend: FriendModel) {
-                FriendActivity.friend = friend
-                startActivity(Intent(applicationContext, FriendActivity::class.java))
+            Constants.UNKNOWN -> {
+                UserInfoActivity.model = UnknownUserModel(documentReference = member.documentReference,
+                                        uid = member.uid, name = member.name, imageUrl = member.imageUrl)
+                startActivity(Intent(this, UserInfoActivity::class.java))
             }
-
-            override fun blockedFound() {
-                showBlockedMessage ()
+            Constants.INACCESSIBLE -> {
+                Toast.makeText(this, R.string.inaccessible_user_warning, Toast.LENGTH_SHORT).show()
             }
-
-            override fun networkError() {
-                Toast.makeText(applicationContext, "Network Error", Toast.LENGTH_SHORT).show()
-            }
-        })
+        }
     }
 
-    override fun onFriendPhotoClicked(position: Int) {
-        val model = membersList[position]
-        val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = false)
+    private fun loadPhoto (member: MemberModel) {
+        val imageViewFragment = ImageViewFragment.newInstance(url = member.imageUrl, isCircle = false)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.addToBackStack(Constants.DP)
         transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
@@ -183,25 +117,42 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, FriendsAdapt
         transaction.commit()
     }
 
-    override fun onFriendInfoClicked(position: Int) {
-        Database.findUser(membersList[position].documentReference, object : UserSearchListener {
-            override fun userFound(user: UnknownUserModel) {
-                UserInfoActivity.model = user
-                startActivity(Intent(applicationContext, UserInfoActivity::class.java))
-            }
-
-            override fun friendFound(friend: FriendModel) {
-                FriendInfoActivity.model = friend
-                startActivity(Intent(applicationContext, FriendInfoActivity::class.java))
-            }
-
-            override fun blockedFound() {
-                showBlockedMessage ()
-            }
-
-            override fun networkError() {
-                Toast.makeText(applicationContext, "Network Error", Toast.LENGTH_SHORT).show()
-            }
-        })
+    override fun onMemberRetrieved(member: MemberModel) {
+        if(member.documentReference.id == model.adminReference.id) {
+            binding.infoAdminCard.cardProfileName.text = member.name
+            Picasso.with(this).load(member.imageUrl)
+                .placeholder(R.drawable.ic_placeholder_user)
+                .transform(CropCircleTransformation())
+                .into(binding.infoAdminCard.cardProfileImage)
+            binding.infoAdminCard.root.setOnClickListener { openMember(member) }
+            binding.infoAdminCard.cardInfo.setOnClickListener { openMemberInfo(member) }
+            binding.infoAdminCard.cardProfileImage.setOnClickListener { loadPhoto(member) }
+        }
+        else {
+            membersList.add(member)
+            adapter.notifyDataSetChanged()
+        }
     }
+
+    override fun onError() {
+        Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    //Friends Click Listeners
+    override fun onMemberClicked(position: Int) {
+        val member = membersList[position]
+        openMember(member)
+    }
+
+    override fun onMemberPhotoClicked(position: Int) {
+        val member = membersList[position]
+        loadPhoto(member)
+    }
+
+    override fun onMemberInfoClicked(position: Int) {
+        val member = membersList[position]
+        openMemberInfo(member)
+    }
+
 }

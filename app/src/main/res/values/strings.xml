@@ -114,6 +114,7 @@
     <string name="enter_your_name">Enter Your Name</string>
     <string name="invalid_name_warning">Please Enter a valid Name</string>
     <string name="signing_up">Signing Up</string>
+    <string name="inaccessible_user_warning">You are not allowed to access this user</string>
 
     <!--    String Array of countries and code-->
     <!--    country names-->
