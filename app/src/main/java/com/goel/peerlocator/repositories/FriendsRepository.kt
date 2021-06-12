@@ -1,10 +1,6 @@
 package com.goel.peerlocator.repositories
 
-import android.widget.LinearLayout
-import com.facebook.shimmer.ShimmerFrameLayout
-import com.goel.peerlocator.adapters.FriendsAdapter
 import com.goel.peerlocator.listeners.EditFriendListener
-import com.goel.peerlocator.listeners.FriendDataListener
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.firebase.database.FriendsDatabase
@@ -38,5 +34,9 @@ class FriendsRepository : UserRepository() {
 
     fun blockFriend(documentReference: DocumentReference, listener: EditFriendListener) {
         FriendsDatabase.instance.blockFriend(documentReference, listener)
+    }
+
+    fun blockUser(documentReference: DocumentReference, listener: EditFriendListener) {
+        FriendsDatabase.instance.blockUser(documentReference, listener)
     }
 }
