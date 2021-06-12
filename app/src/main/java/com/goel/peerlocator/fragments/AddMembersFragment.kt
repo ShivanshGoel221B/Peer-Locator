@@ -1,15 +1,17 @@
 package com.goel.peerlocator.fragments
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goel.peerlocator.R
+import com.goel.peerlocator.activities.CircleInfoActivity
+import com.goel.peerlocator.activities.NewCircleActivity
 import com.goel.peerlocator.adapters.AddMembersAdapter
 import com.goel.peerlocator.databinding.AddMembersFragmentBinding
 import com.goel.peerlocator.listeners.GetListListener
@@ -19,9 +21,8 @@ import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.AddMembersViewModel
-import com.google.firebase.firestore.DocumentReference
+import java.lang.ClassCastException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListeners {
 
@@ -49,6 +50,11 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
         binding?.addMembersButton?.setOnClickListener {
             viewModel.selectedList.forEach {
                 alreadyAdded.add(it)
+            }
+            try {
+                (activity as NewCircleActivity).membersAdded()
+            } catch (e: ClassCastException) {
+                (activity as CircleInfoActivity).membersAdded()
             }
             activity!!.onBackPressed()
         }

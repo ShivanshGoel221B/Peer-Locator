@@ -11,17 +11,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.MembersAdapter
 import com.goel.peerlocator.databinding.ActivityCircleInfoBinding
+import com.goel.peerlocator.dialogs.InvitationLoadingDialog
 import com.goel.peerlocator.dialogs.LoadingBasicDialog
+import com.goel.peerlocator.fragments.AddMembersFragment
 import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.listeners.CircleDataListener
+import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.listeners.RemoveMemberListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.MemberModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.repositories.CirclesRepository
+import com.goel.peerlocator.repositories.InvitesRepository
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
+import com.google.firebase.firestore.DocumentReference
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
@@ -33,6 +38,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
     private lateinit var binding: ActivityCircleInfoBinding
     private lateinit var membersList : ArrayList<MemberModel>
     private lateinit var adapter : MembersAdapter
+    private lateinit var initialList: ArrayList<FriendModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +64,7 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
         if (Database.currentUser.uid == model.adminReference.id) {
             binding.addMembersButton.visibility = View.VISIBLE
             binding.addMembersButton.setOnClickListener {
-
+                formInitialList()
             }
         }
         else
@@ -84,6 +90,40 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
         val lm = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.infoMembersRecyclerView.layoutManager = lm
         CirclesRepository.instance.getAllMembers(model.documentReference, this)
+    }
+
+    private fun formInitialList () {
+        initialList = ArrayList()
+        if (membersList.size + 1 < Constants.MAX_CIRCLE_SIZE) {
+            membersList.forEach {
+                val model = FriendModel(documentReference = it.documentReference, uid = it.uid)
+                initialList.add(model)
+            }
+            model.documentReference.get()
+                .addOnSuccessListener {
+                    try {
+                        val sent = it[Constants.SENT_INVITES] as ArrayList<DocumentReference>
+                        for (reference in sent) {
+                            val model = FriendModel(reference, reference.id)
+                            initialList.add(model)
+                        }
+                    } catch (e: NullPointerException) {
+                    }
+                    showAddMemberFragment(initialList)
+                }
+        }
+        else {
+            Toast.makeText(this, R.string.circle_size_warning, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun showAddMemberFragment(initialList: ArrayList<FriendModel>) {
+        val addMembersFragment = AddMembersFragment.newInstance(initialList)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.addToBackStack(getString(R.string.add_members))
+        transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
+        transaction.replace(R.id.add_members_fragment_container, addMembersFragment, getString(R.string.add_members))
+        transaction.commit()
     }
 
     private fun showLeaveWarning () {
@@ -256,4 +296,41 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
         showRemoveWarning (member)
         return true
     }
+
+    private fun filterList () : ArrayList<DocumentReference> {
+        val membersUid = ArrayList<String>()
+        for (memberModel in membersList) {
+            membersUid.add(memberModel.uid)
+        }
+        val inviteList = initialList.filter { it.uid !in membersUid }
+
+        return inviteList.map { it.documentReference } as ArrayList<DocumentReference>
+    }
+
+    private fun sendInvitations(inviteList: ArrayList<DocumentReference>) {
+        val dialog = InvitationLoadingDialog(getString(R.string.sending_invitation))
+        dialog.show(supportFragmentManager, Constants.INVITES)
+
+        InvitesRepository.instance.sendInvitations(model.documentReference, inviteList,
+            object : EditCircleListener {
+                override fun onCreationSuccessful() {}
+
+                override fun membersAdditionSuccessful() {
+                    dialog.dismiss()
+                    Toast.makeText(this@CircleInfoActivity, R.string.invitation_sent, Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                override fun onError() {
+                    Toast.makeText(this@CircleInfoActivity, R.string.error_message, Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    fun membersAdded () {
+        if (initialList.size > membersList.size) {
+            sendInvitations(filterList())
+        }
+    }
+
 }

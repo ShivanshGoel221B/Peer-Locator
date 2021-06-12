@@ -126,6 +126,11 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
         }
     }
 
+    fun membersAdded () {
+        adapter.notifyDataSetChanged()
+        updateCounter(viewModel.membersList.size)
+    }
+
     // Profile Picture
 
     private fun checkStoragePermission () {
