@@ -216,7 +216,7 @@ class FriendsDatabase : Database() {
                     myInitialFriends = me[Constants.FRIENDS] as ArrayList<DocumentReference>
                 } catch (e: java.lang.NullPointerException) {}
 
-                val myNewFriends = myInitialFriends.filter { it.id != documentReference.id }
+                val myNewFriends = myInitialFriends.filter { it.id != documentReference.id } as ArrayList<DocumentReference>
 
                 currentUserRef.update(Constants.FRIENDS, myNewFriends)
                     .addOnFailureListener { listener.onError() }
@@ -232,13 +232,67 @@ class FriendsDatabase : Database() {
                                     friends = friend[Constants.FRIENDS] as ArrayList<DocumentReference>
                                 } catch (e: java.lang.NullPointerException) {}
 
-                                val newFriends = friends.filter { it.id != currentUserRef.id }
+                                val newFriends = friends.filter { it.id != currentUserRef.id } as ArrayList<DocumentReference>
                                 documentReference.update(Constants.FRIENDS, newFriends)
                                     .addOnFailureListener {
                                         listener.onError()
                                         currentUserRef.update(Constants.FRIENDS, myInitialFriends)
                                     }
                                     .addOnSuccessListener { listener.onFriendRemoved() }
+                            }
+                    }
+            }
+    }
+
+    fun blockFriend(documentReference: DocumentReference, listener: EditFriendListener) {
+        removeFriend(documentReference, object : EditFriendListener {
+            override fun onFriendRemoved() {
+                listener.onFriendRemoved()
+                blockUser(documentReference, listener)
+            }
+
+            override fun onFriendBlocked() {}
+
+            override fun onError() {
+                listener.onError()
+            }
+        })
+    }
+
+    fun blockUser(documentReference: DocumentReference, listener: EditFriendListener) {
+        currentUserRef.get()
+            .addOnFailureListener { listener.onError() }
+            .addOnSuccessListener { me->
+                var myInitialBlocks = ArrayList<DocumentReference>()
+                try {
+                    myInitialBlocks = me[Constants.BLOCKS] as ArrayList<DocumentReference>
+                } catch (e: java.lang.NullPointerException) {}
+
+                val myNewBlocks = myInitialBlocks.filter { true } as ArrayList<DocumentReference>
+                myNewBlocks.add(documentReference)
+
+                currentUserRef.update(Constants.BLOCKS, myNewBlocks)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {
+                        documentReference.get()
+                            .addOnFailureListener {
+                                listener.onError()
+                                currentUserRef.update(Constants.BLOCKS, myInitialBlocks)
+                            }
+                            .addOnSuccessListener {friend->
+                                var blockedBy = ArrayList<DocumentReference>()
+                                try {
+                                    blockedBy = friend[Constants.BLOCKED_BY] as ArrayList<DocumentReference>
+                                } catch (e: java.lang.NullPointerException) {}
+
+                                val newBlockedBy = blockedBy.filter { true } as ArrayList<DocumentReference>
+                                newBlockedBy.add(currentUserRef)
+                                documentReference.update(Constants.BLOCKED_BY, newBlockedBy)
+                                    .addOnFailureListener {
+                                        listener.onError()
+                                        currentUserRef.update(Constants.BLOCKS, myInitialBlocks)
+                                    }
+                                    .addOnSuccessListener { listener.onFriendBlocked() }
                             }
                     }
             }

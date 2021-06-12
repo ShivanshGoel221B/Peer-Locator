@@ -71,6 +71,9 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
         binding.removeButton.setOnClickListener {
             showRemoveWarning()
         }
+        binding.blockButton.setOnClickListener {
+            showBlockWarning()
+        }
     }
 
     private fun showRemoveWarning () {
@@ -81,6 +84,17 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
             .setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
                 removeFriend()
+            }.show()
+    }
+
+    private fun showBlockWarning () {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.block)
+            .setMessage("Are you sure you want to block ${model.name}?")
+            .setNegativeButton(R.string.no) {dialog, _ -> dialog.dismiss()}
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                dialog.dismiss()
+                blockFriend()
             }.show()
     }
 
@@ -96,6 +110,29 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
             }
 
             override fun onFriendBlocked() {}
+
+            override fun onError() {
+                loading.dismiss()
+                Toast.makeText(this@FriendInfoActivity, R.string.error_message, Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        })
+    }
+
+    private fun blockFriend () {
+        val loading = LoadingBasicDialog("Removing Friend")
+        loading.show(supportFragmentManager, "Remove Friend")
+
+        FriendsRepository.instance.blockFriend(model.documentReference, object : EditFriendListener {
+            override fun onFriendRemoved() {
+                loading.setMessage("Blocking User")
+            }
+
+            override fun onFriendBlocked() {
+                loading.dismiss()
+                Toast.makeText(this@FriendInfoActivity, "${model.name} blocked", Toast.LENGTH_SHORT).show()
+                finish()
+            }
 
             override fun onError() {
                 loading.dismiss()
