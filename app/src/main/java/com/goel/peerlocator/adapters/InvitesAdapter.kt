@@ -19,7 +19,6 @@ class InvitesAdapter (private val invitesList: ArrayList<InviteModel>, private v
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): InvitesViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.details_card, parent, false)
         val viewHolder = InvitesViewHolder(view)
-        view.setOnClickListener {clickListener.onInviteClicked(viewHolder.adapterPosition)}
         viewHolder.photoView.setOnClickListener {clickListener.onInvitePhotoClicked(viewHolder.adapterPosition)}
         viewHolder.acceptButton.setOnClickListener {clickListener.onAcceptClicked(viewHolder.adapterPosition)}
         viewHolder.rejectButton.setOnClickListener {clickListener.onRejectClicked(viewHolder.adapterPosition)}
@@ -64,7 +63,6 @@ class InvitesAdapter (private val invitesList: ArrayList<InviteModel>, private v
     }
 
     interface InviteClickListener {
-        fun onInviteClicked (position: Int)
         fun onInvitePhotoClicked (position: Int)
         fun onAcceptClicked (position: Int)
         fun onRejectClicked (position: Int)

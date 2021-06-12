@@ -1,6 +1,5 @@
 package com.goel.peerlocator.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
-import com.goel.peerlocator.activities.InviteInfoActivity
 import com.goel.peerlocator.adapters.InvitesAdapter
 import com.goel.peerlocator.databinding.InvitesFragmentBinding
 import com.goel.peerlocator.dialogs.LoadingBasicDialog
@@ -127,12 +125,6 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
         binding = null
     }
 
-
-    //Click Listeners
-    override fun onInviteClicked(position: Int) {
-        InviteInfoActivity.model = viewModel.invitesList[position]
-        startActivity(Intent(activity, InviteInfoActivity::class.java))
-    }
 
     override fun onInvitePhotoClicked(position: Int) {
         val model = viewModel.invitesList[position]
