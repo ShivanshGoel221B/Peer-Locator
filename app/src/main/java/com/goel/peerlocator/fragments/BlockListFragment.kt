@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.adapters.BlockListAdapter
 import com.goel.peerlocator.databinding.BlockListFragmentBinding
+import com.goel.peerlocator.dialogs.LoadingBasicDialog
 import com.goel.peerlocator.listeners.BlockListener
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.viewmodels.BlockListViewModel
@@ -26,6 +27,7 @@ class BlockListFragment : Fragment(), BlockListAdapter.BlockListClickListener, B
     private lateinit var viewModel: BlockListViewModel
     private lateinit var adapter : BlockListAdapter
     private lateinit var nothingFound : LinearLayout
+    private lateinit var loading: LoadingBasicDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -35,7 +37,11 @@ class BlockListFragment : Fragment(), BlockListAdapter.BlockListClickListener, B
         createRecyclerView()
         binding?.root?.setOnClickListener { return@setOnClickListener }
         binding?.closeButton?.setOnClickListener { activity!!.onBackPressed() }
-        binding?.unblockButton?.setOnClickListener { viewModel.unblockSelected(this) }
+        binding?.unblockButton?.setOnClickListener {
+            loading = LoadingBasicDialog("Unblocking")
+            loading.show(activity!!.supportFragmentManager, "loading")
+            viewModel.unblockSelected(this)
+        }
         return binding?.root
     }
 
@@ -80,6 +86,7 @@ class BlockListFragment : Fragment(), BlockListAdapter.BlockListClickListener, B
                 val index = viewModel.blockList.indexOf(model)
                 viewModel.blockList.remove(model)
                 adapter.notifyItemRemoved(index)
+                loading.dismiss()
             }
             viewModel.checkedList.clear()
             Toast.makeText(context, "Unblocked Selected", Toast.LENGTH_SHORT).show()
