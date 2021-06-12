@@ -3,9 +3,11 @@ package com.goel.peerlocator.repositories
 import android.widget.LinearLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.goel.peerlocator.adapters.FriendsAdapter
+import com.goel.peerlocator.listeners.EditFriendListener
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.firebase.database.FriendsDatabase
+import com.google.firebase.firestore.DocumentReference
 
 class FriendsRepository : UserRepository() {
 
@@ -27,5 +29,9 @@ class FriendsRepository : UserRepository() {
 
     fun getUsers (listener: GetListListener) {
         FriendsDatabase.instance.getUsers(listener)
+    }
+
+    fun removeFriend (documentReference: DocumentReference, listener: EditFriendListener) {
+        FriendsDatabase.instance.removeFriend(documentReference, listener)
     }
 }

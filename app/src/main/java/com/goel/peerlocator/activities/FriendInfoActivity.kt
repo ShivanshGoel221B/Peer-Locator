@@ -2,6 +2,8 @@ package com.goel.peerlocator.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,11 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.CirclesAdapter
 import com.goel.peerlocator.databinding.ActivityFriendInfoBinding
+import com.goel.peerlocator.dialogs.LoadingBasicDialog
 import com.goel.peerlocator.fragments.ImageViewFragment
+import com.goel.peerlocator.listeners.EditFriendListener
 import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.listeners.FriendDataListener
+import com.goel.peerlocator.repositories.FriendsRepository
 import com.goel.peerlocator.utils.firebase.database.FriendsDatabase
 import com.google.firebase.firestore.DocumentReference
 import com.squareup.picasso.Picasso
@@ -35,6 +40,7 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
 
         createToolBar()
         setData()
+        setClickListeners()
     }
 
     private fun createToolBar() {
@@ -59,6 +65,44 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
         binding.infoCirclesRecyclerView.adapter = adapter
         val lm = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.infoCirclesRecyclerView.layoutManager = lm
+    }
+
+    private fun setClickListeners () {
+        binding.removeButton.setOnClickListener {
+            showRemoveWarning()
+        }
+    }
+
+    private fun showRemoveWarning () {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.remove_friend)
+            .setMessage("Are you sure you want to remove ${model.name} as your friend?")
+            .setNegativeButton(R.string.no) {dialog, _ -> dialog.dismiss()}
+            .setPositiveButton(R.string.yes) { dialog, _ ->
+                dialog.dismiss()
+                removeFriend()
+            }.show()
+    }
+
+    private fun removeFriend() {
+        val loading = LoadingBasicDialog("Removing Friend")
+        loading.show(supportFragmentManager, "Remove Friend")
+
+        FriendsRepository.instance.removeFriend(model.documentReference, object : EditFriendListener {
+            override fun onFriendRemoved() {
+                loading.dismiss()
+                Toast.makeText(this@FriendInfoActivity, "Friend Removed", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+
+            override fun onFriendBlocked() {}
+
+            override fun onError() {
+                loading.dismiss()
+                Toast.makeText(this@FriendInfoActivity, R.string.error_message, Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        })
     }
 
     // Friend Listeners

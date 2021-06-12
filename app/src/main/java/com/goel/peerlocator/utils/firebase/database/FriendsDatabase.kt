@@ -1,5 +1,6 @@
 package com.goel.peerlocator.utils.firebase.database
 
+import com.goel.peerlocator.listeners.EditFriendListener
 import com.goel.peerlocator.listeners.FriendDataListener
 import com.goel.peerlocator.listeners.GetListListener
 import com.goel.peerlocator.listeners.InvitationListener
@@ -203,6 +204,43 @@ class FriendsDatabase : Database() {
                 documentReference.update(Constants.FRIENDS, friendsList)
                     .addOnFailureListener { listener.onError() }
                     .addOnSuccessListener { addFriend(model, listener) }
+            }
+    }
+
+    fun removeFriend ( documentReference: DocumentReference, listener: EditFriendListener) {
+        currentUserRef.get()
+            .addOnFailureListener { listener.onError() }
+            .addOnSuccessListener { me->
+                var myInitialFriends = ArrayList<DocumentReference>()
+                try {
+                    myInitialFriends = me[Constants.FRIENDS] as ArrayList<DocumentReference>
+                } catch (e: java.lang.NullPointerException) {}
+
+                val myNewFriends = myInitialFriends.filter { it.id != documentReference.id }
+
+                currentUserRef.update(Constants.FRIENDS, myNewFriends)
+                    .addOnFailureListener { listener.onError() }
+                    .addOnSuccessListener {
+                        documentReference.get()
+                            .addOnFailureListener {
+                                listener.onError()
+                                currentUserRef.update(Constants.FRIENDS, myInitialFriends)
+                            }
+                            .addOnSuccessListener {friend->
+                                var friends = ArrayList<DocumentReference>()
+                                try {
+                                    friends = friend[Constants.FRIENDS] as ArrayList<DocumentReference>
+                                } catch (e: java.lang.NullPointerException) {}
+
+                                val newFriends = friends.filter { it.id != currentUserRef.id }
+                                documentReference.update(Constants.FRIENDS, newFriends)
+                                    .addOnFailureListener {
+                                        listener.onError()
+                                        currentUserRef.update(Constants.FRIENDS, myInitialFriends)
+                                    }
+                                    .addOnSuccessListener { listener.onFriendRemoved() }
+                            }
+                    }
             }
     }
 }
