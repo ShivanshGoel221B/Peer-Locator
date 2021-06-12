@@ -1,0 +1,56 @@
+package com.goel.peerlocator.activities
+
+import android.content.SharedPreferences
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.goel.peerlocator.R
+import com.goel.peerlocator.databinding.ActivitySettingsBinding
+import com.goel.peerlocator.utils.Constants
+
+class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var preferences: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setTheme(R.style.Theme_AppCompat_DayNight_DarkActionBar)
+
+        setContentView(binding.root)
+
+        supportActionBar?.title = getString(R.string.settings)
+        setSwitches()
+        setClickListeners()
+    }
+
+    private fun setSwitches() {
+        preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
+        val backgroundLocation = preferences.getBoolean(Constants.BACK_LOC, true)
+        val foregroundLocation = preferences.getBoolean(Constants.FORE_LOC, true)
+        val notificationAccess = preferences.getBoolean(Constants.NOTIFICATION_ACCESS, true)
+
+        binding.backgroundLocationSwitch.isChecked = backgroundLocation
+        binding.foregroundLocationSwitch.isChecked = foregroundLocation
+        binding.notificationSwitch.isChecked = notificationAccess
+    }
+
+    private fun setClickListeners () {
+        val prefEditor = preferences.edit()
+
+        binding.backgroundLocationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefEditor.putBoolean(Constants.BACK_LOC, isChecked)
+            prefEditor.apply()
+        }
+        binding.foregroundLocationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefEditor.putBoolean(Constants.FORE_LOC, isChecked)
+            prefEditor.apply()
+        }
+        binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            prefEditor.putBoolean(Constants.NOTIFICATION_ACCESS, isChecked)
+            prefEditor.apply()
+        }
+    }
+
+}

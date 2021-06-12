@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.SettingsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/background_location_switch"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="20dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="@string/allow_background_location_access" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/foreground_location_switch"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="20dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="@string/foregroung_location_access" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notification_switch"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="20dp"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="@string/allow_notifications" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

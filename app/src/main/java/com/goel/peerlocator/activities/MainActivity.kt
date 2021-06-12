@@ -142,6 +142,7 @@ class MainActivity : AppCompatActivity() {
             R.id.add_new_circle -> startActivity(Intent(this, NewCircleActivity::class.java))
             R.id.add_new_friend -> startActivity(Intent(this, AddFriendActivity::class.java))
             R.id.sent_invitations -> startActivity(Intent(this, SentInvitationActivity::class.java))
+            R.id.app_settings -> startActivity(Intent(this, SettingsActivity::class.java))
         }
         return true
     }

@@ -116,6 +116,9 @@
     <string name="signing_up">Signing Up</string>
     <string name="inaccessible_user_warning">You are not allowed to access this user</string>
     <string name="remove_member_title">Remove Member</string>
+    <string name="allow_background_location_access">Allow Background Location Access</string>
+    <string name="allow_notifications">Allow notifications</string>
+    <string name="foregroung_location_access">Allow location when app is closed</string>
 
     <!--    String Array of countries and code-->
     <!--    country names-->
