@@ -10,6 +10,11 @@ object Constants {
     const val NOTIFICATION_ACCESS = "notification_access"
     const val USERS = "users"
 
+    const val DEV_PAGE = "dev_page"
+    const val ABOUT = "about_us"
+    const val TERMS = "terms"
+    const val PRIVACY_POLICY = "privacy_policy"
+
     const val INACCESSIBLE = -1
     const val UNKNOWN = 0
     const val FRIEND = 1

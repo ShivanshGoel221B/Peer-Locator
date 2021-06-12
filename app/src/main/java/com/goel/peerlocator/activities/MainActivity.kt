@@ -3,11 +3,13 @@ package com.goel.peerlocator.activities
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -20,6 +22,7 @@ import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
 import com.goel.peerlocator.utils.location.Location
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
@@ -143,9 +146,26 @@ class MainActivity : AppCompatActivity() {
             R.id.add_new_friend -> startActivity(Intent(this, AddFriendActivity::class.java))
             R.id.sent_invitations -> startActivity(Intent(this, SentInvitationActivity::class.java))
             R.id.app_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+            R.id.more_apps -> loadUrl(Constants.DEV_PAGE)
+            R.id.about -> loadUrl(Constants.ABOUT)
+            R.id.terms -> loadUrl(Constants.TERMS)
+            R.id.privacy -> loadUrl(Constants.PRIVACY_POLICY)
         }
         return true
     }
+
+    private fun loadUrl(key: String) {
+        FirebaseDatabase.getInstance().reference.get()
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show()
+            }
+            .addOnSuccessListener {
+                val url = it.child(key).getValue(String::class.java)
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(browserIntent)
+            }
+    }
+
 
     private fun setUserData() {
         Database.currentUser.let {

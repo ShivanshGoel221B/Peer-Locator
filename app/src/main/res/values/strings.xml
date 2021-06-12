@@ -119,6 +119,8 @@
     <string name="allow_background_location_access">Allow Background Location Access</string>
     <string name="allow_notifications">Allow notifications</string>
     <string name="foregroung_location_access">Allow location when app is closed</string>
+    <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
+    <string name="more_apps">More Apps</string>
 
     <!--    String Array of countries and code-->
     <!--    country names-->
