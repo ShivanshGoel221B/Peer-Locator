@@ -1,14 +1,13 @@
 package com.goel.peerlocator.services
 
 import android.app.Activity
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
-import android.content.ComponentName
-import android.content.Context
+import android.content.Intent
+import androidx.core.content.ContextCompat
 
 abstract class ServicesHandler {
 
     companion object {
+
         fun startBackgroundLocation(activity: Activity) {
             toggleBackgroundLocation(activity, true)
         }
@@ -18,15 +17,11 @@ abstract class ServicesHandler {
         }
 
         private fun toggleBackgroundLocation (activity: Activity, flag: Boolean) {
-            val componentName = ComponentName(activity.applicationContext, BackgroundLocationServices::class.java)
-            val info = JobInfo.Builder(100, componentName)
-                .setPersisted(true)
-                .build()
-            val locationSchedule = activity.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+            val notificationIntent = Intent(activity, BackgroundLocationServices::class.java)
             if (flag)
-                locationSchedule.schedule(info)
+                activity.startService(notificationIntent)
             else
-                locationSchedule.cancelAll()
+                activity.stopService(notificationIntent)
         }
     }
 }

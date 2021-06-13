@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivitySettingsBinding
+import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 
 class SettingsActivity : AppCompatActivity() {
@@ -28,10 +29,8 @@ class SettingsActivity : AppCompatActivity() {
     private fun setSwitches() {
         preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
         val backgroundLocation = preferences.getBoolean(Constants.BACK_LOC, true)
-        val foregroundLocation = preferences.getBoolean(Constants.FORE_LOC, true)
 
         binding.backgroundLocationSwitch.isChecked = backgroundLocation
-        binding.foregroundLocationSwitch.isChecked = foregroundLocation
     }
 
     private fun setClickListeners () {
@@ -40,10 +39,10 @@ class SettingsActivity : AppCompatActivity() {
         binding.backgroundLocationSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefEditor.putBoolean(Constants.BACK_LOC, isChecked)
             prefEditor.apply()
-        }
-        binding.foregroundLocationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            prefEditor.putBoolean(Constants.FORE_LOC, isChecked)
-            prefEditor.apply()
+            if (isChecked)
+                ServicesHandler.startBackgroundLocation(this)
+            else
+                ServicesHandler.stopBackgroundLocation(this)
         }
     }
 

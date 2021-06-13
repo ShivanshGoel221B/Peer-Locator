@@ -3,6 +3,7 @@ package com.goel.peerlocator.activities
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -51,23 +52,29 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         val fragmentsAdapter = MainFragmentsAdapter(supportFragmentManager, 0)
         setFragmentsAdapter(fragmentsAdapter)
-
         setUserData()
+        checkGPS()
+        checkBackgroundLocation()
+    }
+
+    private fun checkBackgroundLocation () {
         val preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
         val per = preferences.getBoolean(Constants.BACK_LOC, true)
-        if (!per) {
-            ServicesHandler.stopBackgroundLocation(this)
+        ServicesHandler.stopBackgroundLocation(this)
+        if (per) {
+            ServicesHandler.startBackgroundLocation(this)
         }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         locationPermissionGranted = false
 
         when (requestCode) {
             Constants.LOCATION_PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && PackageManager.PERMISSION_DENIED !in grantResults) {
                     locationPermissionGranted = true
-                    alertForGPS()
+                    checkGPS()
                     getMyLocation()
                     setBackgroundLocationService ()
                     return
@@ -78,12 +85,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getLocationPermission () {
-        if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
-                locationPermissionGranted = true
-                getMyLocation()
-                setBackgroundLocationService ()
-            }
+        if (
+            ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(applicationContext, Constants.BACKGROUND) == PackageManager.PERMISSION_GRANTED) {
+
+            locationPermissionGranted = true
+            getMyLocation()
+            setBackgroundLocationService ()
         }
         else {
             showLocationWarning ()
@@ -91,7 +100,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLocationWarning () {
-        val permissions = arrayOf(Constants.FINE, Constants.COARSE)
+        val permissions = arrayOf(Constants.FINE, Constants.COARSE, Constants.BACKGROUND)
         AlertDialog.Builder(this)
             .setTitle("Permission")
             .setMessage("You need to give Location Access Permission to continue")
@@ -103,10 +112,17 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun checkGPS() {
+        val manager = getSystemService(LOCATION_SERVICE) as LocationManager
+        val isEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if(!isEnabled)
+            alertForGPS()
+    }
+
     private fun alertForGPS () {
         AlertDialog.Builder(this)
             .setTitle("Turn On GPS")
-            .setMessage("Turn on the GPS in the settings for best accuracy")
+            .setMessage("We recommend you to turn on GPS for better accuracy")
             .setPositiveButton("Settings") {dialog, _ ->
                 val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivity(intent)

@@ -25,16 +25,6 @@
             android:textSize="16sp"
             android:text="@string/allow_background_location_access" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/foreground_location_switch"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:padding="20dp"
-            android:layout_marginBottom="2dp"
-            android:layout_weight="1"
-            android:textSize="16sp"
-            android:text="@string/foreground_location_access" />
-
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

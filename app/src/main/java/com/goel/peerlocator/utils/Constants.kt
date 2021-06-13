@@ -6,7 +6,6 @@ object Constants {
 
     const val PREFS = "com.goel.peerlocator.shared"
     const val BACK_LOC = "background_location_access"
-    const val FORE_LOC = "foreground_location_access"
     const val USERS = "users"
 
     const val DEV_PAGE = "dev_page"
@@ -44,6 +43,7 @@ object Constants {
 
     const val FINE = Manifest.permission.ACCESS_FINE_LOCATION
     const val COARSE = Manifest.permission.ACCESS_COARSE_LOCATION
+    const val BACKGROUND = Manifest.permission.ACCESS_BACKGROUND_LOCATION
 
     const val LOCATION_PERMISSION_REQUEST_CODE = 69
     const val READ_STORAGE_PERMISSION_REQUEST_CODE = 50
