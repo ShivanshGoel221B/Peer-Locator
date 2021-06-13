@@ -29,11 +29,9 @@ class SettingsActivity : AppCompatActivity() {
         preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
         val backgroundLocation = preferences.getBoolean(Constants.BACK_LOC, true)
         val foregroundLocation = preferences.getBoolean(Constants.FORE_LOC, true)
-        val notificationAccess = preferences.getBoolean(Constants.NOTIFICATION_ACCESS, true)
 
         binding.backgroundLocationSwitch.isChecked = backgroundLocation
         binding.foregroundLocationSwitch.isChecked = foregroundLocation
-        binding.notificationSwitch.isChecked = notificationAccess
     }
 
     private fun setClickListeners () {
@@ -45,10 +43,6 @@ class SettingsActivity : AppCompatActivity() {
         }
         binding.foregroundLocationSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefEditor.putBoolean(Constants.FORE_LOC, isChecked)
-            prefEditor.apply()
-        }
-        binding.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            prefEditor.putBoolean(Constants.NOTIFICATION_ACCESS, isChecked)
             prefEditor.apply()
         }
     }

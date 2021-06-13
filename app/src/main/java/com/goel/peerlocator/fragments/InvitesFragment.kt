@@ -62,8 +62,6 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
         startShimmer()
         nothingFound.visibility = View.GONE
         createRecyclerView()
-
-        ServicesHandler.stopInviteNotification(activity!!)
     }
 
     private fun createRecyclerView () {
@@ -99,7 +97,6 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
 
     override fun onPause() {
         super.onPause()
-        ServicesHandler.startInviteNotification(activity!!)
         viewModel.invitesList.clear()
         invitesAdapter.notifyDataSetChanged()
     }

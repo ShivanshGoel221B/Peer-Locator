@@ -52,9 +52,6 @@
         </activity>
 
         <service
-            android:name=".services.InvitationNotificationServices"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
             android:name=".services.BackgroundLocationServices"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>

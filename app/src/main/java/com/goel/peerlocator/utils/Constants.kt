@@ -7,7 +7,6 @@ object Constants {
     const val PREFS = "com.goel.peerlocator.shared"
     const val BACK_LOC = "background_location_access"
     const val FORE_LOC = "foreground_location_access"
-    const val NOTIFICATION_ACCESS = "notification_access"
     const val USERS = "users"
 
     const val DEV_PAGE = "dev_page"
