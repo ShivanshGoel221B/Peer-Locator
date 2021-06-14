@@ -69,7 +69,10 @@ class InvitationDatabase : Database() {
             return
         }
         var references = ArrayList<DocumentReference>()
-        val timestamp = Timestamp.now()
+        val timestamp = HashMap<String, Long>()
+        val time = Timestamp.now()
+        timestamp[Constants.NANOSECONDS] = time.nanoseconds.toLong()
+        timestamp[Constants.SECONDS] = time.seconds
         val invitationPath = documentReference.path.toInvitationPath()
         var completion = 30
         val unit = ceil((70/uIds.size).toDouble()).toInt()
@@ -107,9 +110,13 @@ class InvitationDatabase : Database() {
                 currentUserRef.update(Constants.SENT_INVITES, initialSent)
                     .addOnFailureListener { listener.onError() }
                     .addOnSuccessListener {
+                        val timestamp = HashMap<String, Long>()
+                        val time = Timestamp.now()
+                        timestamp[Constants.NANOSECONDS] = time.nanoseconds.toLong()
+                        timestamp[Constants.SECONDS] = time.seconds
                         invitesReference.child(recipient.uid)
                             .child(currentUserRef.path.toInvitationPath())
-                            .setValue(Timestamp.now())
+                            .setValue(timestamp)
                             .addOnFailureListener { listener.onError() }
                             .addOnSuccessListener { listener.onInvitationSent(recipient) }
                     }
