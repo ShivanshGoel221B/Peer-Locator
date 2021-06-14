@@ -1,8 +1,12 @@
 package com.goel.peerlocator.activities
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -31,9 +35,6 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     private lateinit var binding : ActivityFriendBinding
     private lateinit var marker: MarkerOptions
 
-
-    private val defaultZoom = 18f
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFriendBinding.inflate(layoutInflater)
@@ -59,10 +60,13 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     private fun startMyLocation () {
         try {
             ServicesHandler.stopBackgroundLocation(this)
-            if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
                     ServicesHandler.startBackgroundLocation(this)
                 }
+            else {
+                Toast.makeText(this, "Location Permission denied", Toast.LENGTH_SHORT).show()
+                finish()
             }
         } catch (e: SecurityException) {
 
@@ -74,14 +78,40 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         mMap.clear()
         if (latLng.latitude + latLng.longitude > 0.0) {
             mMap.addMarker(marker)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, defaultZoom))
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, Constants.DEFAULT_ZOOM))
         }
         else
             Toast.makeText(this, "Failed to get peer's location", Toast.LENGTH_SHORT).show()
     }
 
-    private fun findMe (latLng: LatLng) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, defaultZoom))
+    private fun findMe () {
+        val myLocation = mMap.myLocation
+        if (myLocation == null)
+            Toast.makeText(this, "Getting your Location", Toast.LENGTH_SHORT).show()
+        myLocation?.let {
+            if (checkGPS()) {
+                val latLng = LatLng(it.latitude, it.longitude)
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, Constants.DEFAULT_ZOOM))
+            }
+            else
+                alertForGPS()
+        }
+    }
+
+    private fun checkGPS(): Boolean {
+        val manager = getSystemService(LOCATION_SERVICE) as LocationManager
+        return manager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    private fun alertForGPS() {
+        AlertDialog.Builder(this)
+            .setTitle("Turn On GPS")
+            .setMessage("We recommend you to turn on GPS for better accuracy")
+            .setPositiveButton("Settings") {dialog, _ ->
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
+                dialog.dismiss()
+            }.show()
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -93,16 +123,15 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
             != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            return
+            Toast.makeText(this, "Location Permission denied", Toast.LENGTH_SHORT).show()
+            finish()
         }
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = false
 
+        findMe()
         binding.findMe.setOnClickListener {
-            val loc = mMap.myLocation
-            loc?.let {
-                findMe(LatLng(it.latitude, it.longitude))
-            }
+            findMe()
         }
 
         binding.findFriend.setOnClickListener {

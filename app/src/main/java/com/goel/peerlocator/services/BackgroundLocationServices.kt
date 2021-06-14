@@ -57,6 +57,11 @@ class BackgroundLocationServices : Service() {
         return null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
+    }
+
     private fun createNotificationChannel () {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId,

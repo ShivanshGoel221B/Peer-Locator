@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         createToolBar()
-        setBackgroundLocationService()
         getLocationPermission()
         binding.customToolbar.profilePicture.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
@@ -76,7 +75,7 @@ class MainActivity : AppCompatActivity() {
                     locationPermissionGranted = true
                     checkGPS()
                     getMyLocation()
-                    setBackgroundLocationService ()
+                    checkBackgroundLocation()
                     return
                 }
             }
@@ -92,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
             locationPermissionGranted = true
             getMyLocation()
-            setBackgroundLocationService ()
+            checkBackgroundLocation()
         }
         else {
             showLocationWarning ()
@@ -133,13 +132,15 @@ class MainActivity : AppCompatActivity() {
     private fun getMyLocation () {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         try {
-            if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(applicationContext, Constants.BACKGROUND) == PackageManager.PERMISSION_GRANTED) {
                         fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                             Location.updateMyLocation (it)
                         }
-                }
             }
+            else
+                getLocationPermission()
         } catch (e : SecurityException) {
         }
     }
@@ -203,11 +204,4 @@ class MainActivity : AppCompatActivity() {
         binding.mainTabs.setupWithViewPager(binding.mainViewPager)
     }
 
-    private fun setBackgroundLocationService () {
-        val preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
-        val per = preferences.getBoolean(Constants.BACK_LOC, true)
-        if (per) {
-            ServicesHandler.startBackgroundLocation(this)
-        }
-    }
 }

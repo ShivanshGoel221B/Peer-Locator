@@ -54,6 +54,8 @@ object Constants {
     const val MAX_IMAGE_SIZE = 1*1024*1024
     const val MAX_CIRCLE_SIZE = 20
 
+    const val DEFAULT_ZOOM = 18f
+
     private const val validCharacters = "qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM"
     private const val emptyNameError = "Name should not be empty"
     private const val nameLengthError = "Name should not contain more than 20 characters"

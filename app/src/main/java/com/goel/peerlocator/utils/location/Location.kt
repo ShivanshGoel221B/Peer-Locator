@@ -36,6 +36,9 @@ object Location {
         override fun onDataChange(snapshot: DataSnapshot) {
             if (snapshot.exists())
                 friendLocation?.longitude = snapshot.getValue(Double::class.java) as Double
+            else
+                friendLocation?.longitude = 0.0
+            currentFriend?.longitude = friendLocation!!.longitude
 
             locationListener?.onFriendMoved(LatLng(friendLocation?.latitude!!, friendLocation?.longitude!!))
         }
@@ -66,7 +69,7 @@ object Location {
 
     fun updateMyLocation(location: Location?) {
         currentLocation = location
-        val ref = FirebaseDatabase.getInstance().reference.child(Constants.LOC).child(Database.currentUser!!.uid)
+        val ref = FirebaseDatabase.getInstance().reference.child(Constants.LOC).child(Database.currentUser.uid)
         ref.child(Constants.LAT).setValue(location?.latitude)
         ref.child(Constants.LON).setValue(location?.longitude)
     }
