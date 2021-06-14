@@ -119,6 +119,7 @@
     <string name="allow_background_location_access">Allow Background Location Access</string>
     <string name="terms_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="more_apps">More Apps</string>
+    <string name="follow">Follow</string>
 
     <!--    String Array of countries and code-->
     <!--    country names-->

@@ -34,11 +34,17 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     private lateinit var mMap: GoogleMap
     private lateinit var binding : ActivityFriendBinding
     private lateinit var marker: MarkerOptions
+    private var follow = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFriendBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        follow = binding.followSwitch.isChecked
+        binding.followSwitch.setOnCheckedChangeListener { _, isChecked ->
+            follow = isChecked
+        }
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -69,15 +75,23 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
                 finish()
             }
         } catch (e: SecurityException) {
+            Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show()
+            finish()
+        }
+    }
 
+    private fun updateFriendMarker (latLng: LatLng) {
+        if (latLng.latitude + latLng.longitude > 0.0) {
+            marker.position(latLng)
+            mMap.clear()
+            mMap.addMarker(marker)
+            if (follow)
+                goToLocation(latLng)
         }
     }
 
     private fun goToLocation(latLng: LatLng) {
-        marker.position(latLng)
-        mMap.clear()
         if (latLng.latitude + latLng.longitude > 0.0) {
-            mMap.addMarker(marker)
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, Constants.DEFAULT_ZOOM))
         }
         else
@@ -121,7 +135,7 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         startMyLocation()
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Location Permission denied", Toast.LENGTH_SHORT).show()
             finish()
@@ -144,7 +158,7 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     }
 
     override fun onFriendMoved(latLng: LatLng) {
-        goToLocation(latLng)
+        updateFriendMarker(latLng)
     }
 
     override fun onDestroy() {

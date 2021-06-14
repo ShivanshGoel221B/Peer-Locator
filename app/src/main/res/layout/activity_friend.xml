@@ -20,6 +20,30 @@
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        map:cardElevation="5dp"
+        map:cardMaxElevation="5dp"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintHorizontal_bias="0.5"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toBottomOf="@+id/cardView">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/follow_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="5dp"
+            android:textSize="12sp"
+            android:text="@string/follow" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         map:cardElevation="5dp"
         map:cardMaxElevation="5dp"
@@ -36,8 +60,8 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            tools:text="Peer Name"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:text="Peer Name" />
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
