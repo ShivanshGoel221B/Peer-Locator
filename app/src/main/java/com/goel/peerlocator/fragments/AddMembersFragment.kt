@@ -46,7 +46,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
         binding?.nothingFound?.visibility = View.GONE
         initializeViewModel()
         updateCounter()
-        binding?.cancelButton?.setOnClickListener { activity!!.onBackPressed() }
+        binding?.cancelButton?.setOnClickListener { requireActivity().onBackPressed() }
         binding?.addMembersButton?.setOnClickListener {
             viewModel.selectedList.forEach {
                 alreadyAdded.add(it)
@@ -56,7 +56,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
             } catch (e: ClassCastException) {
                 (activity as CircleInfoActivity).membersAdded()
             }
-            activity!!.onBackPressed()
+            requireActivity().onBackPressed()
         }
         binding?.searchBar?.setOnQueryTextListener (object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
@@ -70,7 +70,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
     }
 
     private fun initializeViewModel() {
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
+        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))
             .get(AddMembersViewModel::class.java)
         createRecyclerView()
 
@@ -93,7 +93,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
     }
 
     private fun createRecyclerView () {
-        adapter = AddMembersAdapter(context!!, viewModel.friendList, viewModel.selectedList, this)
+        adapter = AddMembersAdapter(requireContext(), viewModel.friendList, viewModel.selectedList, this)
         binding?.friendsRecyclerView?.adapter = adapter
         val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding?.friendsRecyclerView?.layoutManager = layoutManager
@@ -105,7 +105,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
                 val newList = viewModel.friendList.filter { friend ->
                     query.toLowerCase(Locale.ROOT) in friend.name.toLowerCase(Locale.ROOT)
                 } as ArrayList<FriendModel>
-                binding?.friendsRecyclerView?.adapter = AddMembersAdapter(context!!, newList,
+                binding?.friendsRecyclerView?.adapter = AddMembersAdapter(requireContext(), newList,
                                                         viewModel.selectedList, this)
                 if (newList.isEmpty())
                     binding?.nothingFound?.visibility = View.VISIBLE

@@ -65,10 +65,10 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     }
 
     private fun createRecyclerView () {
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
+        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))
             .get(FriendsViewModel::class.java)
         //initialize adapter
-        friendsAdapter = FriendsAdapter(viewModel.friendsList, context!!, this)
+        friendsAdapter = FriendsAdapter(viewModel.friendsList, requireContext(), this)
         setAdapter()
 
         viewModel.getAllFriends(object : GetListListener {
@@ -131,7 +131,7 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
     override fun onFriendPhotoClicked(position: Int) {
         val model = viewModel.friendsList[position]
         val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = false)
-        val transaction = activity!!.supportFragmentManager.beginTransaction()
+        val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.addToBackStack(Constants.DP)
         transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
         transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)

@@ -32,7 +32,7 @@ class ImageViewFragment : Fragment() {
                           else R.drawable.ic_placeholder_user_big
 
         Picasso.with(context).load(url).placeholder(placeHolder).into(binding?.largeProfileImage)
-        binding?.imageCloseButton?.setOnClickListener { activity!!.onBackPressed() }
+        binding?.imageCloseButton?.setOnClickListener { requireActivity().onBackPressed() }
 
         binding?.root?.setOnClickListener { return@setOnClickListener }
 

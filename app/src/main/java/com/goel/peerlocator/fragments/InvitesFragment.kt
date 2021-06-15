@@ -20,7 +20,6 @@ import com.goel.peerlocator.models.CircleModel
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
-import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.InvitesViewModel
 
@@ -65,10 +64,10 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
     }
 
     private fun createRecyclerView () {
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
+        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))
             .get(InvitesViewModel::class.java)
         //initialize adapter
-        invitesAdapter = InvitesAdapter(viewModel.invitesList, context!!, this)
+        invitesAdapter = InvitesAdapter(viewModel.invitesList, requireContext(), this)
         setAdapter()
 
         viewModel.getAllInvites(object : GetListListener {
@@ -127,7 +126,7 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
         val model = viewModel.invitesList[position]
         val isCircle = Constants.CIRCLES in model.documentReference.path
         val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = isCircle)
-        val transaction = activity!!.supportFragmentManager.beginTransaction()
+        val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.addToBackStack(Constants.DP)
         transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
         transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)
@@ -135,12 +134,12 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
     }
 
     override fun onAcceptClicked(position: Int) {
-        acceptDialog.show(activity!!.supportFragmentManager, "loading")
+        acceptDialog.show(requireActivity().supportFragmentManager, "loading")
         viewModel.acceptInvitation(viewModel.invitesList[position], this)
     }
 
     override fun onRejectClicked(position: Int) {
-        rejectDialog.show(activity!!.supportFragmentManager, "loading")
+        rejectDialog.show(requireActivity().supportFragmentManager, "loading")
         viewModel.rejectInvitation(viewModel.invitesList[position], this)
     }
 

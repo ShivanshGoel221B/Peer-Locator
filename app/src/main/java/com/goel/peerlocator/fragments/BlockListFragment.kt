@@ -36,19 +36,19 @@ class BlockListFragment : Fragment(), BlockListAdapter.BlockListClickListener, B
         nothingFound.visibility = View.GONE
         createRecyclerView()
         binding?.root?.setOnClickListener { return@setOnClickListener }
-        binding?.closeButton?.setOnClickListener { activity!!.onBackPressed() }
+        binding?.closeButton?.setOnClickListener { requireActivity().onBackPressed() }
         binding?.unblockButton?.setOnClickListener {
             loading = LoadingBasicDialog("Unblocking")
-            loading.show(activity!!.supportFragmentManager, "loading")
+            loading.show(requireActivity().supportFragmentManager, "loading")
             viewModel.unblockSelected(this)
         }
         return binding?.root
     }
 
     private fun createRecyclerView () {
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
+        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))
             .get(BlockListViewModel::class.java)
-        adapter = BlockListAdapter(viewModel.blockList, this, context!!)
+        adapter = BlockListAdapter(viewModel.blockList, this, requireContext())
 
         binding?.blockListRecyclerView?.adapter = adapter
         val lm = LinearLayoutManager(context, RecyclerView.VERTICAL, false)

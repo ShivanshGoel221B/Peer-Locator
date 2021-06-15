@@ -63,10 +63,10 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
     }
 
     private fun createRecyclerView () {
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application))
+        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))
             .get(CirclesViewModel::class.java)
         //initialize adapter
-        circlesAdapter = CirclesAdapter(viewModel.circleList, context!!, this)
+        circlesAdapter = CirclesAdapter(viewModel.circleList, requireContext(), this)
         setAdapter()
 
         viewModel.getAllCircles(object : GetListListener {
@@ -122,7 +122,7 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
     override fun onCirclePhotoClicked(position: Int) {
         val model = viewModel.circleList[position]
         val imageViewFragment = ImageViewFragment.newInstance(url = model.imageUrl, isCircle = true)
-        val transaction = activity!!.supportFragmentManager.beginTransaction()
+        val transaction = requireActivity().supportFragmentManager.beginTransaction()
         transaction.addToBackStack(Constants.DP)
         transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
         transaction.replace(R.id.profile_photo_container, imageViewFragment, Constants.DP)

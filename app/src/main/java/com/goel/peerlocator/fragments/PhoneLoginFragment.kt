@@ -35,7 +35,7 @@ class PhoneLoginFragment(private val splash: SplashActivity) : Fragment() {
         binding?.loadingLayout?.visibility = View.GONE
         binding?.verificationContainer?.visibility = View.GONE
 
-        binding?.closeButton?.setOnClickListener { activity!!.onBackPressed() }
+        binding?.closeButton?.setOnClickListener { requireActivity().onBackPressed() }
         binding?.getOtpButton?.setOnClickListener { sendOtp() }
         return binding?.root
     }
@@ -112,7 +112,7 @@ class PhoneLoginFragment(private val splash: SplashActivity) : Fragment() {
         auth.signInWithCredential(credential).addOnSuccessListener {
             val user = it.user!!
             splash.signInUser(user)
-            activity!!.onBackPressed()
+            requireActivity().onBackPressed()
             splash.showProgress()
         }.addOnFailureListener {
             Toast.makeText(context, "Couldn't Verify, Try Again", Toast.LENGTH_SHORT).show()
