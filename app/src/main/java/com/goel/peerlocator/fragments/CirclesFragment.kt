@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.goel.peerlocator.R
+import com.goel.peerlocator.activities.CircleActivity
 import com.goel.peerlocator.activities.CircleInfoActivity
 import com.goel.peerlocator.activities.NewCircleActivity
 import com.goel.peerlocator.adapters.CirclesAdapter
@@ -116,7 +117,8 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
 
     //Click Listeners
     override fun onCircleClicked(position: Int) {
-        TODO("Not yet implemented")
+        CircleActivity.model = viewModel.circleList[position]
+        startActivity(Intent(requireContext(), CircleActivity::class.java))
     }
 
     override fun onCirclePhotoClicked(position: Int) {

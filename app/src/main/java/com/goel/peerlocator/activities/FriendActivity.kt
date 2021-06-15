@@ -64,6 +64,11 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         mapFragment.getMapAsync(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        startMyLocation()
+    }
+
     private fun startMyLocation () {
         try {
             ServicesHandler.stopBackgroundLocation(this)
@@ -133,7 +138,6 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         mMap = googleMap
 
         Location.getFriendLocation()
-        startMyLocation()
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
             || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
