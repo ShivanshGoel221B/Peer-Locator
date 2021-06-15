@@ -55,7 +55,7 @@ object Constants {
     const val PROFILE_PICTURES = "profile_pictures"
     val IMAGE_FILE_TYPES = arrayOf("image/jpg", "image/jpeg")
     const val MAX_IMAGE_SIZE = 1*1024*1024
-    const val MAX_CIRCLE_SIZE = 20
+    const val MAX_CIRCLE_SIZE = 10
 
     const val DEFAULT_ZOOM = 18f
 
