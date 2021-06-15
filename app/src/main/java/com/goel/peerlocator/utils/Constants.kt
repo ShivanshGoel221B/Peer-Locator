@@ -1,6 +1,8 @@
 package com.goel.peerlocator.utils
 
 import android.Manifest
+import android.os.Build
+import androidx.annotation.RequiresApi
 
 object Constants {
 
@@ -43,6 +45,7 @@ object Constants {
 
     const val FINE = Manifest.permission.ACCESS_FINE_LOCATION
     const val COARSE = Manifest.permission.ACCESS_COARSE_LOCATION
+    @RequiresApi(Build.VERSION_CODES.Q)
     const val BACKGROUND = Manifest.permission.ACCESS_BACKGROUND_LOCATION
 
     const val LOCATION_PERMISSION_REQUEST_CODE = 69

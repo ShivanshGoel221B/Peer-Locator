@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -86,12 +87,20 @@ class MainActivity : AppCompatActivity() {
     private fun getLocationPermission () {
         if (
             ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED
-            && ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED
-            && ContextCompat.checkSelfPermission(applicationContext, Constants.BACKGROUND) == PackageManager.PERMISSION_GRANTED) {
+            && ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
+                if(Build.VERSION.SDK_INT >= 29) {
+                    if (ContextCompat.checkSelfPermission(applicationContext, Constants.BACKGROUND)
+                        == PackageManager.PERMISSION_GRANTED) {
+                        locationPermissionGranted = true
+                        getMyLocation()
+                        checkBackgroundLocation()
+                    }
 
-            locationPermissionGranted = true
-            getMyLocation()
-            checkBackgroundLocation()
+                } else {
+                    locationPermissionGranted = true
+                    getMyLocation()
+                    checkBackgroundLocation()
+                }
         }
         else {
             showLocationWarning ()
@@ -133,8 +142,7 @@ class MainActivity : AppCompatActivity() {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         try {
             if (ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(applicationContext, Constants.BACKGROUND) == PackageManager.PERMISSION_GRANTED) {
+                && ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
                         fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                             Location.updateMyLocation (it)
                         }
