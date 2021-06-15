@@ -12,9 +12,9 @@
         android:id="@+id/nothing_found"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
         android:orientation="vertical"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,12 +28,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_invitations"
-            android:textSize="22sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="12dp"
+            android:fontFamily="@font/bree_serif"
+            android:text="@string/no_invitations"
             android:textColor="@color/grey"
-            android:fontFamily="@font/bree_serif"/>
+            android:textSize="22sp" />
 
     </LinearLayout>
 
