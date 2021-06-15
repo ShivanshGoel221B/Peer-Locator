@@ -20,6 +20,7 @@ import com.goel.peerlocator.fragments.BlockListFragment
 import com.goel.peerlocator.fragments.ImageViewFragment
 import com.goel.peerlocator.listeners.ProfileDataListener
 import com.goel.peerlocator.models.UserModel
+import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
 import com.goel.peerlocator.utils.firebase.storage.Storage
@@ -141,6 +142,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Constants.READ_STORAGE_PERMISSION_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 uploadImage()
@@ -204,6 +206,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
                 .addOnFailureListener { Toast.makeText(applicationContext, "Failed to sign out", Toast.LENGTH_SHORT).show() }
                 .addOnSuccessListener {
                     Toast.makeText(applicationContext, "Signed out successfully", Toast.LENGTH_SHORT).show()
+                    ServicesHandler.stopBackgroundLocation(this)
                     startActivity(Intent(this, SplashActivity::class.java))
                     finishAffinity()
                 }

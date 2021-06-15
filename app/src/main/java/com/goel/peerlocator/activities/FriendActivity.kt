@@ -19,6 +19,7 @@ import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.location.Location
 import com.goel.peerlocator.listeners.LocationListener
+import com.goel.peerlocator.utils.firebase.database.Database
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -154,11 +155,29 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     }
 
     override fun onLocationReady(latLng: LatLng) {
-        goToLocation(latLng)
+        Database.currentUserRef.get()
+            .addOnSuccessListener {
+                val isOnline = it[Constants.ONLINE] as Boolean
+                if (isOnline)
+                    goToLocation(latLng)
+                else {
+                    Toast.makeText(this, "${friend.name} is offline", Toast.LENGTH_SHORT).show()
+                    mMap.clear()
+                }
+            }
     }
 
     override fun onFriendMoved(latLng: LatLng) {
-        updateFriendMarker(latLng)
+        Database.currentUserRef.get()
+            .addOnSuccessListener {
+                val isOnline = it[Constants.ONLINE] as Boolean
+                if (isOnline)
+                    updateFriendMarker(latLng)
+                else {
+                    Toast.makeText(this, "${friend.name} is offline", Toast.LENGTH_SHORT).show()
+                    mMap.clear()
+                }
+            }
     }
 
     override fun onDestroy() {

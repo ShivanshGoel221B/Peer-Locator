@@ -108,7 +108,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLocationWarning () {
-        val permissions = arrayOf(Constants.FINE, Constants.COARSE, Constants.BACKGROUND)
+        val permissions = if(Build.VERSION.SDK_INT >= 29)
+            arrayOf(Constants.FINE, Constants.COARSE, Constants.BACKGROUND)
+        else
+            arrayOf(Constants.FINE, Constants.COARSE)
         AlertDialog.Builder(this)
             .setTitle("Permission")
             .setMessage("You need to give Location Access Permission to continue")

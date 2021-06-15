@@ -40,7 +40,7 @@ class SignInFragment(private val splash: SplashActivity) : Fragment() {
         googleSignInButton.setOnClickListener {googleSignIn()}
         binding?.btnPhoneLogin?.setOnClickListener {
             val phoneFragment = PhoneLoginFragment(splash)
-            val transaction = activity!!.supportFragmentManager.beginTransaction()
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
             transaction.addToBackStack(Constants.DP)
             transaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_bottom, R.anim.enter_from_bottom, R.anim.exit_to_bottom)
             transaction.replace(R.id.phone_fragment_container, phoneFragment, Constants.PHONE)
@@ -58,7 +58,7 @@ class SignInFragment(private val splash: SplashActivity) : Fragment() {
             .requestEmail()
             .build()
 
-        googleSignInClient = GoogleSignIn.getClient(activity!!, gso)
+        googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
     }
 
     private fun googleSignIn() {
@@ -79,7 +79,7 @@ class SignInFragment(private val splash: SplashActivity) : Fragment() {
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
-                Log.w("Login Failed", "Google sign in failed", e)
+                Toast.makeText(context, "Google Sign in Failed", Toast.LENGTH_LONG).show()
                 splash.hideProgress()
             }
         }
