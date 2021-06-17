@@ -1,7 +1,12 @@
 package com.goel.peerlocator.utils.firebase.database
 
-import com.goel.peerlocator.listeners.*
-import com.goel.peerlocator.models.*
+import com.goel.peerlocator.listeners.BlockListener
+import com.goel.peerlocator.listeners.InvitationListener
+import com.goel.peerlocator.listeners.ProfileDataListener
+import com.goel.peerlocator.listeners.UserDataListener
+import com.goel.peerlocator.models.InviteModel
+import com.goel.peerlocator.models.UnknownUserModel
+import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.utils.Constants
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.ktx.firestore

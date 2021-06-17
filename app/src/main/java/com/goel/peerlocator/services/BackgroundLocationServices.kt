@@ -5,19 +5,15 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.app.job.JobParameters
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import com.goel.peerlocator.activities.MainActivity
 import com.goel.peerlocator.activities.SplashActivity
-import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.location.Location
 import com.google.android.gms.location.*
 

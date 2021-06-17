@@ -6,7 +6,7 @@ import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.repositories.CirclesRepository
 import java.io.InputStream
-import java.util.ArrayList
+import java.util.*
 
 class NewCircleViewModel(application: Application) : AndroidViewModel(application) {
     val membersList = ArrayList<FriendModel>()

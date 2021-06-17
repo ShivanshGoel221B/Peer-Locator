@@ -6,7 +6,6 @@ import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.repositories.InvitesRepository
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
-import com.goel.peerlocator.utils.firebase.database.InvitationDatabase
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage

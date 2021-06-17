@@ -14,12 +14,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityFriendBinding
+import com.goel.peerlocator.listeners.LocationListener
 import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.location.Location
-import com.goel.peerlocator.listeners.LocationListener
-import com.goel.peerlocator.utils.firebase.database.Database
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback

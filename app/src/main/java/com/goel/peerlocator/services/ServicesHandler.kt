@@ -2,7 +2,6 @@ package com.goel.peerlocator.services
 
 import android.app.Activity
 import android.content.Intent
-import androidx.core.content.ContextCompat
 
 abstract class ServicesHandler {
 

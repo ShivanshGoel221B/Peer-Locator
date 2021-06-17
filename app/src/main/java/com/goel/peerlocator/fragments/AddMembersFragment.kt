@@ -21,7 +21,6 @@ import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.viewmodels.AddMembersViewModel
-import java.lang.ClassCastException
 import java.util.*
 
 class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListeners {
