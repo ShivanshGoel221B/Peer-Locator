@@ -300,36 +300,13 @@
                 app:cardMaxElevation="4dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:fontFamily="@font/bree_serif"
-                    android:padding="7dp"
-                    android:text="@string/block_list"
-                    android:textColor="@color/crimson"
-                    android:textSize="22sp" />
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/delete_account_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="8dp"
-                app:cardElevation="7dp"
-                app:cardMaxElevation="4dp">
-
-                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:fontFamily="@font/bree_serif"
                     android:padding="7dp"
                     android:textAlignment="center"
-                    android:text="@string/delete_account"
+                    android:text="@string/block_list"
                     android:background="@color/crimson"
                     android:textColor="@color/white"
                     android:textSize="22sp" />
