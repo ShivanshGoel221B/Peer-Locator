@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
-import android.provider.Settings
+  import android.os.Handler
+  import android.os.Looper
+  import android.provider.Settings
 import android.view.View
   import android.view.WindowManager
   import android.widget.Toast
@@ -24,11 +26,18 @@ import com.goel.peerlocator.models.MemberModel
 import com.goel.peerlocator.repositories.CirclesRepository
 import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
-import com.google.android.gms.maps.CameraUpdateFactory
+  import com.goel.peerlocator.utils.firebase.database.Database
+  import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
   import com.google.android.gms.maps.SupportMapFragment
   import com.google.android.gms.maps.model.LatLng
+  import com.google.android.gms.maps.model.Marker
+  import com.google.android.gms.maps.model.MarkerOptions
+  import com.google.firebase.database.DataSnapshot
+  import com.google.firebase.database.DatabaseError
+  import com.google.firebase.database.FirebaseDatabase
+  import com.google.firebase.database.ValueEventListener
 
 class CircleActivity : AppCompatActivity(), CircleDataListener,
     LocationMembersAdapter.ClickListener, OnMapReadyCallback {
@@ -42,6 +51,17 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
     private lateinit var membersList: ArrayList<LocationMemberModel>
     private lateinit var adapter: LocationMembersAdapter
 
+    private lateinit var markers: HashMap<String, Marker?>
+
+    private lateinit var locationHandler: Handler
+
+    private val locationTask = object : Runnable {
+        override fun run() {
+            updatePeersLocation()
+            locationHandler.postDelayed(this, 2500)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCircleBinding.inflate(layoutInflater)
@@ -49,17 +69,29 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        binding.infoBtn.setOnClickListener {
+            CircleInfoActivity.model = model
+            startActivity(Intent(this, CircleInfoActivity::class.java))
+        }
+
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         toggleMembers()
         createRecyclerView()
         getAllMembers()
+        locationHandler = Handler(Looper.getMainLooper())
     }
 
     override fun onResume() {
         super.onResume()
         startMyLocation()
+        locationHandler.post(locationTask)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locationHandler.removeCallbacks(locationTask)
     }
 
     private fun startMyLocation () {
@@ -130,6 +162,7 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
 
     private fun createRecyclerView () {
         membersList = ArrayList()
+        markers = HashMap()
         adapter = LocationMembersAdapter(membersList, this, this)
         binding.membersRecyclerView.adapter = adapter
         val lm = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -155,6 +188,50 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
         CirclesRepository.instance.getAllMembers(model.documentReference, this)
     }
 
+    private fun updatePeersLocation () {
+        for (member in membersList) {
+            member.locationReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val lat = snapshot.child(Constants.LAT).value as Double
+                    val lon = snapshot.child(Constants.LON).value as Double
+                    member.latitude = lat
+                    member.longitude = lon
+                    updatePeerMarker(member, LatLng(lat, lon))
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast
+                        .makeText(this@CircleActivity, R.string.error_message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            })
+        }
+    }
+
+    private fun updatePeerMarker(member: LocationMemberModel, latLng: LatLng) {
+        member.documentReference.get()
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show()
+            }
+            .addOnSuccessListener {
+                val online = it[Constants.ONLINE] as Boolean
+                markers[member.uid]?.let {marker->
+                    marker.position = latLng
+                    marker.remove()
+                }
+                if (online)
+                    markers[member.uid] = mMap.addMarker(MarkerOptions().position(latLng).title(member.name))
+            }
+    }
+
+    private fun gotoLocation (latLng: LatLng) {
+        if (latLng.latitude + latLng.longitude > 0.0) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, Constants.DEFAULT_ZOOM))
+        }
+        else
+            Toast.makeText(this, "Failed to get peer's location", Toast.LENGTH_SHORT).show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         val preferences = getSharedPreferences(Constants.PREFS, MODE_PRIVATE)
@@ -167,10 +244,31 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
     override fun onMemberCountComplete(members: Long) {}
 
     override fun onMemberRetrieved(member: MemberModel) {
+        if(member.uid == Database.currentUser.uid)
+            return
+        val locationRef = FirebaseDatabase.getInstance().reference
+            .child(Constants.LOC)
+            .child(member.uid)
         val memberModel = LocationMemberModel(documentReference = member.documentReference,
-            uid = member.uid, name = member.name, imageUrl = member.imageUrl)
+            locationReference = locationRef, uid = member.uid,
+            name = member.name, imageUrl = member.imageUrl)
         membersList.add(memberModel)
         adapter.notifyDataSetChanged()
+        locationRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val lat = snapshot.child(Constants.LAT).value as Double
+                val lon = snapshot.child(Constants.LON).value as Double
+                memberModel.latitude = lat
+                memberModel.longitude = lon
+                markers[member.uid] = mMap.addMarker(MarkerOptions().position(LatLng(lat, lon)).title(member.name))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast
+                    .makeText(this@CircleActivity, R.string.error_message, Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
     }
 
     override fun onError() {
@@ -178,6 +276,18 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
     }
 
     override fun onMemberClicked(position: Int) {
-        TODO("Not yet implemented")
+        val member = membersList[position]
+        toggleMembers()
+        member.documentReference.get()
+            .addOnFailureListener {
+                Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show()
+            }
+            .addOnSuccessListener {
+                val online = it[Constants.ONLINE] as Boolean
+                if (online)
+                    gotoLocation(LatLng(member.latitude, member.longitude))
+                else
+                    Toast.makeText(this, "${member.name} is offline", Toast.LENGTH_SHORT).show()
+            }
     }
 }

@@ -83,7 +83,7 @@
     <string name="enter_circle_name">Enter Circle Name</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
-    <string name="circle_size_warning">Circle Size should not exceed 20 members</string>
+    <string name="circle_size_warning">Circle Size should not exceed 10 members</string>
     <string name="add_selected">Add Selected</string>
     <string name="error_message">Some Error Occurred</string>
     <string name="creating_circle">Creating Circle</string>
