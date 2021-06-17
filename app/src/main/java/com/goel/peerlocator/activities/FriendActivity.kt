@@ -154,12 +154,23 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         }
 
         binding.findFriend.setOnClickListener {
-            goToLocation(LatLng(friend.latitude, friend.longitude))
+            friend.documentReference.get()
+                .addOnSuccessListener {
+                    val isOnline = it[Constants.ONLINE] as Boolean
+                    if (isOnline) {
+                        updateFriendMarker(LatLng(friend.latitude, friend.longitude))
+                        goToLocation(LatLng(friend.latitude, friend.longitude))
+                    }
+                    else {
+                        Toast.makeText(this, "${friend.name} is offline", Toast.LENGTH_SHORT).show()
+                        mMap.clear()
+                    }
+                }
         }
     }
 
     override fun onLocationReady(latLng: LatLng) {
-        Database.currentUserRef.get()
+        friend.documentReference.get()
             .addOnSuccessListener {
                 val isOnline = it[Constants.ONLINE] as Boolean
                 if (isOnline)
@@ -172,13 +183,12 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
     }
 
     override fun onFriendMoved(latLng: LatLng) {
-        Database.currentUserRef.get()
+        friend.documentReference.get()
             .addOnSuccessListener {
                 val isOnline = it[Constants.ONLINE] as Boolean
                 if (isOnline)
                     updateFriendMarker(latLng)
                 else {
-                    Toast.makeText(this, "${friend.name} is offline", Toast.LENGTH_SHORT).show()
                     mMap.clear()
                 }
             }

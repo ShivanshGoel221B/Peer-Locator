@@ -169,7 +169,8 @@ class FriendInfoActivity : AppCompatActivity(), FriendDataListener, CirclesAdapt
 
     //Circles Click Listeners
     override fun onCircleClicked(position: Int) {
-        TODO("Not yet implemented")
+        CircleActivity.model = commonList[position]
+        startActivity(Intent(this, CircleActivity::class.java))
     }
 
     override fun onCirclePhotoClicked(position: Int) {
