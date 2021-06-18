@@ -168,7 +168,8 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
     private fun openMember (member: MemberModel) {
         when (member.flag) {
             Constants.FRIEND -> {
-                FriendActivity.friend = FriendModel(documentReference = member.documentReference, name = member.name, imageUrl = member.imageUrl)
+                FriendActivity.friend = FriendModel(documentReference = member.documentReference,
+                    uid=member.uid, name = member.name, imageUrl = member.imageUrl)
                 startActivity(Intent(this, FriendActivity::class.java))
             }
             Constants.UNKNOWN -> {

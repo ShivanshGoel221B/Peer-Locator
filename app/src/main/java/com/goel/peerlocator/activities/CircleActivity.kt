@@ -192,11 +192,23 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
         for (member in membersList) {
             member.locationReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val lat = snapshot.child(Constants.LAT).value as Double
-                    val lon = snapshot.child(Constants.LON).value as Double
-                    member.latitude = lat
-                    member.longitude = lon
-                    updatePeerMarker(member, LatLng(lat, lon))
+                    if (snapshot.exists()) {
+                        val latLng = try {
+                            val lat = snapshot.child(Constants.LAT).value as Double
+                            val lon = snapshot.child(Constants.LON).value as Double
+                            LatLng(lat, lon)
+                        } catch (e: NullPointerException) {
+                            LatLng(0.0, 0.0)
+                        }
+                        member.latitude = latLng.latitude
+                        member.longitude = latLng.longitude
+                        updatePeerMarker(member, latLng)
+                    }
+                    else {
+                        member.latitude = 0.0
+                        member.longitude = 0.0
+                        updatePeerMarker(member, LatLng(0.0, 0.0))
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {

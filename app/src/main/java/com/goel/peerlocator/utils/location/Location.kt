@@ -52,9 +52,14 @@ object Location {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
-                        val lat = snapshot.child(Constants.LAT).getValue(Double::class.java) as Double
-                        val lon = snapshot.child(Constants.LON).getValue(Double::class.java) as Double
-                        locationListener?.onLocationReady(LatLng(lat, lon))
+                        val latLng = try {
+                            val lat = snapshot.child(Constants.LAT).value as Double
+                            val lon = snapshot.child(Constants.LON).value as Double
+                            LatLng(lat, lon)
+                        } catch (e: NullPointerException) {
+                            LatLng(0.0, 0.0)
+                        }
+                        locationListener?.onLocationReady(latLng)
                     }
                     else {
                         locationListener?.onLocationReady(LatLng(0.0, 0.0))
