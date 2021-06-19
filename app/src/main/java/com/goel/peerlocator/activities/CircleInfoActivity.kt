@@ -68,6 +68,10 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
             }
 
             binding.sentInvitationsBtn.visibility = View.VISIBLE
+            binding.sentInvitationsBtn.setOnClickListener {
+                SentInvitationActivity.documentReference = model.documentReference
+                startActivity(Intent(this, SentInvitationActivity::class.java))
+            }
         }
         else {
             binding.addMembersButton.visibility = View.GONE
