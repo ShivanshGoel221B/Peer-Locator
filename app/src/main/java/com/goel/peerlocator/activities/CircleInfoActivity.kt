@@ -66,9 +66,13 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
             binding.addMembersButton.setOnClickListener {
                 formInitialList()
             }
+
+            binding.sentInvitationsBtn.visibility = View.VISIBLE
         }
-        else
+        else {
             binding.addMembersButton.visibility = View.GONE
+            binding.sentInvitationsBtn.visibility = View.GONE
+        }
 
         binding.leaveCircleButton.setOnClickListener {
             showLeaveWarning()
