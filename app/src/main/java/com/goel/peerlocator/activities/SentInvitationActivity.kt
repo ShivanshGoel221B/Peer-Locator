@@ -18,8 +18,13 @@ import com.goel.peerlocator.models.FriendModel
 import com.goel.peerlocator.models.InviteModel
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.viewmodels.SentInvitationViewModel
+import com.google.firebase.firestore.DocumentReference
 
 class SentInvitationActivity : AppCompatActivity() {
+
+    companion object {
+        lateinit var documentReference: DocumentReference
+    }
 
     private lateinit var binding: ActivitySentInvitationBinding
     private lateinit var viewModel: SentInvitationViewModel
@@ -64,7 +69,7 @@ class SentInvitationActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.sentRecyclerView.layoutManager = layoutManager
 
-        viewModel.getSentInvitations(object : GetListListener {
+        viewModel.getSentInvitations(documentReference, object : GetListListener {
             override fun onFriendRetrieved(friend: FriendModel) {}
             override fun onCircleRetrieved(circle: CircleModel) {}
             override fun onInvitationRetrieved(invitation: InviteModel) {}
@@ -108,7 +113,7 @@ class SentInvitationActivity : AppCompatActivity() {
     }
 
     private fun unSendInvitation(model: UnknownUserModel) {
-        viewModel.removeInvitation(model, object : AddFriendListener {
+        viewModel.removeInvitation(documentReference, model, object : AddFriendListener {
             override fun onInvitationSent(model: UnknownUserModel) {}
             override fun onInvitationUnsent(model: UnknownUserModel) {
                 val index = viewModel.sentInvitationList.indexOf(model)

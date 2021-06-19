@@ -32,12 +32,14 @@ class InvitesRepository : UserRepository() {
         InvitationDatabase.instance.sendInvitation(recipient, listener)
     }
 
-    fun getSentInvitations (listener: GetListListener) {
-        InvitationDatabase.instance.getSentInvitations(listener)
+    fun getSentInvitations (documentReference: DocumentReference, listener: GetListListener) {
+        InvitationDatabase.instance.getSentInvitations(documentReference, listener)
     }
 
-    fun unSendInvitation (model: UnknownUserModel, listener: AddFriendListener) {
-        InvitationDatabase.instance.unSendInvitation(model, listener)
+    fun unSendInvitation (documentReference: DocumentReference,
+                          model: UnknownUserModel,
+                          listener: AddFriendListener) {
+        InvitationDatabase.instance.unSendInvitation(documentReference, model, listener)
     }
 
     fun acceptInvitation (model: InviteModel, listener: InvitationListener) {

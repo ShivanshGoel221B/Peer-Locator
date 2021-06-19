@@ -123,8 +123,8 @@ class InvitationDatabase : Database() {
             }
     }
 
-    fun getSentInvitations (listener: GetListListener) {
-        currentUserRef.get().addOnFailureListener { listener.onError() }
+    fun getSentInvitations (documentReference: DocumentReference, listener: GetListListener) {
+        documentReference.get().addOnFailureListener { listener.onError() }
             .addOnSuccessListener {
                 var referenceList = ArrayList<DocumentReference>()
                 try {
@@ -144,21 +144,23 @@ class InvitationDatabase : Database() {
             }
     }
 
-    fun unSendInvitation (model: UnknownUserModel, listener: AddFriendListener) {
+    fun unSendInvitation (documentReference: DocumentReference,
+                          model: UnknownUserModel,
+                          listener: AddFriendListener) {
         val reference = model.documentReference
         var initialSentList = ArrayList<DocumentReference>()
         val updatedSentList = ArrayList<DocumentReference>()
-        val path = currentUserRef.path
-        currentUserRef.get().addOnFailureListener { listener.onError() }
+        val path = documentReference.path
+        documentReference.get().addOnFailureListener { listener.onError() }
             .addOnSuccessListener {
                 try {
                     initialSentList = it[Constants.SENT_INVITES] as ArrayList<DocumentReference>
                 } catch (e: NullPointerException) {}
-                for (documentReference in initialSentList) {
-                    if (documentReference.id != reference.id)
-                        updatedSentList.add(documentReference)
+                for (documentRef in initialSentList) {
+                    if (documentRef.id != reference.id)
+                        updatedSentList.add(documentRef)
                 }
-                currentUserRef.update(Constants.SENT_INVITES, updatedSentList)
+                documentReference.update(Constants.SENT_INVITES, updatedSentList)
                     .addOnFailureListener { listener.onError() }
                     .addOnSuccessListener {
                         invitesReference.child(reference.id).child(path.toInvitationPath()).removeValue()
@@ -197,7 +199,7 @@ class InvitationDatabase : Database() {
                                                     uid = inviteModel.documentReference.id,
                                                     name = inviteModel.name,
                                                     imageUrl = inviteModel.imageUrl)
-                    unSendInvitation(userModel, friendListener)
+                    unSendInvitation(currentUserRef, userModel, friendListener)
                 }
                 else
                     acceptInvitation(inviteModel, listener)
