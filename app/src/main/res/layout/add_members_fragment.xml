@@ -28,7 +28,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/members_counter" />
+            app:layout_constraintTop_toBottomOf="@id/members_counter_info" />
 
         <LinearLayout
             android:id="@+id/nothing_found"
@@ -72,6 +72,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="13/20 Members" />
+
+        <TextView
+            android:id="@+id/members_counter_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/fjord_one"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/members_counter"
+            android:text="@string/including_sent_invitations" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/friends_recycler_view"
