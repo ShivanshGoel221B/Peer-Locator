@@ -57,8 +57,7 @@
                 android:id="@+id/card_info"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@android:drawable/ic_info"
-                app:srcCompat="@android:drawable/ic_info"
+                android:src="@drawable/ic_info"
                 android:layout_marginEnd="5dp"
                 app:tint="?android:attr/textColorPrimary" />
 

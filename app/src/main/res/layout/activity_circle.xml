@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:src="@android:drawable/ic_info"
+            android:src="@drawable/ic_info"
             app:tint="?android:attr/textColorPrimary"/>
 
     </androidx.cardview.widget.CardView>
