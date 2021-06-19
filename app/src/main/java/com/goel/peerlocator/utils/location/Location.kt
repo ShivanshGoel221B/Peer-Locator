@@ -21,7 +21,11 @@ object Location {
     private val friendsLatitudeListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             if (snapshot.exists())
-                friendLocation?.latitude = snapshot.getValue(Double::class.java) as Double
+                try {
+                    friendLocation?.latitude = snapshot.getValue(Double::class.java) as Double
+                } catch (e: NullPointerException) {
+                    friendLocation?.latitude = 0.0
+                }
             else
                 friendLocation?.latitude = 0.0
             currentFriend?.latitude = friendLocation!!.latitude
@@ -35,7 +39,11 @@ object Location {
     private val friendsLongitudeListener = object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             if (snapshot.exists())
-                friendLocation?.longitude = snapshot.getValue(Double::class.java) as Double
+                try {
+                    friendLocation?.longitude = snapshot.getValue(Double::class.java) as Double
+                } catch (e: NullPointerException) {
+                    friendLocation?.longitude = 0.0
+                }
             else
                 friendLocation?.longitude = 0.0
             currentFriend?.longitude = friendLocation!!.longitude

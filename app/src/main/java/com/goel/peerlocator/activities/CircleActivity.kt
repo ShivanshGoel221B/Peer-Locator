@@ -268,8 +268,15 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
         adapter.notifyDataSetChanged()
         locationRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val lat = snapshot.child(Constants.LAT).value as Double
-                val lon = snapshot.child(Constants.LON).value as Double
+                var lat = 0.0
+                var lon = 0.0
+                try {
+                    lat = snapshot.child(Constants.LAT).value as Double
+                    lon = snapshot.child(Constants.LON).value as Double
+                } catch (e: NullPointerException) {
+                    lat = 0.0
+                    lon = 0.0
+                }
                 memberModel.latitude = lat
                 memberModel.longitude = lon
                 markers[member.uid] = mMap.addMarker(MarkerOptions().position(LatLng(lat, lon)).title(member.name))
