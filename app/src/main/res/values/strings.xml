@@ -121,4 +121,8 @@
     <string name="follow">Follow</string>
     <string name="including_sent_invitations">(Including sent invitations)</string>
 
+    <string name="location_warning">You need to grant Background Location Permission to continue</string>
+    <string name="disclosure">Peer Locator collects location data so that your friends and family members can access your real-time location even when the app is closed or not in use</string>
+    <string name="proceed">Proceed</string>
+
 </resources>

@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -18,6 +17,7 @@ import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.MainFragmentsAdapter
 import com.goel.peerlocator.databinding.ActivityMainBinding
+import com.goel.peerlocator.dialogs.LocationDialog
 import com.goel.peerlocator.models.UserModel
 import com.goel.peerlocator.services.ServicesHandler
 import com.goel.peerlocator.utils.Constants
@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         createToolBar()
-        getLocationPermission()
         binding.customToolbar.profilePicture.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
@@ -53,8 +52,7 @@ class MainActivity : AppCompatActivity() {
         val fragmentsAdapter = MainFragmentsAdapter(supportFragmentManager, 0)
         setFragmentsAdapter(fragmentsAdapter)
         setUserData()
-        checkGPS()
-        checkBackgroundLocation()
+        getLocationPermission()
     }
 
     private fun checkBackgroundLocation () {
@@ -92,17 +90,20 @@ class MainActivity : AppCompatActivity() {
                     if (ContextCompat.checkSelfPermission(applicationContext, Constants.BACKGROUND)
                         == PackageManager.PERMISSION_GRANTED) {
                         locationPermissionGranted = true
+                        checkGPS()
                         getMyLocation()
                         checkBackgroundLocation()
                     }
 
                 } else {
                     locationPermissionGranted = true
+                    checkGPS()
                     getMyLocation()
                     checkBackgroundLocation()
                 }
         }
         else {
+            locationPermissionGranted = false
             showLocationWarning ()
         }
     }
@@ -112,15 +113,16 @@ class MainActivity : AppCompatActivity() {
             arrayOf(Constants.FINE, Constants.COARSE, Constants.BACKGROUND)
         else
             arrayOf(Constants.FINE, Constants.COARSE)
-        AlertDialog.Builder(this)
-            .setTitle("Permission")
-            .setMessage("You need to give Location Access Permission to continue")
-            .setPositiveButton("Proceed") { dialog, _ -> Log.d("Error: ", "Could not Retrieve Data")
-                ActivityCompat.requestPermissions(this, permissions, Constants.LOCATION_PERMISSION_REQUEST_CODE)
-                dialog.dismiss()
+
+        LocationDialog(object : LocationDialog.ClickListeners {
+            override fun proceed() {
+                ActivityCompat.requestPermissions(this@MainActivity, permissions, Constants.LOCATION_PERMISSION_REQUEST_CODE)
             }
-            .setNegativeButton("Cancel") { _, _ -> finish()}
-            .show()
+            override fun cancel() {
+                finishAffinity()
+                ServicesHandler.stopBackgroundLocation(this@MainActivity)
+            }
+        }).show(supportFragmentManager, "location")
     }
 
     private fun checkGPS() {
