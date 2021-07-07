@@ -1,12 +1,15 @@
 package com.goel.peerlocator.activities
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivitySplashBinding
 import com.goel.peerlocator.dialogs.CreateProfileDialog
@@ -100,7 +103,27 @@ class SplashActivity : AppCompatActivity(), UserDataListener, CreateProfileDialo
 
     override fun onUserCreated() {
         val mainIntent = Intent(this, MainActivity::class.java)
-        startActivity(mainIntent)
+        val disclosureIntent = Intent(this, DisclosureActivity::class.java)
+
+        if (
+            ContextCompat.checkSelfPermission(applicationContext, Constants.FINE) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(applicationContext, Constants.COARSE) == PackageManager.PERMISSION_GRANTED) {
+            if(Build.VERSION.SDK_INT >= 29) {
+                if (ContextCompat.checkSelfPermission(applicationContext, Constants.BACKGROUND)
+                    == PackageManager.PERMISSION_GRANTED) {
+                    startActivity(mainIntent)
+                }
+                else {
+                    startActivity(disclosureIntent)
+                }
+
+            } else {
+                startActivity(mainIntent)
+            }
+        }
+        else {
+            startActivity(disclosureIntent)
+        }
         hideProgress()
         finish()
     }
