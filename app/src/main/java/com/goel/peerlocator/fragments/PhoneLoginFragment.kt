@@ -22,6 +22,7 @@ class PhoneLoginFragment(private val splash: SplashActivity) : Fragment() {
     private var binding: FragmentPhoneLoginBinding? = null
     private lateinit var auth : FirebaseAuth
     private lateinit var storedVerificationId: String
+    private var countryCode = "+91"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,6 +30,7 @@ class PhoneLoginFragment(private val splash: SplashActivity) : Fragment() {
         auth = FirebaseAuth.getInstance()
         auth.useAppLanguage()
         binding = FragmentPhoneLoginBinding.inflate(inflater, container, false)
+        setCountryListener()
         binding?.root?.setOnClickListener { return@setOnClickListener }
 
         binding?.phoneDetailsContainer?.visibility = View.VISIBLE
@@ -40,6 +42,12 @@ class PhoneLoginFragment(private val splash: SplashActivity) : Fragment() {
         return binding?.root
     }
 
+    private fun setCountryListener() {
+        binding?.country?.setOnCountryChangeListener {
+            countryCode = "+" + it.phoneCode
+        }
+    }
+
     private fun sendOtp () {
         val phoneNumber = binding?.editTextPhone?.text?.toString()!!
         if (phoneNumber.isEmpty()) {
@@ -47,7 +55,7 @@ class PhoneLoginFragment(private val splash: SplashActivity) : Fragment() {
             return
         }
         else {
-            createCallBack(phoneNumber)
+            createCallBack(countryCode + phoneNumber)
             showLoading(getString(com.goel.peerlocator.R.string.sending_otp))
         }
     }

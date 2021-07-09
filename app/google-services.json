@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "955075070166",
+    "firebase_url": "https://peer-locator-default-rtdb.firebaseio.com",
     "project_id": "peer-locator",
     "storage_bucket": "peer-locator.appspot.com"
   },
@@ -19,6 +20,22 @@
           "android_info": {
             "package_name": "com.goel.peerlocator",
             "certificate_hash": "4316272f9bce3ea7643f00ac26250de9c781bc5b"
+          }
+        },
+        {
+          "client_id": "955075070166-buup2oahbci6rj54b30q58maouug9skp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goel.peerlocator",
+            "certificate_hash": "0d076bcd152e5bd6ff57f15240590afc612de9eb"
+          }
+        },
+        {
+          "client_id": "955075070166-sl1v3g4hm99ejr5dqtrqcnl32olj387l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goel.peerlocator",
+            "certificate_hash": "338d301b1a670a7cd712c559641edacbf44ffa12"
           }
         },
         {

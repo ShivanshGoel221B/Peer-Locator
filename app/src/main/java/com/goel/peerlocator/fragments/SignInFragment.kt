@@ -79,6 +79,7 @@ class SignInFragment(private val splash: SplashActivity) : Fragment() {
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
+                Log.w("LogIn Fail", "signIn:failure", e)
                 Toast.makeText(context, "Google Sign in Failed", Toast.LENGTH_LONG).show()
                 splash.hideProgress()
             }
