@@ -34,6 +34,8 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
     private lateinit var adapter : AddFriendAdapter
     private lateinit var watcher: TextWatcher
     private lateinit var loadingDialog: InvitationLoadingDialog
+    private lateinit var filteredList: ArrayList<UnknownUserModel>
+    private lateinit var filterAdapter: AddFriendAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,12 +128,32 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
             adapter.notifyDataSetChanged()
             return
         }
-        val filteredList = ArrayList<UnknownUserModel>()
-        binding.usersRecyclerView.adapter = AddFriendAdapter(this, filteredList, this)
+        filteredList = ArrayList()
+        filterAdapter = AddFriendAdapter(this, filteredList,
+            object : AddFriendAdapter.ClickListeners {
+                override fun onInviteClicked(position: Int) {
+                    val userIndex = viewModel.usersList.indexOf(filteredList[position])
+                    this@AddFriendActivity.onInviteClicked(userIndex)
+                }
+
+                override fun onUserClicked(position: Int) {
+                    val model = filteredList[position]
+                    val index = viewModel.usersList.indexOf(model)
+                    this@AddFriendActivity.onUserClicked(index)
+                }
+
+                override fun onPhotoClicked(position: Int) {
+                    val model = filteredList[position]
+                    val index = viewModel.usersList.indexOf(model)
+                    this@AddFriendActivity.onPhotoClicked(index)
+                }
+            })
+
+        binding.usersRecyclerView.adapter = filterAdapter
         binding.usersRecyclerView.adapter!!.notifyDataSetChanged()
         startShimmer()
         val tempList = viewModel.usersList.filter {
-            query.toLowerCase(Locale.ROOT) in it.name.toLowerCase(Locale.ROOT)
+            query.lowercase(Locale.ROOT) in it.name.lowercase(Locale.ROOT)
         }
         filteredList.addAll(tempList)
         binding.usersRecyclerView.adapter!!.notifyDataSetChanged()
@@ -160,6 +182,12 @@ class AddFriendActivity : AppCompatActivity(), AddFriendAdapter.ClickListeners {
         loadingDialog.show(supportFragmentManager, "loading dialog")
         viewModel.sendInvitation(position, object :  AddFriendListener{
             override fun onInvitationSent(model: UnknownUserModel) {
+                try {
+                    val filteredIndex = filteredList.indexOf(model)
+                    loadingDialog.dismiss()
+                    filterAdapter.notifyItemRemoved(filteredIndex)
+                    filteredList.remove(model)
+                }catch (e: Exception){}
                 val index = viewModel.usersList.indexOf(model)
                 loadingDialog.dismiss()
                 adapter.notifyItemRemoved(index)
