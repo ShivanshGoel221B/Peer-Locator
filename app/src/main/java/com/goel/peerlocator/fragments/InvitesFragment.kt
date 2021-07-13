@@ -43,23 +43,20 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
         acceptDialog = LoadingBasicDialog("Accepting Invitation")
         rejectDialog = LoadingBasicDialog("Rejecting Invitation")
 
+        createRecyclerView()
+
         val swipe = binding?.swipeLayout!!
         swipe.setOnRefreshListener {
-            onResume()
+            nothingFound.visibility = View.GONE
+            createRecyclerView()
             swipe.isRefreshing = false
         }
 
         return binding?.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        startShimmer()
-        nothingFound.visibility = View.GONE
-        createRecyclerView()
-    }
-
     private fun createRecyclerView () {
+        startShimmer()
         viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))
             .get(InvitesViewModel::class.java)
         //initialize adapter

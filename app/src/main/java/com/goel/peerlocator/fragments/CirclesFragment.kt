@@ -43,25 +43,20 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
         binding?.createNewCircleButton?.setOnClickListener {
             startActivity(Intent(activity, NewCircleActivity::class.java))
         }
+        createRecyclerView()
 
         val swipe = binding?.swipeLayout!!
         swipe.setOnRefreshListener {
-            onResume()
+            nothingFound.visibility = View.GONE
+            createRecyclerView()
             swipe.isRefreshing = false
         }
 
         return binding?.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        startShimmer()
-        nothingFound.visibility = View.GONE
-        createRecyclerView()
-    }
-
     private fun createRecyclerView () {
+        startShimmer()
         viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))
             .get(CirclesViewModel::class.java)
         //initialize adapter

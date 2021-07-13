@@ -43,25 +43,20 @@ class FriendsFragment : Fragment(), FriendsAdapter.FriendClickListener {
         binding?.addNewFriend?.setOnClickListener {
             startActivity(Intent(context, AddFriendActivity::class.java))
         }
+        createRecyclerView()
 
         val swipe = binding?.swipeLayout!!
         swipe.setOnRefreshListener {
-            onResume()
+            nothingFound.visibility = View.GONE
+            createRecyclerView()
             swipe.isRefreshing = false
         }
 
         return binding?.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        startShimmer()
-        nothingFound.visibility = View.GONE
-        createRecyclerView()
-    }
-
     private fun createRecyclerView () {
+        startShimmer()
         viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application))
             .get(FriendsViewModel::class.java)
         //initialize adapter
