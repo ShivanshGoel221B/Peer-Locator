@@ -25,6 +25,7 @@ import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
 import com.goel.peerlocator.utils.location.Location
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.database.FirebaseDatabase
 
 
@@ -48,8 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val fragmentsAdapter = MainFragmentsAdapter(supportFragmentManager, 0)
-        setFragmentsAdapter(fragmentsAdapter)
+        setFragmentsAdapter()
         setUserData()
         getLocationPermission()
     }
@@ -214,9 +214,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setFragmentsAdapter(fragmentsAdapter: MainFragmentsAdapter) {
-        binding.mainViewPager.adapter = fragmentsAdapter
-        binding.mainTabs.setupWithViewPager(binding.mainViewPager)
+    private fun setFragmentsAdapter() {
+        val adapter = MainFragmentsAdapter(this)
+        binding.mainViewPager.adapter = adapter
+        TabLayoutMediator(binding.mainTabs, binding.mainViewPager) { tab, position ->
+            tab.text = adapter.getPageTitle(position)
+        }.attach()
     }
 
 }
