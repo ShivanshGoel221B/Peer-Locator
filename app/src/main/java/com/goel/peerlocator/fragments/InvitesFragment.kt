@@ -42,11 +42,6 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
         nothingFound.visibility = View.GONE
         acceptDialog = LoadingBasicDialog("Accepting Invitation")
         rejectDialog = LoadingBasicDialog("Rejecting Invitation")
-        return binding?.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
         val swipe = binding?.swipeLayout!!
         swipe.setOnRefreshListener {
@@ -54,6 +49,7 @@ class InvitesFragment : Fragment(), InvitesAdapter.InviteClickListener, Invitati
             swipe.isRefreshing = false
         }
 
+        return binding?.root
     }
 
     override fun onResume() {

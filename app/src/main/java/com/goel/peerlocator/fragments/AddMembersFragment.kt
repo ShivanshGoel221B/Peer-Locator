@@ -102,7 +102,7 @@ class AddMembersFragment : Fragment(), AddMembersAdapter.AddMembersClickListener
         query?.let {
             if (it.isNotEmpty()) {
                 val newList = viewModel.friendList.filter { friend ->
-                    query.toLowerCase(Locale.ROOT) in friend.name.toLowerCase(Locale.ROOT)
+                    query.lowercase(Locale.ROOT) in friend.name.lowercase(Locale.ROOT)
                 } as ArrayList<FriendModel>
                 binding?.friendsRecyclerView?.adapter = AddMembersAdapter(requireContext(), newList,
                                                         viewModel.selectedList, this)

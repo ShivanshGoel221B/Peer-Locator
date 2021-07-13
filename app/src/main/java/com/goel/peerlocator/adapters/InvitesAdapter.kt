@@ -8,10 +8,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.models.InviteModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class InvitesAdapter (private val invitesList: ArrayList<InviteModel>, private val context: Context,
                       private val clickListener: InviteClickListener) : RecyclerView.Adapter<InvitesAdapter.InvitesViewHolder>() {
@@ -39,8 +38,8 @@ class InvitesAdapter (private val invitesList: ArrayList<InviteModel>, private v
 
         holder.nameView.text = name
         holder.additional.text = timeStamp
-        Picasso.with(context).load(profileUrl).placeholder(placeHolder)
-            .transform(CropCircleTransformation())
+        Glide.with(context).load(profileUrl).placeholder(placeHolder)
+            .circleCrop()
             .into(holder.photoView)
     }
 

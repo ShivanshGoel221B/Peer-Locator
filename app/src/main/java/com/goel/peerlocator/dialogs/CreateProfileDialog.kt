@@ -18,9 +18,9 @@ class CreateProfileDialog (private val listener: ClickListener): AppCompatDialog
 
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        builder = AlertDialog.Builder(context!!)
+        builder = AlertDialog.Builder(requireContext())
         builder.setCancelable(false)
-        dialogView = activity!!.layoutInflater.inflate(R.layout.create_profile_layout, null, false)
+        dialogView = requireActivity().layoutInflater.inflate(R.layout.create_profile_layout, null, false)
         builder.setView(dialogView)
         this.isCancelable = false
         setClickListeners ()

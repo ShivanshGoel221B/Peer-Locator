@@ -8,10 +8,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.models.UnknownUserModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class AddFriendAdapter (private val context: Context, private val usersList : ArrayList<UnknownUserModel>,
                         private val clickListener: ClickListeners) : RecyclerView.Adapter<AddFriendAdapter.AddFriendViewHolder>() {
@@ -30,8 +29,8 @@ class AddFriendAdapter (private val context: Context, private val usersList : Ar
         val name = model.name
         val url = model.imageUrl
         holder.nameView.text = name
-        Picasso.with(context).load(url).placeholder(R.drawable.ic_placeholder_user)
-            .transform(CropCircleTransformation())
+        Glide.with(context).load(url).placeholder(R.drawable.ic_placeholder_user)
+            .circleCrop()
             .into(holder.photoView)
     }
 

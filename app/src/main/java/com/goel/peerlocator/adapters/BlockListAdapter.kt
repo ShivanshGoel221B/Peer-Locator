@@ -8,10 +8,9 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.models.UnknownUserModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class BlockListAdapter (private val blockList : ArrayList<UnknownUserModel>, private val listener : BlockListClickListener,
                         private val context: Context) : RecyclerView.Adapter<BlockListAdapter.BlockViewHolder>() {
@@ -27,10 +26,10 @@ class BlockListAdapter (private val blockList : ArrayList<UnknownUserModel>, pri
         val user = blockList[position]
         val url = user.imageUrl
         val name = user.name
-        Picasso.with(context)
+        Glide.with(context)
             .load(url)
             .placeholder(R.drawable.ic_placeholder_user)
-            .transform(CropCircleTransformation())
+            .circleCrop()
             .into(holder.blockImage)
         holder.blockName.text = name
     }

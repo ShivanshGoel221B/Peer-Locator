@@ -43,16 +43,14 @@ class CirclesFragment : Fragment(), CirclesAdapter.CircleClickListener {
         binding?.createNewCircleButton?.setOnClickListener {
             startActivity(Intent(activity, NewCircleActivity::class.java))
         }
-        return binding?.root
-    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         val swipe = binding?.swipeLayout!!
         swipe.setOnRefreshListener {
             onResume()
             swipe.isRefreshing = false
         }
+
+        return binding?.root
     }
 
     override fun onResume() {

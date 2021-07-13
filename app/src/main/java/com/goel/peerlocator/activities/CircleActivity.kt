@@ -134,9 +134,9 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
         val myLocation = mMap.myLocation
         if (myLocation == null)
             Toast.makeText(this, "Getting your Location", Toast.LENGTH_SHORT).show()
-        myLocation?.let {
+        else {
             if (checkGPS()) {
-                val latLng = LatLng(it.latitude, it.longitude)
+                val latLng = LatLng(myLocation.latitude, myLocation.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, Constants.DEFAULT_ZOOM))
             }
             else
@@ -268,8 +268,8 @@ class CircleActivity : AppCompatActivity(), CircleDataListener,
         adapter.notifyDataSetChanged()
         locationRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                var lat = 0.0
-                var lon = 0.0
+                var lat: Double
+                var lon: Double
                 try {
                     lat = snapshot.child(Constants.LAT).value as Double
                     lon = snapshot.child(Constants.LON).value as Double

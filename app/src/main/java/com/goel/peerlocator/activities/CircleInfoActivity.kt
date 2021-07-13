@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.MembersAdapter
 import com.goel.peerlocator.databinding.ActivityCircleInfoBinding
@@ -27,8 +28,6 @@ import com.goel.peerlocator.repositories.InvitesRepository
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
 import com.google.firebase.firestore.DocumentReference
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapter.MemberClickedListener {
 
@@ -87,7 +86,9 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
         val photoUrl = model.imageUrl
         val name = model.name
         binding.infoToolbar.profileName.text = name
-        Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_circle_big).into(binding.profileImageHolder)
+        Glide.with(this).load(photoUrl)
+            .placeholder(R.drawable.ic_placeholder_circle_big)
+            .into(binding.profileImageHolder)
         createRecyclerView()
     }
 
@@ -227,9 +228,9 @@ class CircleInfoActivity : AppCompatActivity(), CircleDataListener, MembersAdapt
     override fun onMemberRetrieved(member: MemberModel) {
         if(member.documentReference.id == model.adminReference.id) {
             binding.infoAdminCard.cardProfileName.text = member.name
-            Picasso.with(this).load(member.imageUrl)
+            Glide.with(this).load(member.imageUrl)
                 .placeholder(R.drawable.ic_placeholder_user)
-                .transform(CropCircleTransformation())
+                .circleCrop()
                 .into(binding.infoAdminCard.cardProfileImage)
             binding.infoAdminCard.cardAdditionalDetail.visibility = View.GONE
             binding.infoAdminCard.root.setOnClickListener { openMember(member) }

@@ -8,10 +8,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.models.CircleModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val context: Context,
                      private val clickListener: CircleClickListener)
@@ -34,8 +33,8 @@ class CirclesAdapter(private val circleList: ArrayList<CircleModel>, private val
 
         holder.circleName.text = circleName
         holder.membersCount.text = membersCount
-        Picasso.with(context).load(imageUri).placeholder(R.drawable.ic_placeholder_circle)
-            .transform(CropCircleTransformation())
+        Glide.with(context).load(imageUri).placeholder(R.drawable.ic_placeholder_circle)
+            .circleCrop()
             .into(holder.circleImage)
     }
 

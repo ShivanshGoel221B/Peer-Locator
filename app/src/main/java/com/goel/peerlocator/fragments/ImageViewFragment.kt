@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.FragmentImageViewBinding
-import com.squareup.picasso.Picasso
 
 class ImageViewFragment : Fragment() {
 
@@ -29,7 +29,8 @@ class ImageViewFragment : Fragment() {
         val placeHolder = if (isCircle) R.drawable.ic_placeholder_circle_big
                           else R.drawable.ic_placeholder_user_big
 
-        Picasso.with(context).load(url).placeholder(placeHolder).into(binding?.largeProfileImage)
+        Glide.with(requireContext()).load(url)
+            .placeholder(placeHolder).into(binding?.largeProfileImage!!)
         binding?.imageCloseButton?.setOnClickListener { requireActivity().onBackPressed() }
 
         binding?.root?.setOnClickListener { return@setOnClickListener }

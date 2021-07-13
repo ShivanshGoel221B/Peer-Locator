@@ -107,9 +107,9 @@ class FriendActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener
         val myLocation = mMap.myLocation
         if (myLocation == null)
             Toast.makeText(this, "Getting your Location", Toast.LENGTH_SHORT).show()
-        myLocation?.let {
+        else {
             if (checkGPS()) {
-                val latLng = LatLng(it.latitude, it.longitude)
+                val latLng = LatLng(myLocation.latitude, myLocation.longitude)
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, Constants.DEFAULT_ZOOM))
             }
             else

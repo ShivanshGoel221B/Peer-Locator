@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.NewCircleAdapter
 import com.goel.peerlocator.databinding.ActivityNewCircleBinding
@@ -24,8 +25,6 @@ import com.goel.peerlocator.listeners.EditCircleListener
 import com.goel.peerlocator.utils.Constants
 import com.goel.peerlocator.utils.firebase.database.Database
 import com.goel.peerlocator.viewmodels.NewCircleViewModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import java.io.InputStream
 
 class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickListener,
@@ -52,10 +51,10 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
 
     private fun setViews () {
         membersCounter = binding.circleMembersCounter
-        Picasso.with(this)
+        Glide.with(this)
             .load(Database.currentUser.imageUrl)
             .placeholder(R.drawable.ic_placeholder_user)
-            .transform(CropCircleTransformation())
+            .circleCrop()
             .into(binding.myProfilePicture)
         membersCount = 1
         updateCounter(membersCount)
@@ -144,6 +143,7 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == Constants.READ_STORAGE_PERMISSION_REQUEST_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 uploadImage()
@@ -168,8 +168,8 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
                         Toast.makeText(this, getString(R.string.image_size_warning), Toast.LENGTH_LONG).show()
                     else -> {
                         imageStream = contentResolver.openInputStream(it.data!!)
-                        Picasso.with(this).load(it.data)
-                            .transform(CropCircleTransformation()).into(binding.circleProfilePhoto)
+                        Glide.with(this).load(it.data)
+                            .circleCrop().into(binding.circleProfilePhoto)
                     }
                 }
             }

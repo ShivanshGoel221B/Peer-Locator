@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityProfileBinding
 import com.goel.peerlocator.fragments.BlockListFragment
@@ -27,8 +28,6 @@ import com.goel.peerlocator.utils.firebase.storage.Storage
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class ProfileActivity : AppCompatActivity(), ProfileDataListener {
 
@@ -50,8 +49,8 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
 
         Database.getMyData(this)
 
-        Picasso.with(this).load(model.imageUrl).placeholder(R.drawable.ic_placeholder_user)
-                .transform(CropCircleTransformation()).into(binding.profilePhoto)
+        Glide.with(this).load(model.imageUrl).placeholder(R.drawable.ic_placeholder_user)
+                .circleCrop().into(binding.profilePhoto)
         binding.profilePhotoProgress.visibility = View.GONE
     }
 
@@ -248,8 +247,8 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
 
     override fun onPhotoChanged(url: String) {
         model.imageUrl = url
-        Picasso.with(this).load(url).placeholder(R.drawable.ic_placeholder_user)
-                .transform(CropCircleTransformation()).into(binding.profilePhoto)
+        Glide.with(this).load(url).placeholder(R.drawable.ic_placeholder_user)
+                .circleCrop().into(binding.profilePhoto)
         binding.profilePhotoProgress.visibility = View.GONE
     }
 

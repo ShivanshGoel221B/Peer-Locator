@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.models.LocationMemberModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class LocationMembersAdapter (private val membersList: ArrayList<LocationMemberModel>,
                               private val context: Context,
@@ -29,8 +28,8 @@ class LocationMembersAdapter (private val membersList: ArrayList<LocationMemberM
     override fun onBindViewHolder(holder: MembersViewHolder, position: Int) {
         val model = membersList[position]
         holder.nameView.text = model.name
-        Picasso.with(context).load(model.imageUrl)
-            .transform(CropCircleTransformation())
+        Glide.with(context).load(model.imageUrl)
+            .circleCrop()
             .placeholder(R.drawable.ic_placeholder_user)
             .into(holder.photoView)
     }

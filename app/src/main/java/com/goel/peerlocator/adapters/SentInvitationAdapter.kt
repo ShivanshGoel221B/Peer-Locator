@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.models.UnknownUserModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class SentInvitationAdapter (private val context: Context,
             private val list : ArrayList<UnknownUserModel>, private val clickListener: ClickListener)
@@ -28,9 +27,9 @@ class SentInvitationAdapter (private val context: Context,
         val url = model.imageUrl
         val name = model.name
         holder.nameView.text = name
-        Picasso.with(context).load(url)
+        Glide.with(context).load(url)
             .placeholder(R.drawable.ic_placeholder_user)
-            .transform(CropCircleTransformation())
+            .circleCrop()
             .into(holder.imageView)
     }
 

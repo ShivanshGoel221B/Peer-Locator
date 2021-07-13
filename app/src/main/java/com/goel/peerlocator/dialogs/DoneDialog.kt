@@ -18,9 +18,9 @@ class DoneDialog (private val message: String, private val clickListener: ClickL
 
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        builder = AlertDialog.Builder(context!!)
+        builder = AlertDialog.Builder(requireContext())
         builder.setCancelable(false)
-        dialogView = activity!!.layoutInflater.inflate(R.layout.dialog_done, null, false)
+        dialogView = requireActivity().layoutInflater.inflate(R.layout.dialog_done, null, false)
         builder.setView(dialogView).setTitle(R.string.please_wait)
         this.isCancelable = false
         setMessage(message)

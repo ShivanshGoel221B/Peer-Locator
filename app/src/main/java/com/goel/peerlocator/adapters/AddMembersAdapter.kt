@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.models.FriendModel
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 class AddMembersAdapter (private val context : Context, private val friendsList : ArrayList<FriendModel>,
                          private val addedList : ArrayList<FriendModel>, private val listener : AddMembersClickListeners)
@@ -29,9 +28,9 @@ class AddMembersAdapter (private val context : Context, private val friendsList 
         val name = model.name
         val url = model.imageUrl
         holder.profileName.text = name
-        Picasso.with(context)
+        Glide.with(context)
             .load(url)
-            .transform(CropCircleTransformation())
+            .circleCrop()
             .placeholder(R.drawable.ic_placeholder_user)
             .into(holder.profileImage)
         if (model in addedList) {

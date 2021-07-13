@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.adapters.MainFragmentsAdapter
 import com.goel.peerlocator.databinding.ActivityMainBinding
@@ -25,8 +26,6 @@ import com.goel.peerlocator.utils.firebase.database.Database
 import com.goel.peerlocator.utils.location.Location
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.database.FirebaseDatabase
-import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
 
 class MainActivity : AppCompatActivity() {
@@ -210,8 +209,8 @@ class MainActivity : AppCompatActivity() {
             val photoUrl = user.imageUrl
             nameView.text = displayName
             if (photoUrl.isNotEmpty())
-                Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user)
-                    .transform(CropCircleTransformation()).into(dpView)
+                Glide.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user)
+                    .circleCrop().into(dpView)
         }
     }
 

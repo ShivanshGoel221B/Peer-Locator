@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.goel.peerlocator.R
 import com.goel.peerlocator.databinding.ActivityUserInfoBinding
 import com.goel.peerlocator.dialogs.InvitationLoadingDialog
@@ -14,7 +15,6 @@ import com.goel.peerlocator.listeners.EditFriendListener
 import com.goel.peerlocator.models.UnknownUserModel
 import com.goel.peerlocator.repositories.FriendsRepository
 import com.goel.peerlocator.repositories.InvitesRepository
-import com.squareup.picasso.Picasso
 
 class UserInfoActivity : AppCompatActivity() {
 
@@ -48,7 +48,9 @@ class UserInfoActivity : AppCompatActivity() {
         val photoUrl = model.imageUrl
         val name = model.name
         binding.infoToolbar.profileName.text = name
-        Picasso.with(this).load(photoUrl).placeholder(R.drawable.ic_placeholder_user_big).into(binding.profileImageHolder)
+        Glide.with(this).load(photoUrl)
+            .placeholder(R.drawable.ic_placeholder_user_big)
+            .into(binding.profileImageHolder)
     }
 
     private fun setClickListeners () {
