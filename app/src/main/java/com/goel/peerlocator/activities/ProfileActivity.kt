@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -33,6 +34,27 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
 
     private lateinit var binding : ActivityProfileBinding
     private lateinit var model : UserModel
+    private val imageResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
+            if (result.resultCode == RESULT_OK) {
+                val intent = result.data
+                intent?.let {
+                    val inputStream = contentResolver.openInputStream(it.data!!)
+                    val type = contentResolver.getType(it.data!!)
+                    val size = contentResolver.openInputStream(it.data!!)!!.readBytes().size
+                    when {
+                        type !in Constants.IMAGE_FILE_TYPES ->
+                            Toast.makeText(this, getString(R.string.image_type_warning), Toast.LENGTH_LONG).show()
+                        size > Constants.MAX_IMAGE_SIZE ->
+                            Toast.makeText(this, getString(R.string.image_size_warning), Toast.LENGTH_LONG).show()
+                        else -> {
+                            binding.profilePhotoProgress.visibility = View.VISIBLE
+                            Storage.uploadProfileImage(model, inputStream!!, this)
+                        }
+                    }
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -150,28 +172,7 @@ class ProfileActivity : AppCompatActivity(), ProfileDataListener {
 
     private fun uploadImage () {
         val imageIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        startActivityForResult(imageIntent, Constants.IMAGE_REQUEST_CODE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Constants.IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
-            data?.let {
-                val inputStream = contentResolver.openInputStream(it.data!!)
-                val type = contentResolver.getType(it.data!!)
-                val size = contentResolver.openInputStream(it.data!!)!!.readBytes().size
-                when {
-                    type !in Constants.IMAGE_FILE_TYPES ->
-                        Toast.makeText(this, getString(R.string.image_type_warning), Toast.LENGTH_LONG).show()
-                    size > Constants.MAX_IMAGE_SIZE ->
-                        Toast.makeText(this, getString(R.string.image_size_warning), Toast.LENGTH_LONG).show()
-                    else -> {
-                        binding.profilePhotoProgress.visibility = View.VISIBLE
-                        Storage.uploadProfileImage(model, inputStream!!, this)
-                    }
-                }
-            }
-        }
+        imageResult.launch(imageIntent)
     }
 
     // Change online status and visibility

@@ -51,7 +51,6 @@ object Constants {
     const val LOCATION_PERMISSION_REQUEST_CODE = 69
     const val READ_STORAGE_PERMISSION_REQUEST_CODE = 50
 
-    const val IMAGE_REQUEST_CODE = 100
     const val PROFILE_PICTURES = "profile_pictures"
     val IMAGE_FILE_TYPES = arrayOf("image/jpg", "image/jpeg")
     const val MAX_IMAGE_SIZE = 1*1024*1024

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -38,6 +39,27 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
     private var imageStream: InputStream? = null
     private lateinit var loadingDialogBox: LoadingBasicDialog
     private lateinit var doneDialog: DoneDialog
+    private val imageResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result->
+        if (result.resultCode == RESULT_OK) {
+            val intent = result.data
+            intent?.let {
+                val type = contentResolver.getType(it.data!!)
+                val size = contentResolver.openInputStream(it.data!!)!!.readBytes().size
+                when {
+                    type !in Constants.IMAGE_FILE_TYPES ->
+                        Toast.makeText(this, getString(R.string.image_type_warning), Toast.LENGTH_LONG).show()
+                    size > Constants.MAX_IMAGE_SIZE ->
+                        Toast.makeText(this, getString(R.string.image_size_warning), Toast.LENGTH_LONG).show()
+                    else -> {
+                        imageStream = contentResolver.openInputStream(it.data!!)
+                        Glide.with(this).load(it.data)
+                            .circleCrop().into(binding.circleProfilePhoto)
+                    }
+                }
+            }
+        }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,28 +174,7 @@ class NewCircleActivity : AppCompatActivity(), NewCircleAdapter.NewCircleClickLi
 
     private fun uploadImage () {
         val imageIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        startActivityForResult(imageIntent, Constants.IMAGE_REQUEST_CODE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Constants.IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
-            data?.let {
-                val type = contentResolver.getType(it.data!!)
-                val size = contentResolver.openInputStream(it.data!!)!!.readBytes().size
-                when {
-                    type !in Constants.IMAGE_FILE_TYPES ->
-                        Toast.makeText(this, getString(R.string.image_type_warning), Toast.LENGTH_LONG).show()
-                    size > Constants.MAX_IMAGE_SIZE ->
-                        Toast.makeText(this, getString(R.string.image_size_warning), Toast.LENGTH_LONG).show()
-                    else -> {
-                        imageStream = contentResolver.openInputStream(it.data!!)
-                        Glide.with(this).load(it.data)
-                            .circleCrop().into(binding.circleProfilePhoto)
-                    }
-                }
-            }
-        }
+        imageResult.launch(imageIntent)
     }
 
     ////////////////////////////////////////////////
